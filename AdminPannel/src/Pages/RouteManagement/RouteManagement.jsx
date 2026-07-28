@@ -11,45 +11,27 @@ import {
   FaChevronDown,
   FaUpload,
   FaCalendarAlt,
+  FaImage,
+  FaSatelliteDish,
   FaTruck
 } from 'react-icons/fa';
 import './RouteManagement.css';
 import API from '../../api/axios';
 
-// Coordinates database for Map Pins
-const LOCATION_COORDS = {
-  "patia": [20.3540, 85.8330],
-  "kiit square": [20.3510, 85.8180],
-  "sailashree vihar": [20.3390, 85.8150],
-  "chandrasekharpur": [20.3250, 85.8180],
-  "jaydev vihar": [20.3015, 85.8192],
-  "nayapalli": [20.2940, 85.8120],
-  "rasulgarh": [20.2882, 85.8584],
-  "master canteen": [20.2660, 85.8430],
-  "khandagiri": [20.2580, 85.7870]
-};
+// Default hub location (Bhubaneswar) — only used as the map's starting
+// center point until a real route with its own hubCoords is loaded.
+const DEFAULT_HUB_COORDS = [20.3050, 85.8280];
 
-const DEFAULT_LOCATION_OPTIONS = [
-  'Patia',
-  'KIIT Square',
-  'Sailashree Vihar',
-  'Chandrasekharpur',
-  'Jaydev Vihar',
-  'Nayapalli',
-  'Rasulgarh'
-];
-
-const API_BASE_URL = 'http://localhost:5000/api/routeRoutes';
+const ROUTE_API = '/routeRoutes';
 
 const RouteManagement = () => {
   // Modal & Route States
   const [showModal, setShowModal] = useState(false);
   const [locationInput, setLocationInput] = useState('');
   const [stops, setStops] = useState([]);
-  const [routeLocations, setRouteLocations] = useState(DEFAULT_LOCATION_OPTIONS);
   const [totalDistance, setTotalDistance] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState('0m');
-  const [baseHubCoords, setBaseHubCoords] = useState([20.3050, 85.8280]);
+  const [baseHubCoords, setBaseHubCoords] = useState(DEFAULT_HUB_COORDS);
   const [loadingStops, setLoadingStops] = useState(false);
   const [mapReady, setMapReady] = useState(false);
 
@@ -76,8 +58,15 @@ const RouteManagement = () => {
   const [vehicles, setVehicles] = useState([]);
   const [loadingVehicles, setLoadingVehicles] = useState(false);
 
+  // Tracks whether we're currently compressing a selected image, so the
+  // submit button / file label can reflect that briefly.
+  const [processingImage, setProcessingImage] = useState(false);
+
+  // Live clock for the console header — cosmetic only.
+  const [clockNow, setClockNow] = useState(new Date());
+
   // Table Form Controls
-  const [formData, setFormData] = useState({
+  const emptyFormData = {
     date: new Date().toISOString().split('T')[0],
     name: '',
     order: '',
@@ -86,7 +75,12 @@ const RouteManagement = () => {
     vehicle: '',
     image: null,
     imagePreview: ''
-  });
+  };
+  const [formData, setFormData] = useState(emptyFormData);
+
+  // Locations available for the "Add New Entry" dropdown — derived ONLY
+  // from stops that have actually been added to the route. No preset list.
+  const routeLocations = stops.map((s) => s.name);
 
   // --- Fetch Delivery Partners from Delivery API ---
   const fetchDeliveryPartners = async () => {
@@ -95,6 +89,8 @@ const RouteManagement = () => {
       const response = await API.get('/delivery');
       if (response.data?.success) {
         setDeliveryPartners(response.data.data);
+      } else {
+        setDeliveryPartners([]);
       }
     } catch (error) {
       console.error('Error fetching delivery partners:', error);
@@ -109,18 +105,14 @@ const RouteManagement = () => {
     try {
       setLoadingVehicles(true);
       const response = await API.get('/vehicle');
-      console.log('Vehicle API Response:', response.data);
 
       let vehicleData = [];
       if (response.data?.success && Array.isArray(response.data.data)) {
         vehicleData = response.data.data;
       } else if (Array.isArray(response.data)) {
         vehicleData = response.data;
-      } else if (response.data?.data && Array.isArray(response.data.data)) {
-        vehicleData = response.data.data;
       }
 
-      console.log('Processed Vehicle Data:', vehicleData);
       setVehicles(vehicleData);
     } catch (error) {
       console.error('Error fetching vehicles:', error);
@@ -131,18 +123,13 @@ const RouteManagement = () => {
   };
 
   // --- Fetch Table Records from Backend (/api/routeRoutes/assignments) ---
-  // These are the real "Add New Entry" submissions, persisted in MongoDB —
-  // NOT derived from stops. Previously the table only showed stop-based
-  // placeholder rows because nothing was ever saved to the backend on submit.
   const fetchTableRecords = async () => {
     try {
       setLoadingTable(true);
       setTableError(null);
-      console.log('Fetching route assignment records...');
 
-      const response = await fetch(`${API_BASE_URL}/assignments`);
-      const result = await response.json();
-      console.log('Assignments response:', result);
+      const response = await API.get(`${ROUTE_API}/assignments`);
+      const result = response.data;
 
       if (result.success && Array.isArray(result.data)) {
         const formatted = result.data.map((item) => ({
@@ -153,7 +140,7 @@ const RouteManagement = () => {
           locations: item.locations || [],
           vehicleNo: item.vehicleNo,
           vehicle: item.vehicle,
-          image: item.image || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150'
+          image: item.image || ''
         }));
         setTableData(formatted);
       } else {
@@ -162,61 +149,27 @@ const RouteManagement = () => {
     } catch (error) {
       console.error('Error fetching route assignment records:', error);
       setTableError(error.message || 'Failed to fetch data from server');
-      setTableData(getFallbackData());
+      setTableData([]);
     } finally {
       setLoadingTable(false);
     }
-  };
-
-  // Fallback data function
-  const getFallbackData = () => {
-    return [
-      {
-        id: 1,
-        date: '2026-07-24',
-        name: 'Rahul Sharma',
-        order: 'Express Delivery',
-        locations: ['Patia', 'KIIT Square'],
-        vehicleNo: 'OD-02-AX-1234',
-        vehicle: 'Tata Ace (Mini Truck)',
-        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150'
-      },
-      {
-        id: 2,
-        date: '2026-07-25',
-        name: 'Amit Patel',
-        order: 'Standard Cargo',
-        locations: ['Sailashree Vihar'],
-        vehicleNo: 'OD-02-BZ-5678',
-        vehicle: 'Mahindra Bolero Pickup',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150'
-      }
-    ];
   };
 
   // --- Fetch Active Route ---
   const fetchActiveRoute = async () => {
     setLoadingStops(true);
     try {
-      console.log('Fetching active route from:', `${API_BASE_URL}/active`);
-      const response = await fetch(`${API_BASE_URL}/active`);
-      const result = await response.json();
-      console.log('Active route response:', result);
+      const response = await API.get(`${ROUTE_API}/active`);
+      const result = response.data;
 
       if (result.success && result.data) {
         const routeData = result.data;
         setStops(routeData.stops || []);
         setTotalDistance(routeData.totalDistance || 0);
         setEstimatedTime(routeData.estimatedTime || '0m');
-        if (routeData.hubCoords) {
-          setBaseHubCoords(routeData.hubCoords);
-        }
-
-        const stopNames = (routeData.stops || []).map(stop => stop.name);
-        const mergedLocations = [...new Set([...DEFAULT_LOCATION_OPTIONS, ...stopNames])];
-        setRouteLocations(mergedLocations);
-        setMapReady(true);
+        setBaseHubCoords(routeData.hubCoords || DEFAULT_HUB_COORDS);
       }
+      setMapReady(true);
     } catch (err) {
       console.error('Error fetching active route:', err);
       setMapReady(true);
@@ -233,15 +186,17 @@ const RouteManagement = () => {
     fetchVehicles();
   }, []);
 
+  // Live clock tick — purely cosmetic, does not touch any backend state.
+  useEffect(() => {
+    const timer = setInterval(() => setClockNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   /* -----------------------------------------------------------------
      MAP INITIALIZATION — runs once when mapReady flips true.
-     This used to run on every `stops` change and call
-     mapInstanceRef.current.remove() to recreate the whole map, which
-     raced with Leaflet's internal animation frame (fitBounds / marker
-     positioning) and threw:
-       "Cannot read properties of undefined (reading '_leaflet_pos')"
-     Fix: create the map + a single layerGroup ONCE, then only touch
-     the layerGroup's contents when stops/hub change (see next effect).
+     Creates the map + a single layerGroup ONCE, then only touches
+     the layerGroup's contents when stops/hub change (see next effect),
+     avoiding the Leaflet "_leaflet_pos" race from recreating the map.
   ----------------------------------------------------------------- */
   useEffect(() => {
     if (!mapReady || !mapContainerRef.current) return;
@@ -261,7 +216,8 @@ const RouteManagement = () => {
       mapInstanceRef.current = map;
       layerGroupRef.current = L.layerGroup().addTo(map);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      // Dark "control room" basemap to match the console theme.
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
         maxZoom: 19
       }).addTo(map);
 
@@ -306,8 +262,7 @@ const RouteManagement = () => {
   /* -----------------------------------------------------------------
      MARKER / ROUTE REDRAW — runs whenever stops or hub coords change.
      Only clears and repopulates the layerGroup; the map instance
-     itself is never destroyed, so there's no race with Leaflet's
-     internal position updates.
+     itself is never destroyed.
   ----------------------------------------------------------------- */
   useEffect(() => {
     const L = window.L;
@@ -320,7 +275,7 @@ const RouteManagement = () => {
 
       const hubIcon = L.divIcon({
         className: 'route-management-hub-marker',
-        html: `<div class="hub-marker-wrapper"><span class="hub-icon">🏠</span></div>`,
+        html: `<div class="hub-marker-wrapper"><span class="hub-icon">◎</span></div>`,
         iconSize: [34, 34],
         iconAnchor: [17, 17]
       });
@@ -352,10 +307,11 @@ const RouteManagement = () => {
 
       if (routePoints.length > 1) {
         L.polyline(routePoints, {
-          color: '#2563eb',
-          weight: 4,
-          opacity: 0.85,
-          lineJoin: 'round'
+          color: '#F2A93B',
+          weight: 3.5,
+          opacity: 0.9,
+          lineJoin: 'round',
+          dashArray: '1, 8'
         }).addTo(layerGroup);
 
         const bounds = L.latLngBounds(routePoints);
@@ -369,70 +325,52 @@ const RouteManagement = () => {
   }, [stops, baseHubCoords]);
 
   // Handle Adding Stop via Backend API (`/add-stop`)
+  // Coordinates are placed as a small random offset around the hub since
+  // there is no geocoding service wired up — no location is pre-mapped.
   const handleGenerateRoute = async (e) => {
     e.preventDefault();
-    if (!locationInput.trim()) {
+    const trimmedName = locationInput.trim();
+
+    if (!trimmedName) {
       alert('Please enter a location');
       return;
     }
 
-    if (stops.some(s => s.name.toLowerCase() === locationInput.toLowerCase().trim())) {
-      alert(`⚠️ Location "${locationInput}" already exists in the route.`);
+    if (stops.some((s) => s.name.toLowerCase() === trimmedName.toLowerCase())) {
+      alert(`⚠️ Location "${trimmedName}" already exists in the route.`);
       return;
     }
 
-    const formattedKey = locationInput.toLowerCase().trim();
-    let coords = LOCATION_COORDS[formattedKey];
-
-    if (!coords) {
-      const offsetLat = (Math.random() - 0.5) * 0.045;
-      const offsetLng = (Math.random() - 0.5) * 0.045;
-      coords = [baseHubCoords[0] + offsetLat, baseHubCoords[1] + offsetLng];
-    }
-
+    const offsetLat = (Math.random() - 0.5) * 0.045;
+    const offsetLng = (Math.random() - 0.5) * 0.045;
+    const coords = [baseHubCoords[0] + offsetLat, baseHubCoords[1] + offsetLng];
     const calculatedDistance = parseFloat((Math.random() * 3 + 1.2).toFixed(1));
 
     try {
       setLoadingStops(true);
-      console.log('Adding stop:', locationInput);
 
-      const response = await fetch(`${API_BASE_URL}/add-stop`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: locationInput,
-          distance: calculatedDistance,
-          coords: coords
-        })
+      const response = await API.post(`${ROUTE_API}/add-stop`, {
+        name: trimmedName,
+        distance: calculatedDistance,
+        coords
       });
-      const result = await response.json();
-      console.log('Add stop response:', result);
+      const result = response.data;
 
       if (result.success) {
-        const updatedStops = result.data.stops;
-        setStops(updatedStops);
+        setStops(result.data.stops);
         setTotalDistance(result.data.totalDistance);
         setEstimatedTime(result.data.estimatedTime);
-
-        const newLocation = locationInput.trim();
-        setRouteLocations((prev) => {
-          const alreadyExists = prev.some(
-            (loc) => loc.toLowerCase() === newLocation.toLowerCase()
-          );
-          if (alreadyExists) return prev;
-          return [...prev, newLocation];
-        });
+        setBaseHubCoords(result.data.hubCoords || baseHubCoords);
 
         setLocationInput('');
         setShowModal(false);
-        alert(`✅ Location "${locationInput}" added successfully!`);
-        await fetchTableRecords();
+        alert(`✅ Location "${trimmedName}" added successfully!`);
       } else {
         alert(result.message || 'Failed to add stop');
       }
     } catch (error) {
       console.error('API Error adding stop:', error);
-      alert('Error adding location. Please try again.');
+      alert(error.response?.data?.message || 'Error adding location. Please try again.');
     } finally {
       setLoadingStops(false);
     }
@@ -444,17 +382,14 @@ const RouteManagement = () => {
 
     try {
       setLoadingStops(true);
-      const response = await fetch(`${API_BASE_URL}/stop/${id}`, {
-        method: 'DELETE'
-      });
-      const result = await response.json();
+      const response = await API.delete(`${ROUTE_API}/stop/${id}`);
+      const result = response.data;
 
       if (result.success) {
         setStops(result.data.stops);
         setTotalDistance(result.data.totalDistance);
         setEstimatedTime(result.data.estimatedTime);
         alert('✅ Stop removed successfully!');
-        await fetchTableRecords();
       } else {
         alert(result.message || 'Failed to delete stop');
       }
@@ -472,19 +407,68 @@ const RouteManagement = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Compresses/resizes the image on a canvas before storing it as a base64
+  // data URL. This keeps the JSON payload small so it never hits Express's
+  // body-size limit (which was causing the 500/413 error previously).
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          image: file,
-          imagePreview: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file.');
+      return;
     }
+
+    setProcessingImage(true);
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const img = new window.Image();
+
+      img.onload = () => {
+        try {
+          const MAX_WIDTH = 800;
+          const scale = Math.min(1, MAX_WIDTH / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // 0.7 quality JPEG keeps most photos well under ~200-400KB
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+          setFormData((prev) => ({
+            ...prev,
+            image: file,
+            imagePreview: compressedDataUrl
+          }));
+        } catch (err) {
+          console.error('Error compressing image:', err);
+          alert('Could not process this image. Please try a different file.');
+        } finally {
+          setProcessingImage(false);
+        }
+      };
+
+      img.onerror = () => {
+        console.error('Error loading image for compression.');
+        alert('Could not read this image file. Please try a different one.');
+        setProcessingImage(false);
+      };
+
+      img.src = reader.result;
+    };
+
+    reader.onerror = () => {
+      console.error('FileReader error.');
+      alert('Could not read the selected file. Please try again.');
+      setProcessingImage(false);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleSelectAllLocations = (e) => {
@@ -498,29 +482,19 @@ const RouteManagement = () => {
   const handleLocationCheckboxChange = (location) => {
     setFormData((prev) => {
       const isSelected = prev.locations.includes(location);
-      if (isSelected) {
-        return { ...prev, locations: prev.locations.filter((loc) => loc !== location) };
-      } else {
-        return { ...prev, locations: [...prev.locations, location] };
-      }
+      return isSelected
+        ? { ...prev, locations: prev.locations.filter((loc) => loc !== location) }
+        : { ...prev, locations: [...prev.locations, location] };
     });
   };
 
   const handleVehicleSelect = (e) => {
     const selectedVehicleNumber = e.target.value;
-    if (selectedVehicleNumber) {
-      setFormData((prev) => ({
-        ...prev,
-        vehicle: selectedVehicleNumber,
-        vehicleNo: selectedVehicleNumber
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        vehicle: '',
-        vehicleNo: ''
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      vehicle: selectedVehicleNumber,
+      vehicleNo: selectedVehicleNumber
+    }));
   };
 
   // Submit form - Save to backend
@@ -531,30 +505,27 @@ const RouteManagement = () => {
       return;
     }
 
+    if (processingImage) {
+      alert('Please wait, the image is still being processed.');
+      return;
+    }
+
     try {
       setLoadingTable(true);
 
-      // Prepare data for backend
       const payload = {
         date: formData.date,
         name: formData.name,
         order: formData.order,
-        locations: formData.locations.length ? formData.locations : ['General Location'],
+        locations: formData.locations,
         vehicleNo: formData.vehicleNo,
         vehicle: formData.vehicle,
         image: formData.imagePreview || undefined // only send when a new image was picked
       };
 
-      console.log('Saving to backend:', payload);
-
       if (editingId) {
-        const response = await fetch(`${API_BASE_URL}/assignments/${editingId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        console.log('Update assignment response:', result);
+        const response = await API.put(`${ROUTE_API}/assignments/${editingId}`, payload);
+        const result = response.data;
 
         if (!result.success) {
           alert(result.message || 'Failed to update record');
@@ -564,40 +535,12 @@ const RouteManagement = () => {
         alert('✅ Record updated successfully!');
         setEditingId(null);
       } else {
-        const response = await fetch(`${API_BASE_URL}/assignments`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        console.log('Create assignment response:', result);
+        const response = await API.post(`${ROUTE_API}/assignments`, payload);
+        const result = response.data;
 
         if (!result.success) {
           alert(result.message || 'Failed to create record');
           return;
-        }
-
-        // Also add the name as a stop if it's a delivery partner
-        const isDeliveryPartner = deliveryPartners.some(p => p.name === formData.name);
-        if (isDeliveryPartner && !stops.some(s => s.name === formData.name)) {
-          try {
-            const coords = LOCATION_COORDS[formData.name.toLowerCase()] || [baseHubCoords[0] + (Math.random() - 0.5) * 0.045, baseHubCoords[1] + (Math.random() - 0.5) * 0.045];
-            const distance = parseFloat((Math.random() * 3 + 1.2).toFixed(1));
-
-            await fetch(`${API_BASE_URL}/add-stop`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name: formData.name,
-                distance: distance,
-                coords: coords
-              })
-            });
-            // Refresh route data
-            await fetchActiveRoute();
-          } catch (error) {
-            console.error('Error adding as stop:', error);
-          }
         }
 
         alert('✅ Record created successfully!');
@@ -606,21 +549,19 @@ const RouteManagement = () => {
       // Refetch from backend so the table always reflects real DB state
       await fetchTableRecords();
 
-      setFormData({
-        date: new Date().toISOString().split('T')[0],
-        name: '',
-        order: '',
-        locations: [],
-        vehicleNo: '',
-        vehicle: '',
-        image: null,
-        imagePreview: ''
-      });
+      setFormData(emptyFormData);
       setShowTableForm(false);
-
     } catch (error) {
       console.error('Error saving record:', error);
-      alert('Failed to save record. Please try again.');
+
+      // Surface the real backend message when available (e.g. "Image too
+      // large" from the global error handler), instead of a generic string.
+      const backendMessage = error.response?.data?.message;
+      if (error.response?.status === 413) {
+        alert(backendMessage || 'Image too large. Please choose a smaller image.');
+      } else {
+        alert(backendMessage || 'Failed to save record. Please try again.');
+      }
     } finally {
       setLoadingTable(false);
     }
@@ -645,10 +586,8 @@ const RouteManagement = () => {
     if (!window.confirm('Are you sure you want to delete this record?')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/assignments/${id}`, {
-        method: 'DELETE'
-      });
-      const result = await response.json();
+      const response = await API.delete(`${ROUTE_API}/assignments/${id}`);
+      const result = response.data;
 
       if (!result.success) {
         alert(result.message || 'Failed to delete record');
@@ -663,306 +602,330 @@ const RouteManagement = () => {
     }
   };
 
+  const clockLabel = clockNow.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const dateLabel = clockNow.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+
   return (
-    <div className="route-management-wrapper">
-      {/* Route Planner Header section */}
-      <div className="route-management-header">
-        <div className="route-management-header__title-box">
-          <span className="route-management-header__count-badge">{stops.length}</span>
-          <h2 className="route-management-header__title">Route Planner</h2>
+    <div className="rm-shell">
+      {/* ================= TOP CONSOLE BAR ================= */}
+      <header className="rm-topbar">
+        <div className="rm-topbar__brand">
+          <span className="rm-topbar__mark"><FaSatelliteDish /></span>
+          <div className="rm-topbar__title-group">
+            <h1 className="rm-topbar__title">Route Command</h1>
+            <span className="rm-topbar__subtitle">Live dispatch &amp; fleet routing console</span>
+          </div>
         </div>
+
+        <div className="rm-topbar__status">
+          <span className="rm-live-dot" aria-hidden="true"></span>
+          <span className="rm-topbar__status-text">LIVE</span>
+        </div>
+
+        <div className="rm-topbar__clock">
+          <span className="rm-topbar__clock-time">{clockLabel}</span>
+          <span className="rm-topbar__clock-date">{dateLabel}</span>
+        </div>
+
         <button
-          className="route-management-header__add-btn"
+          className="rm-btn rm-btn--primary"
           onClick={() => setShowModal(true)}
           disabled={loadingStops}
         >
-          <FaPlus /> {loadingStops ? 'Loading...' : 'Add Stop'}
+          <FaPlus /> {loadingStops ? 'Loading…' : 'Add Stop'}
         </button>
-      </div>
+      </header>
 
-      {/* Main Content Workspace Split Panel */}
-      <div className="route-management-workspace">
-        {/* Left Map View */}
-        <div className="route-management-map-container">
-          <div ref={mapContainerRef} className="route-management-map-canvas"></div>
+      {/* ================= MAIN WORKSPACE ================= */}
+      <main className="rm-main">
+        <section className="rm-hero">
+          {/* Map stage — full bleed */}
+          <div className="rm-map-pane">
+            <div ref={mapContainerRef} className="rm-map-canvas"></div>
 
-          <div className="route-management-floating-search">
-            <div className="route-management-floating-search__details">
-              <span className="route-management-floating-search__main-text">Bhubaneswar</span>
-              <span className="route-management-floating-search__sub-text">Bhubaneswar, Odisha, India</span>
-            </div>
-            <div className="route-management-floating-search__actions">
-              <button className="route-management-floating-search__btn" title="Open Map Link">
-                <FaExternalLinkAlt />
-              </button>
-              <button className="route-management-floating-search__btn active" title="Get Directions">
-                <FaLocationArrow />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Pane Sidebar Cards */}
-        <div className="route-management-sidebar-queue">
-          {loadingStops ? (
-            <div className="route-management-queue-empty">
-              <p>Loading stops...</p>
-            </div>
-          ) : (
-            stops.map((stop, index) => (
-              <div key={stop.id} className="route-management-queue-card">
-                <div className="route-management-queue-card__left">
-                  <div className="route-management-queue-card__num-indicator">{index + 1}</div>
-                  <div className="route-management-queue-card__info-group">
-                    <h4 className="route-management-queue-card__name">{stop.name}</h4>
-                  </div>
-                </div>
-                <div className="route-management-queue-card__right">
-                  <span className="route-management-queue-card__distance">{stop.distance} KM</span>
-                  <button
-                    className="route-management-queue-card__remove-btn"
-                    onClick={() => removeStop(stop.id)}
-                    title="Remove stop"
-                    disabled={loadingStops}
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-
-          {!loadingStops && stops.length === 0 && (
-            <div className="route-management-queue-empty">
-              <p>No stops assigned. Click "+ Add Stop" to populate checkpoints.</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Control Summary Footer Metrics */}
-      <div className="route-management-footer">
-        <div className="route-management-footer__stats-group">
-          <span className="route-management-footer__stat-item">
-            <FaRoute className="route-management-footer__stat-icon" />
-            Total Distance : <strong>{Number(totalDistance).toFixed(1)} KM</strong>
-          </span>
-          <span className="route-management-footer__stat-item">
-            <FaClock className="route-management-footer__stat-icon" />
-            Estimated Time : <strong>{estimatedTime}</strong>
-          </span>
-        </div>
-
-        <button
-          className="route-management-footer__navigate-btn"
-          onClick={() => alert(`Initiating navigation sequences for ${stops.length} locations!`)}
-          disabled={stops.length === 0}
-        >
-          <FaLocationArrow /> Start Navigation
-        </button>
-      </div>
-
-      {/* Add Stop Modal */}
-      {showModal && (
-        <div className="route-management-modal-backdrop" onClick={() => setShowModal(false)}>
-          <div className="route-management-modal-pane" onClick={(e) => e.stopPropagation()}>
-            <div className="route-management-modal-header">
-              <h3 className="route-management-modal-title">Assign New Route Mapping</h3>
-              <button
-                className="route-management-modal-close-btn"
-                onClick={() => setShowModal(false)}
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <form onSubmit={handleGenerateRoute} className="route-management-modal-form">
-              <div className="route-management-modal-form__group">
-                <label className="route-management-modal-form__label">Target Hub Location / Address</label>
-                <input
-                  type="text"
-                  className="route-management-modal-form__input"
-                  placeholder="e.g. Patia Square, Bhubaneswar"
-                  value={locationInput}
-                  onChange={(e) => setLocationInput(e.target.value)}
-                  required
-                />
-                <span className="route-management-modal-form__tip">
-                  The integrated Map display above will center automatically to this address coordinates on submit.
+            {/* Floating glass HUD card */}
+            <div className="rm-hud-card">
+              <div className="rm-hud-card__details">
+                <span className="rm-hud-card__label">Dispatch Hub</span>
+                <span className="rm-hud-card__coords">
+                  {baseHubCoords[0].toFixed(4)}, {baseHubCoords[1].toFixed(4)}
                 </span>
               </div>
-
-              <div className="route-management-modal-actions">
-                <button
-                  type="button"
-                  className="route-management-modal-actions__cancel"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
+              <div className="rm-hud-card__actions">
+                <button className="rm-icon-btn" title="Open Map Link">
+                  <FaExternalLinkAlt />
                 </button>
-                <button
-                  type="submit"
-                  className="route-management-modal-actions__submit"
-                  disabled={loadingStops}
-                >
-                  {loadingStops ? 'Adding...' : 'Generate Map Route'}
+                <button className="rm-icon-btn rm-icon-btn--active" title="Get Directions">
+                  <FaLocationArrow />
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
 
-      {/* --- TABLE MANAGEMENT SECTION --- */}
-      <div className="route-management-table-section">
-        <div className="route-management-table-header">
-          <h3>Route Assignment Directory</h3>
-          <button
-            className="route-management-table-add-btn"
-            onClick={() => {
-              setEditingId(null);
-              setFormData({
-                date: new Date().toISOString().split('T')[0],
-                name: '',
-                order: '',
-                locations: [],
-                vehicleNo: '',
-                vehicle: '',
-                image: null,
-                imagePreview: ''
-              });
-              setShowTableForm(!showTableForm);
-            }}
-          >
-            <FaPlus /> {showTableForm ? 'Close Form' : 'Add Data'}
-          </button>
-        </div>
-
-        {/* Collapsible Add / Edit Form */}
-        {showTableForm && (
-          <form className="route-management-table-form" onSubmit={handleTableSubmit}>
-            <h4 className="form-heading">{editingId ? 'Edit Entry' : 'Add New Entry'}</h4>
-            <div className="form-grid">
-
-              <div className="form-group date-input-wrapper">
-                <label>Date</label>
-                <div
-                  className="calendar-field"
-                  onClick={() => dateInputRef.current && dateInputRef.current.showPicker && dateInputRef.current.showPicker()}
-                >
-                  <input
-                    ref={dateInputRef}
-                    type="date"
-                    name="date"
-                    className="custom-date-input"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <FaCalendarAlt className="calendar-icon" />
+            {/* Floating stat readouts, bottom-left of the map stage */}
+            <div className="rm-hud-stats">
+              <div className="rm-hud-stats__item">
+                <FaRoute className="rm-hud-stats__icon" />
+                <div className="rm-hud-stats__text">
+                  <span className="rm-hud-stats__value">{Number(totalDistance).toFixed(1)} KM</span>
+                  <span className="rm-hud-stats__label">Total distance</span>
                 </div>
               </div>
+              <div className="rm-hud-stats__divider" />
+              <div className="rm-hud-stats__item">
+                <FaClock className="rm-hud-stats__icon" />
+                <div className="rm-hud-stats__text">
+                  <span className="rm-hud-stats__value">{estimatedTime}</span>
+                  <span className="rm-hud-stats__label">Est. time</span>
+                </div>
+              </div>
+              <button
+                className="rm-btn rm-btn--ghost-accent rm-hud-stats__navigate"
+                onClick={() => alert(`Initiating navigation sequences for ${stops.length} locations!`)}
+                disabled={stops.length === 0}
+              >
+                <FaLocationArrow /> Start Navigation
+              </button>
+            </div>
+          </div>
 
-              {/* NAME DROPDOWN - Fetched from Delivery API */}
-              <div className="form-group">
-                <label>Name</label>
-                <select
-                  name="name"
-                  className="form-select"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="" disabled>
-                    {loadingPartners ? 'Loading delivery partners...' : 'Select Driver / Personnel'}
-                  </option>
-                  {deliveryPartners.length > 0 ? (
-                    deliveryPartners.map((partner) => (
+          {/* Right rail — stop queue */}
+          <aside className="rm-queue-rail">
+            <div className="rm-queue-rail__header">
+              <span className="rm-queue-rail__title">Stop Queue</span>
+              <span className="rm-queue-rail__count">{stops.length}</span>
+            </div>
+
+            <div className="rm-queue-rail__list">
+              {loadingStops ? (
+                <div className="rm-empty-state">
+                  <p>Loading stops…</p>
+                </div>
+              ) : stops.length > 0 ? (
+                stops.map((stop, index) => (
+                  <div key={stop.id} className="rm-queue-card">
+                    <div className="rm-queue-card__left">
+                      <div className="rm-queue-card__num">{index + 1}</div>
+                      <div className="rm-queue-card__info">
+                        <h4 className="rm-queue-card__name">{stop.name}</h4>
+                      </div>
+                    </div>
+                    <div className="rm-queue-card__right">
+                      <span className="rm-queue-card__distance">{stop.distance} KM</span>
+                      <button
+                        className="rm-queue-card__remove"
+                        onClick={() => removeStop(stop.id)}
+                        title="Remove stop"
+                        disabled={loadingStops}
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="rm-empty-state">
+                  <p>No stops assigned.<br />Tap “Add Stop” to populate checkpoints.</p>
+                </div>
+              )}
+            </div>
+          </aside>
+        </section>
+
+        {/* ================= Add Stop Modal ================= */}
+        {showModal && (
+          <div className="rm-modal-backdrop" onClick={() => setShowModal(false)}>
+            <div className="rm-modal-pane" onClick={(e) => e.stopPropagation()}>
+              <div className="rm-modal-header">
+                <div>
+                  <span className="rm-modal-eyebrow">Route Mapping</span>
+                  <h3 className="rm-modal-title">Assign New Stop</h3>
+                </div>
+                <button className="rm-icon-btn" onClick={() => setShowModal(false)}>
+                  <FaTimes />
+                </button>
+              </div>
+
+              <form onSubmit={handleGenerateRoute} className="rm-modal-form">
+                <div className="rm-field">
+                  <label className="rm-field__label">Location Name</label>
+                  <input
+                    type="text"
+                    className="rm-field__input"
+                    placeholder="Enter a location name"
+                    value={locationInput}
+                    onChange={(e) => setLocationInput(e.target.value)}
+                    required
+                  />
+                  <span className="rm-field__tip">
+                    This location will be added as a stop and will appear in the Route Assignment
+                    Directory's location list below.
+                  </span>
+                </div>
+
+                <div className="rm-modal-actions">
+                  <button
+                    type="button"
+                    className="rm-btn rm-btn--outline"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rm-btn rm-btn--primary"
+                    disabled={loadingStops}
+                  >
+                    {loadingStops ? 'Adding…' : 'Generate Map Route'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MANIFEST / TABLE SECTION ================= */}
+        <section className="rm-manifest">
+          <div className="rm-manifest__header">
+            <div>
+              <span className="rm-manifest__eyebrow">Directory</span>
+              <h3 className="rm-manifest__title">Route Assignment Manifest</h3>
+            </div>
+            <button
+              className="rm-btn rm-btn--dark"
+              onClick={() => {
+                setEditingId(null);
+                setFormData(emptyFormData);
+                setShowTableForm(!showTableForm);
+              }}
+            >
+              <FaPlus /> {showTableForm ? 'Close Form' : 'Add Data'}
+            </button>
+          </div>
+
+          {/* Collapsible Add / Edit Form */}
+          {showTableForm && (
+            <form className="rm-entry-form" onSubmit={handleTableSubmit}>
+              <h4 className="rm-entry-form__heading">
+                {editingId ? 'Edit Entry' : 'Add New Entry'}
+              </h4>
+              <div className="rm-entry-form__grid">
+
+                <div className="rm-field rm-field--date">
+                  <label className="rm-field__label">Date</label>
+                  <div
+                    className="rm-calendar-field"
+                    onClick={() => dateInputRef.current && dateInputRef.current.showPicker && dateInputRef.current.showPicker()}
+                  >
+                    <input
+                      ref={dateInputRef}
+                      type="date"
+                      name="date"
+                      className="rm-calendar-field__input"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <FaCalendarAlt className="rm-calendar-field__icon" />
+                  </div>
+                </div>
+
+                {/* NAME DROPDOWN - Fetched from Delivery API */}
+                <div className="rm-field">
+                  <label className="rm-field__label">Name</label>
+                  <select
+                    name="name"
+                    className="rm-field__select"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="" disabled>
+                      {loadingPartners ? 'Loading delivery partners…' : 'Select Driver / Personnel'}
+                    </option>
+                    {deliveryPartners.map((partner) => (
                       <option key={partner._id} value={partner.name}>
                         {partner.name} {partner.loginId ? `(${partner.loginId})` : ''}
                       </option>
-                    ))
-                  ) : (
-                    <>
-                      <option value="Rahul Sharma">Rahul Sharma</option>
-                      <option value="Amit Patel">Amit Patel</option>
-                      <option value="Priya Das">Priya Das</option>
-                      <option value="Suresh Kumar">Suresh Kumar</option>
-                      <option value="Ananya Ray">Ananya Ray</option>
-                      <option value="Vikram Singh">Vikram Singh</option>
-                    </>
+                    ))}
+                  </select>
+                  {deliveryPartners.length === 0 && !loadingPartners && (
+                    <small className="rm-field__warning">
+                      ⚠️ No delivery partners found. Please add partners in Delivery ID section first.
+                    </small>
                   )}
-                </select>
-                {deliveryPartners.length === 0 && !loadingPartners && (
-                  <small style={{ color: '#f59e0b', marginTop: '4px', display: 'block' }}>
-                    ⚠️ No delivery partners found. Please add partners in Delivery ID section first.
-                  </small>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label>Order</label>
-                <input
-                  type="text"
-                  name="order"
-                  placeholder="Order Type/Details"
-                  value={formData.order}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group custom-dropdown-group">
-                <label>Location</label>
-                <div className="custom-dropdown-header" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                  <span>
-                    {formData.locations.length === 0
-                      ? 'Select Locations'
-                      : `${formData.locations.length} Selected`}
-                  </span>
-                  <FaChevronDown />
                 </div>
 
-                {isDropdownOpen && (
-                  <div className="custom-dropdown-menu">
-                    <label className="dropdown-option select-all">
-                      <input
-                        type="checkbox"
-                        checked={formData.locations.length === routeLocations.length}
-                        onChange={handleSelectAllLocations}
-                      />
-                      <strong>Select All ({routeLocations.length})</strong>
-                    </label>
-                    <hr />
-                    {routeLocations.map((loc) => (
-                      <label key={loc} className="dropdown-option">
-                        <input
-                          type="checkbox"
-                          checked={formData.locations.includes(loc)}
-                          onChange={() => handleLocationCheckboxChange(loc)}
-                        />
-                        {loc}
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
+                <div className="rm-field">
+                  <label className="rm-field__label">Order</label>
+                  <input
+                    type="text"
+                    name="order"
+                    className="rm-field__input"
+                    placeholder="Order Type/Details"
+                    value={formData.order}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
 
-              {/* VEHICLE SELECTION - Fetched from Vehicle API */}
-              <div className="form-group">
-                <label>Select Vehicle</label>
-                <select
-                  name="vehicle"
-                  className="form-select"
-                  value={formData.vehicle}
-                  onChange={handleVehicleSelect}
-                  required
-                >
-                  <option value="" disabled>
-                    {loadingVehicles ? 'Loading vehicles...' : 'Select Vehicle'}
-                  </option>
-                  {vehicles.length > 0 ? (
-                    vehicles.map((vehicle) => {
+                <div className="rm-field rm-dropdown-group">
+                  <label className="rm-field__label">Location</label>
+                  <div className="rm-dropdown-header" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                    <span>
+                      {formData.locations.length === 0
+                        ? 'Select Locations'
+                        : `${formData.locations.length} Selected`}
+                    </span>
+                    <FaChevronDown className={isDropdownOpen ? 'rm-chevron rm-chevron--open' : 'rm-chevron'} />
+                  </div>
+
+                  {isDropdownOpen && (
+                    <div className="rm-dropdown-menu">
+                      {routeLocations.length === 0 ? (
+                        <p className="rm-dropdown-menu__empty">
+                          No stops added yet. Add a stop from "Add Stop" above first.
+                        </p>
+                      ) : (
+                        <>
+                          <label className="rm-dropdown-option rm-dropdown-option--all">
+                            <input
+                              type="checkbox"
+                              checked={formData.locations.length === routeLocations.length}
+                              onChange={handleSelectAllLocations}
+                            />
+                            <strong>Select All ({routeLocations.length})</strong>
+                          </label>
+                          <hr className="rm-dropdown-divider" />
+                          {routeLocations.map((loc) => (
+                            <label key={loc} className="rm-dropdown-option">
+                              <input
+                                type="checkbox"
+                                checked={formData.locations.includes(loc)}
+                                onChange={() => handleLocationCheckboxChange(loc)}
+                              />
+                              {loc}
+                            </label>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* VEHICLE SELECTION - Fetched from Vehicle API */}
+                <div className="rm-field">
+                  <label className="rm-field__label">Select Vehicle</label>
+                  <select
+                    name="vehicle"
+                    className="rm-field__select"
+                    value={formData.vehicle}
+                    onChange={handleVehicleSelect}
+                    required
+                  >
+                    <option value="" disabled>
+                      {loadingVehicles ? 'Loading vehicles…' : 'Select Vehicle'}
+                    </option>
+                    {vehicles.map((vehicle) => {
                       const vehicleId = vehicle._id || vehicle.id;
                       const vehicleNumber = vehicle.number || vehicle.vehicleNo || '';
                       const driverName = vehicle.driver || 'No Driver';
@@ -974,157 +937,168 @@ const RouteManagement = () => {
                           {vehicleNumber} - {driverName} (Capacity: {capacity}, Status: {status})
                         </option>
                       );
-                    })
-                  ) : (
-                    <>
-                      <option value="OD-02-AB-1234">OD-02-AB-1234 - Default Vehicle</option>
-                      <option value="OD-03-CD-5678">OD-03-CD-5678 - Backup Vehicle</option>
-                    </>
+                    })}
+                  </select>
+                  {vehicles.length === 0 && !loadingVehicles && (
+                    <small className="rm-field__warning">
+                      ⚠️ No vehicles found. Please add vehicles in Vehicle Management section first.
+                    </small>
                   )}
-                </select>
-                {vehicles.length === 0 && !loadingVehicles && (
-                  <small style={{ color: '#f59e0b', marginTop: '4px', display: 'block' }}>
-                    ⚠️ No vehicles found. Please add vehicles in Vehicle Management section first.
+                </div>
+
+                {/* VEHICLE NUMBER - Auto-filled from vehicle selection */}
+                <div className="rm-field">
+                  <label className="rm-field__label">Vehicle Number</label>
+                  <input
+                    type="text"
+                    name="vehicleNo"
+                    className="rm-field__input rm-field__input--readonly"
+                    placeholder="Auto-filled from vehicle selection"
+                    value={formData.vehicleNo}
+                    onChange={handleInputChange}
+                    required
+                    readOnly
+                  />
+                  <small className="rm-field__hint">
+                    Vehicle number is auto-filled when you select a vehicle above
                   </small>
-                )}
+                </div>
+
+                <div className="rm-field rm-file-upload-group">
+                  <label className="rm-field__label">Upload Image</label>
+                  <label
+                    htmlFor="image-file-input"
+                    className={processingImage ? 'rm-file-label rm-file-label--busy' : 'rm-file-label'}
+                  >
+                    <FaUpload />{' '}
+                    {processingImage
+                      ? 'Processing image…'
+                      : formData.image
+                      ? formData.image.name
+                      : 'Choose File'}
+                  </label>
+                  <input
+                    id="image-file-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                    disabled={processingImage}
+                  />
+                  {formData.imagePreview && (
+                    <img src={formData.imagePreview} alt="Preview" className="rm-image-preview" />
+                  )}
+                </div>
               </div>
 
-              {/* VEHICLE NUMBER - Auto-filled from vehicle selection */}
-              <div className="form-group">
-                <label>Vehicle Number</label>
-                <input
-                  type="text"
-                  name="vehicleNo"
-                  placeholder="Auto-filled from vehicle selection"
-                  value={formData.vehicleNo}
-                  onChange={handleInputChange}
-                  required
-                  readOnly
-                  style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
-                />
-                <small style={{ color: '#6c757d', marginTop: '4px', display: 'block' }}>
-                  Vehicle number is auto-filled when you select a vehicle above
-                </small>
-              </div>
+              <button
+                type="submit"
+                className="rm-btn rm-btn--primary rm-entry-form__submit"
+                disabled={loadingTable || processingImage}
+              >
+                {loadingTable ? 'Saving…' : (editingId ? 'Update Record' : 'Submit Record')}
+              </button>
+            </form>
+          )}
 
-              <div className="form-group file-upload-group">
-                <label>Upload Image</label>
-                <label htmlFor="image-file-input" className="file-upload-label">
-                  <FaUpload /> {formData.image ? formData.image.name : 'Choose File'}
-                </label>
-                <input
-                  id="image-file-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                {formData.imagePreview && (
-                  <img src={formData.imagePreview} alt="Preview" className="image-preview" />
-                )}
-              </div>
-            </div>
-
-            <button type="submit" className="form-submit-btn" disabled={loadingTable}>
-              {loadingTable ? 'Saving...' : (editingId ? 'Update Record' : 'Submit Record')}
-            </button>
-          </form>
-        )}
-
-        {/* Data Table - Connected to Backend */}
-        <div className="route-management-table-container">
-          <table className="route-management-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Order</th>
-                <th>Location</th>
-                <th>Vehicle No.</th>
-                <th>Vehicle</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loadingTable ? (
+          {/* Data Table - Connected to Backend */}
+          <div className="rm-table-container">
+            <table className="rm-table">
+              <thead>
                 <tr>
-                  <td colSpan="8" className="text-center no-data">
-                    Loading records from server...
-                  </td>
+                  <th>Image</th>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Order</th>
+                  <th>Location</th>
+                  <th>Vehicle No.</th>
+                  <th>Vehicle</th>
+                  <th>Action</th>
                 </tr>
-              ) : tableError ? (
-                <tr>
-                  <td colSpan="8" className="text-center no-data" style={{ color: '#ef4444' }}>
-                    ⚠️ Error: {tableError}
-                  </td>
-                </tr>
-              ) : tableData.length > 0 ? (
-                tableData.map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="table-img"
-                        onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150';
-                        }}
-                      />
-                    </td>
-                    <td className="font-semibold">{item.date}</td>
-                    <td>{item.name}</td>
-                    <td>{item.order}</td>
-                    <td>
-                      <div className="location-tags">
-                        {item.locations && item.locations.length > 0 ? (
-                          item.locations.map((loc, idx) => (
-                            <span key={idx} className="location-badge">
-                              {typeof loc === 'object' ? loc.name : loc}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="location-badge">None</span>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="vehicle-badge" style={{ fontWeight: 'bold' }}>
-                        {item.vehicleNo || 'N/A'}
-                      </span>
-                    </td>
-                    <td>{item.vehicle || 'N/A'}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-btn edit"
-                          onClick={() => handleEdit(item)}
-                          title="Edit"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          className="action-btn delete"
-                          onClick={() => handleDelete(item.id)}
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
+              </thead>
+              <tbody>
+                {loadingTable ? (
+                  <tr>
+                    <td colSpan="8" className="rm-table__notice">
+                      Loading records from server…
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center no-data">
-                    No data records available. Click "+ Add Data" to create one.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                ) : tableError ? (
+                  <tr>
+                    <td colSpan="8" className="rm-table__notice rm-table__notice--error">
+                      ⚠️ Error: {tableError}
+                    </td>
+                  </tr>
+                ) : tableData.length > 0 ? (
+                  tableData.map((item) => (
+                    <tr key={item.id}>
+                      <td>
+                        {item.image ? (
+                          <img src={item.image} alt={item.name} className="rm-table-img" />
+                        ) : (
+                          <div className="rm-table-img rm-table-img--placeholder">
+                            <FaImage />
+                          </div>
+                        )}
+                      </td>
+                      <td className="rm-mono">{item.date}</td>
+                      <td>{item.name}</td>
+                      <td>{item.order}</td>
+                      <td>
+                        <div className="rm-location-tags">
+                          {item.locations && item.locations.length > 0 ? (
+                            item.locations.map((loc, idx) => (
+                              <span key={idx} className="rm-badge rm-badge--teal">
+                                {typeof loc === 'object' ? loc.name : loc}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="rm-badge">None</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <span className="rm-badge rm-badge--amber rm-mono">
+                          {item.vehicleNo || 'N/A'}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="rm-vehicle-cell">
+                          <FaTruck /> {item.vehicle || 'N/A'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="rm-action-buttons">
+                          <button
+                            className="rm-action-btn rm-action-btn--edit"
+                            onClick={() => handleEdit(item)}
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            className="rm-action-btn rm-action-btn--delete"
+                            onClick={() => handleDelete(item.id)}
+                            title="Delete"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="rm-table__notice">
+                      No data records available. Click "+ Add Data" to create one.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

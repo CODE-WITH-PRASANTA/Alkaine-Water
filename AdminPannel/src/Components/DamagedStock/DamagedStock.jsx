@@ -6,7 +6,7 @@ const DamagedStock = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   const [tableData, setTableData] = useState([]);
   const [summaryCards, setSummaryCards] = useState([
     { key: 'totalDamaged', label: 'Total Damaged', value: 0, isRed: true },
@@ -18,19 +18,13 @@ const DamagedStock = () => {
 
   // Product list from ManageStock
   const [productList, setProductList] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
-  const [volumeList, setVolumeList] = useState(['20L', '10L', '5L', '1L']);
 
   // Filter state
   const [selectedProductFilter, setSelectedProductFilter] = useState('');
 
-  // Selected volume state added
-  const [selectedVolume, setSelectedVolume] = useState('');
-
   const [formData, setFormData] = useState({
     product: '',
     category: '',
-    selectedVolume: '',
     broken: '',
     leakage: '',
     lost: '',
@@ -52,7 +46,7 @@ const DamagedStock = () => {
     try {
       const response = await API.get('/manage');
       console.log('Products fetched from ManageStock:', response.data);
-      
+
       let products = [];
       if (response.data?.success && Array.isArray(response.data.data)) {
         products = response.data.data;
@@ -61,16 +55,16 @@ const DamagedStock = () => {
       } else if (response.data?.data && Array.isArray(response.data.data)) {
         products = response.data.data;
       }
-      
+
       setProductList(products);
-      
+
     } catch (error) {
       console.error('Error fetching products from ManageStock:', error);
       // Fallback mock data
       setProductList([
-        { _id: '1', product: 'Coca-Cola', productCode: 'CC001', category: 'glass-bottles', volumes: ['20L', '10L', '5L', '1L'] },
-        { _id: '2', product: 'Pepsi', productCode: 'PS001', category: 'plastic-bottles', volumes: ['20L', '10L', '5L', '1L'] },
-        { _id: '3', product: 'Sprite', productCode: 'SP001', category: 'cans', volumes: ['20L', '10L', '5L', '1L'] },
+        { _id: '1', product: 'Coca-Cola', productCode: 'CC001', category: 'glass-bottles' },
+        { _id: '2', product: 'Pepsi', productCode: 'PS001', category: 'plastic-bottles' },
+        { _id: '3', product: 'Sprite', productCode: 'SP001', category: 'cans' },
       ]);
     }
   };
@@ -80,32 +74,10 @@ const DamagedStock = () => {
     const productId = e.target.value;
     const selectedProduct = productList.find(item => item._id === productId || item.id === productId);
 
-    if (selectedProduct) {
-      setCategoryList(selectedProduct.category ? [selectedProduct.category] : []);
-      
-      const volumes = selectedProduct.volumes || ['20L', '10L', '5L', '1L'];
-      setVolumeList(volumes);
-    } else {
-      setCategoryList([]);
-      setVolumeList(['20L', '10L', '5L', '1L']);
-    }
-
     setFormData(prev => ({
       ...prev,
       product: productId,
       category: selectedProduct?.category || '',
-      selectedVolume: '',
-    }));
-    setSelectedVolume('');
-  };
-
-  // --- Handle Volume Selection Change ---
-  const handleVolumeChange = (e) => {
-    const vol = e.target.value;
-    setSelectedVolume(vol);
-    setFormData(prev => ({
-      ...prev,
-      selectedVolume: vol
     }));
   };
 
@@ -118,17 +90,17 @@ const DamagedStock = () => {
 
       const response = await API.get('/damage', { params });
       console.log('Damaged Stock Data:', response.data);
-      
+
       if (response.data && response.data.success) {
-        setTableData(response.data.tableData || getDefaultTableData());
+        setTableData(response.data.tableData || []);
         setSummaryCards(response.data.summaryCards || getDefaultSummaryCards());
       } else {
-        setTableData(getDefaultTableData());
+        setTableData([]);
         setSummaryCards(getDefaultSummaryCards());
       }
     } catch (error) {
       console.error('Error fetching damaged stock summary:', error);
-      setTableData(getDefaultTableData());
+      setTableData([]);
       setSummaryCards(getDefaultSummaryCards());
     } finally {
       setLoading(false);
@@ -136,13 +108,6 @@ const DamagedStock = () => {
   };
 
   // --- Default Data Functions ---
-  const getDefaultTableData = () => [
-    { reason: 'Broken', v20L: 0, v10L: 0, v5L: 0, v1L: 0, total: 0 },
-    { reason: 'Leakage', v20L: 0, v10L: 0, v5L: 0, v1L: 0, total: 0 },
-    { reason: 'Lost', v20L: 0, v10L: 0, v5L: 0, v1L: 0, total: 0 },
-    { reason: 'Customer Damage', v20L: 0, v10L: 0, v5L: 0, v1L: 0, total: 0 },
-  ];
-
   const getDefaultSummaryCards = () => [
     { key: 'totalDamaged', label: 'Total Damaged', value: 0, isRed: true },
     { key: 'Broken', label: 'Broken', value: 0 },
@@ -150,6 +115,15 @@ const DamagedStock = () => {
     { key: 'Lost', label: 'Lost', value: 0 },
     { key: 'Customer Damage', label: 'Customer Damage', value: 0 },
   ];
+
+  // --- Get product display name for a table row (by id) ---
+  const getProductName = (id) => {
+    const found = productList.find(item => item._id === id || item.id === id);
+    if (found) {
+      return found.product || found.name || id;
+    }
+    return id; // fallback: show whatever came from backend (already the name if backend stores name)
+  };
 
   // --- Handle Form Input Change ---
   const handleInputChange = (e) => {
@@ -163,11 +137,6 @@ const DamagedStock = () => {
 
     if (!formData.product) {
       alert('Please select a product!');
-      return;
-    }
-
-    if (!formData.selectedVolume) {
-      alert('Please select a volume!');
       return;
     }
 
@@ -187,8 +156,6 @@ const DamagedStock = () => {
       const payload = {
         product: formData.product,
         category: formData.category || 'general',
-        volumes: volumeList,
-        selectedVolume: formData.selectedVolume,
         broken: formData.broken !== '' ? Number(formData.broken) : 0,
         leakage: formData.leakage !== '' ? Number(formData.leakage) : 0,
         lost: formData.lost !== '' ? Number(formData.lost) : 0,
@@ -197,17 +164,27 @@ const DamagedStock = () => {
 
       const response = await API.post('/damage', payload);
       console.log('Save Response:', response.data);
-      
+
       if (response.data && response.data.success) {
         alert(response.data.message || 'Damaged stock saved successfully!');
+
+        const savedProductId = formData.product;
+
         setIsModalOpen(false);
         // Reset form
         setFormData({
-          product: '', category: '', selectedVolume: '',
+          product: '', category: '',
           broken: '', leakage: '', lost: '', customerDamage: '',
         });
-        setSelectedVolume('');
-        fetchDamagedStockData();
+
+        // Auto-filter the list table to only the product just added.
+        // If the filter is already set to this product, the useEffect
+        // won't refire (state unchanged) — so fetch manually in that case.
+        if (selectedProductFilter === savedProductId) {
+          fetchDamagedStockData();
+        } else {
+          setSelectedProductFilter(savedProductId);
+        }
       } else {
         alert(response.data.message || 'Failed to save damaged stock entry.');
       }
@@ -275,16 +252,16 @@ const DamagedStock = () => {
           ))}
         </div>
 
-        {/* Table */}
+        {/* Table — one row per entry, no volumes */}
         <div className="dsc-table-responsive">
           <table className="dsc-table">
             <thead>
               <tr>
-                <th className="text-left">Reason</th>
-                <th>20L</th>
-                <th>10L</th>
-                <th>5L</th>
-                <th>1L</th>
+                <th className="text-left">Product</th>
+                <th>Broken</th>
+                <th>Leakage</th>
+                <th>Lost</th>
+                <th>Customer Damage</th>
                 <th className="text-right">Total</th>
               </tr>
             </thead>
@@ -302,13 +279,13 @@ const DamagedStock = () => {
                   </td>
                 </tr>
               ) : (
-                tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td className="text-left font-semibold">{row.reason}</td>
-                    <td>{row.v20L}</td>
-                    <td>{row.v10L}</td>
-                    <td>{row.v5L}</td>
-                    <td>{row.v1L}</td>
+                tableData.map((row) => (
+                  <tr key={row._id}>
+                    <td className="text-left font-semibold">{getProductName(row.product)}</td>
+                    <td>{row.broken}</td>
+                    <td>{row.leakage}</td>
+                    <td>{row.lost}</td>
+                    <td>{row.customerDamage}</td>
                     <td className="text-right font-bold">{row.total}</td>
                   </tr>
                 ))
@@ -358,27 +335,6 @@ const DamagedStock = () => {
                     ⚠️ No products found. Please add products in Stock Management first.
                   </small>
                 )}
-              </div>
-
-              {/* Volume Dropdown */}
-              <div className="dsc-form-group">
-                <label className="dsc-group-label">
-                  Volume <span className="dsc-required">*</span>
-                </label>
-                <select
-                  name="selectedVolume"
-                  value={selectedVolume}
-                  onChange={handleVolumeChange}
-                  className="dsc-select-input"
-                  required
-                >
-                  <option value="">Select Volume</option>
-                  {volumeList.map((vol, index) => (
-                    <option key={index} value={vol}>
-                      {vol}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               {/* Damage Reason Sections with Single Textbox Inputs */}

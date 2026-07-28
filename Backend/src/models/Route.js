@@ -15,10 +15,10 @@ const StopSchema = new mongoose.Schema({
 
 const RouteSchema = new mongoose.Schema(
   {
-    title: { type: String, default: 'Bhubaneswar Central Route' },
+    title: { type: String, default: 'Active Route' },
     hubCoords: {
       type: [Number],
-      default: [20.3050, 85.8280] // Base Hub
+      default: [20.3050, 85.8280]
     },
     stops: [StopSchema],
     totalDistance: { type: Number, required: true, default: 0 },
@@ -33,38 +33,13 @@ const RouteSchema = new mongoose.Schema(
 --------------------------------------------------------- */
 const RouteAssignmentSchema = new mongoose.Schema(
   {
-    date: {
-      type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    order: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    locations: {
-      type: [String],
-      default: []
-    },
-    vehicleNo: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    vehicle: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    image: {
-      type: String, // base64 data URL from the frontend's FileReader, or a plain URL
-      default: ''
-    }
+    date: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    order: { type: String, required: true, trim: true },
+    locations: { type: [String], default: [] },
+    vehicleNo: { type: String, required: true, trim: true },
+    vehicle: { type: String, required: true, trim: true },
+    image: { type: String, default: '' }
   },
   { timestamps: true }
 );

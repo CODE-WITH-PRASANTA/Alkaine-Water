@@ -2,88 +2,169 @@
   width: 260px;
   height: 100vh;
   background-color: #ffffff;
-  color: #004c99; /* Changed from #333333 to theme blue */
+  color: #0f766e;
   display: flex;
   flex-direction: column;
-  border-right: 2px solid #e2e8f0; /* Slightly thicker border for crispness */
+  border-right: 1px solid #e6f4f1;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  /* CRITICAL FIX: Prevents horizontal scrollbars during animations or text overflow */
-  overflow-x: hidden; 
+  z-index: 200;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  box-shadow: 2px 0 12px rgba(13, 148, 136, 0.05);
 }
 
 .Sidebar.collapsed {
-  width: 70px;
+  width: 76px;
 }
 
+/* ---------- Mobile backdrop ---------- */
+.Sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .Sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 40, 37, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 190;
+    animation: fadeIn 0.25s ease forwards;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------- Mobile close button ---------- */
+.Sidebar-close-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .Sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #f0fbf9;
+    color: #0d9488;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .Sidebar-close-btn:active {
+    background: #e05252;
+    color: #ffffff;
+    transform: scale(0.92) rotate(90deg);
+  }
+}
+
+@media (max-width: 768px) and (hover: hover) and (pointer: fine) {
+  .Sidebar-close-btn:hover {
+    background: #e05252;
+    color: #ffffff;
+    transform: rotate(90deg);
+  }
+}
+
+/* ---------- Logo / Brand ---------- */
 .Sidebar-logo {
-  height: 70px;
+  height: 76px;
   display: flex;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 2px solid #e2e8f0;
   gap: 12px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
-/* Added helper to perfectly center icons when the sidebar is collapsed */
 .Sidebar.collapsed .Sidebar-logo {
   padding: 0;
   justify-content: center;
 }
 
 .Sidebar-logo-icon {
-  background-color: #0066cc;
-  color: #ffffff;
-  font-weight: 900; /* Bolder logo icon text */
-  font-size: 20px;
-  min-width: 35px;
-  height: 35px;
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  min-width: 40px;
+  height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  animation: float 3.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.Sidebar-logo-text-wrap {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  overflow: hidden;
 }
 
 .Sidebar-logo-text {
-  font-size: 18px;
-  font-weight: 900; /* Increased to ultra bold */
-  color: #003366; /* Deepened blue for contrast */
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f766e;
   white-space: nowrap;
 }
 
-.Sidebar-logo-text span {
-  color: #0066cc;
+.Sidebar-logo-subtext {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #5eb8ac;
+  white-space: nowrap;
 }
 
+/* ---------- Navigation ---------- */
 .Sidebar-nav {
-  padding: 20px 10px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
   overflow-y: auto;
-  /* CRITICAL FIX: Ensures nested layout changes won't prompt horizontal scrolls */
-  overflow-x: hidden; 
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Added helper to center nav link icons neatly when collapsed */
-.Sidebar.collapsed .Sidebar-link {
-  padding: 12px 0;
-  justify-content: center;
+.Sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.Sidebar-nav::-webkit-scrollbar-thumb {
+  background: #cdeee8;
+  border-radius: 4px;
 }
 
 .Sidebar-link {
   display: flex;
   align-items: center;
-  padding: 12px;
-  color: #0055b3; /* Swapped gray for a strong theme blue */
+  padding: 12px 14px;
+  color: #4b5f66;
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   gap: 12px;
   white-space: nowrap;
   width: 100%;
@@ -91,154 +172,223 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  font-size: 15px;
-  font-weight: 700; /* Bold text applied */
+  font-size: 14.5px;
+  font-weight: 600;
+  position: relative;
+  opacity: 0;
+  animation: slideIn 0.4s ease forwards;
+  animation-delay: calc(var(--i, 0) * 0.04s);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.Sidebar-link:hover {
-  background-color: #f0f7ff;
-  color: #0066cc;
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-.Sidebar-dropdown-toggle {
-  justify-content: flex-start;
+.Sidebar.collapsed .Sidebar-link {
+  padding: 12px 0;
+  justify-content: center;
 }
 
-.Sidebar-chevron {
-  margin-left: auto;
-  transition: transform 0.2s ease;
-  color: #0066cc; /* Swapped from gray to theme blue */
-  font-weight: 900; /* Made chevron glyph bold */
+/* Real hover only — keeps touch taps from getting stuck in a hovered state */
+@media (hover: hover) and (pointer: fine) {
+  .Sidebar-link:hover {
+    background-color: #f0fbf9;
+    color: #0d9488;
+    transform: translateX(3px);
+  }
+  .Sidebar-link.active:hover {
+    transform: translateX(0);
+  }
+  .Sidebar-logout:hover {
+    background-color: #fdeeee;
+    color: #d43f3f;
+    transform: translateX(3px);
+  }
 }
 
-.Sidebar-chevron.rotated {
-  transform: rotate(180deg);
-  color: #004c99;
+/* Touch devices get instant tap feedback instead */
+.Sidebar-link:active {
+  background-color: #e6f7f4;
+  color: #0d9488;
+}
+
+.Sidebar-logout:active {
+  background-color: #fdeeee;
+  color: #d43f3f;
+}
+
+.Sidebar-link.active {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(13, 148, 136, 0.3);
 }
 
 .Sidebar-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
+  min-width: 22px;
 }
 
-.Sidebar-section-wrapper {
-  margin: 16px 0 8px 0;
-  padding: 0 16px;
+.Sidebar-logout {
+  color: #e05252;
+  margin-top: 6px;
 }
 
-.Sidebar-divider {
-  border: 0;
-  border-top: 1px solid rgba(0, 102, 204, 0.15); /* Updated divider to use a blue tint */
-  margin-bottom: 8px;
-}
-
-.Sidebar-section-title {
-  display: block;
-  font-size: 11px;
-  font-weight: 800; /* Increased from 700 to 800 for extra bold punch */
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #0066cc; /* Swapped gray for vibrant theme blue */
-  padding-left: 4px;
-}
-
-/* Ensure icons/text blend smoothly on collapsed states */
-.Sidebar.collapsed .Sidebar-section-wrapper {
-  padding: 0 8px;
-}
-
-/* Light Blue Dropdowns Panel Styling */
-.Sidebar-submenu {
-  max-height: 0;
+/* ---------- Promo Card ---------- */
+.Sidebar-promo {
+  margin: 14px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #14b8a6, #0d7d72 85%);
+  padding: 18px 16px 0 16px;
+  position: relative;
   overflow: hidden;
-  transition: max-height 0.25s ease-out;
+  min-height: 158px;
+  box-shadow: 0 10px 24px rgba(13, 148, 136, 0.28);
+  flex-shrink: 0;
+}
+
+.Sidebar-promo-shine {
+  position: absolute;
+  top: -60%;
+  left: -30%;
+  width: 60%;
+  height: 220%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: rotate(20deg);
+  animation: shine 4.5s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% { left: -40%; }
+  50% { left: 120%; }
+  100% { left: 120%; }
+}
+
+.Sidebar-promo-text {
   display: flex;
   flex-direction: column;
-  padding-left: 36px;
-  margin: 2px 0;
-  background-color: #f4f9ff; /* Soft light blue menu accent matching dropdown requirement */
-  border-radius: 6px;
-}
-
-.Sidebar-dropdown-wrapper.is-open .Sidebar-submenu {
-  max-height: 250px; /* Ensures dynamic accordion height limit expansions fit seamlessly */
-  padding: 6px 6px 6px 36px;
-}
-
-.Sidebar-submenu-link {
-  padding: 8px 12px;
-  font-size: 13.5px;
-  color: #004c99;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: all 0.2s;
-  white-space: nowrap;
-  font-weight: 700; /* Bold text applied */
-}
-
-.Sidebar-submenu-link:hover {
-  background-color: #0066cc;
   color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  position: relative;
+  z-index: 2;
 }
 
-/* Profile Card Styling Fixes */
-.Sidebar-profile {
+.Sidebar-promo-bottles {
   display: flex;
-  align-items: center;
-  padding: 16px;
-  border-top: 2px solid #e2e8f0; 
-  gap: 12px;
-  background-color: #ffffff;
-  overflow: hidden; /* Safeguards profile content when compressed */
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 6px;
+  position: relative;
+  height: 118px;
 }
 
-.Sidebar-profile-avatar {
-  width: 40px;
-  height: 40px;
+.Sidebar-bottle-shadow {
+  position: absolute;
+  bottom: 2px;
   border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0; /* Keeps avatar square when sidebar collapses */
-  border: 2px solid #0066cc; /* Added blue frame ring around user profile */
+  background: rgba(0, 0, 0, 0.22);
+  filter: blur(4px);
+  animation: shadowPulse 3s ease-in-out infinite;
+}
+.Sidebar-bottle-shadow.small {
+  width: 30px;
+  height: 8px;
+  right: 46px;
+}
+.Sidebar-bottle-shadow.large {
+  width: 40px;
+  height: 10px;
+  right: 4px;
 }
 
-.Sidebar-profile-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+@keyframes shadowPulse {
+  0%, 100% { transform: scaleX(1); opacity: 0.22; }
+  50% { transform: scaleX(0.85); opacity: 0.14; }
 }
 
-.Sidebar-profile-name {
-  font-size: 14px;
-  font-weight: 800; /* Set to extra bold */
-  color: #003366; /* Set to dark blue text */
-  white-space: nowrap;
+.Sidebar-bottle {
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
+  transform-origin: bottom center;
 }
 
-.Sidebar-profile-role {
-  font-size: 12px;
-  font-weight: 700; /* Bold text applied */
-  color: #0066cc; /* Swapped gray for mid-tone blue text */
-  white-space: nowrap;
+.Sidebar-bottle-small {
+  width: 42px;
+  height: 100px;
+  margin-right: -12px;
+  animation: bob 3.2s ease-in-out infinite;
 }
 
-/* Collapsed profile state adjustments */
-.Sidebar.collapsed .Sidebar-profile {
-  justify-content: center;
-  padding: 16px 0;
+.Sidebar-bottle-large {
+  width: 56px;
+  height: 122px;
+  animation: bob 3.2s ease-in-out infinite 0.4s;
 }
 
-/* Mobile Responsive Adjustments */
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(-1.5deg); }
+}
+
+.Sidebar-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: rise 3.5s ease-in infinite;
+}
+.Sidebar-bubble.b1 {
+  width: 7px;
+  height: 7px;
+  left: 16px;
+  bottom: 10px;
+  animation-delay: 0s;
+}
+.Sidebar-bubble.b2 {
+  width: 5px;
+  height: 5px;
+  left: 32px;
+  bottom: 20px;
+  animation-delay: 0.8s;
+}
+.Sidebar-bubble.b3 {
+  width: 6px;
+  height: 6px;
+  left: 8px;
+  bottom: 35px;
+  animation-delay: 1.6s;
+}
+.Sidebar-bubble.b4 {
+  width: 4px;
+  height: 4px;
+  left: 22px;
+  bottom: 5px;
+  animation-delay: 2.3s;
+}
+
+@keyframes rise {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.9; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-60px); opacity: 0; }
+}
+
+/* ---------- Mobile Responsive ---------- */
 @media (max-width: 768px) {
   .Sidebar {
-    left: -260px;
+    left: -280px;
+    width: 260px;
   }
   .Sidebar.mobile-open {
     left: 0;
     width: 260px;
+    box-shadow: 4px 0 28px rgba(0, 0, 0, 0.2);
   }
   .Sidebar.collapsed {
-    left: -260px;
+    left: -280px;
   }
 }

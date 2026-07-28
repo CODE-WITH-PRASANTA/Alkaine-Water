@@ -1,60 +1,336 @@
-/* Container Layout */
-.dashboard-container {
-  display: grid;
-  grid-template-columns: 320px 1fr 300px;
-  gap: 24px;
-  padding: 24px;
-  background-color: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+.next-delivery-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   box-sizing: border-box;
 }
 
-/* Card Base */
-.dashboard-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+/* ==========================================
+   QUICK ACTIONS SECTION
+   ========================================== */
+.quick-actions-section {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
-/* Card Header */
-.card-header {
+.section-main-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.quick-action-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-action-card:hover {
+  transform: translateY(-4px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 25px -5px rgba(37, 99, 235, 0.08);
+}
+
+.action-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: center;
 }
 
-.header-title-wrapper {
+.action-icon-circle.blue-tint { background-color: #eff6ff; color: #2563eb; }
+.action-icon-circle.orange-tint { background-color: #fff7ed; color: #ea580c; }
+.action-icon-circle.purple-tint { background-color: #f3e8ff; color: #9333ea; }
+.action-icon-circle.green-tint { background-color: #f0fdf4; color: #16a34a; }
+.action-icon-circle.emerald-tint { background-color: #ecfdf5; color: #059669; }
+
+.action-text {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* ==========================================
+   DASHBOARD MAIN CONTENT GRID (3 Columns)
+   ========================================== */
+.dashboard-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* ==========================================
+   1. SUBSCRIPTION CARD BOX (Column 1)
+   ========================================== */
+.subscription-card-box {
+  background: linear-gradient(135deg, #0052ff 0%, #0070ff 50%, #00a2ff 100%);
+  border-radius: 24px;
+  padding: 28px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 16px 36px -10px rgba(0, 82, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.sub-card-header-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+
+.sub-top-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sub-plan-name {
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 3D Bottle Graphic in Subscription Card */
+.sub-bottle-graphic-container {
+  position: relative;
+  height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  z-index: 2;
+}
+
+.sub-water-glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.sub-bottle-3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: floatBottleSub 4s ease-in-out infinite;
+  filter: drop-shadow(0 12px 20px rgba(0, 40, 120, 0.35));
+}
+
+@keyframes floatBottleSub {
+  0%, 100% { transform: translateY(0px) rotate(2deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+.sub-cap {
+  width: 30px;
+  height: 16px;
+  background: linear-gradient(90deg, #0284c7, #38bdf8, #0284c7);
+  border-radius: 5px 5px 2px 2px;
+}
+
+.sub-neck {
+  width: 38px;
+  height: 20px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.4), rgba(56,189,248,0.7), rgba(255,255,255,0.3));
+  border-radius: 3px;
+}
+
+.sub-body {
+  width: 110px;
+  height: 150px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(56, 189, 248, 0.35) 50%, rgba(2, 132, 199, 0.5) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px 16px 26px 26px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub-label-badge {
+  background: #ffffff;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border: 2px solid #e0f2fe;
+  transform: rotate(-5deg);
+}
+
+.sub-brand {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0284c7;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  line-height: 1;
+}
+
+.sub-brand-sub {
+  font-size: 0.42rem;
+  font-weight: 800;
+  color: #0369a1;
+  letter-spacing: 0.15em;
+  margin-top: 2px;
+}
+
+.sub-wave-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(2, 132, 199, 0.65) 100%);
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Features List */
+.sub-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 14px 16px;
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+}
+
+.sub-feature-item {
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
 }
 
-.header-icon {
-  color: #2563eb;
-  font-size: 20px;
+.sub-feature-item svg {
+  color: #34d399;
+}
+
+.sub-dates-footer-row {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 14px;
+  z-index: 2;
+}
+
+.date-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.date-title {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+.date-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.renew-plan-btn {
+  background: #ffffff;
+  color: #0052ff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
+.renew-plan-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   2. RECENT ORDERS CARD BOX (Column 2)
+   ========================================== */
+.recent-orders-card-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-heading {
+  font-size: 1.15rem;
+  font-weight: 800;
   color: #0f172a;
   margin: 0;
 }
 
 .view-all-link {
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
   background: none;
   border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -62,211 +338,359 @@
   text-decoration: underline;
 }
 
-/* --- Next Delivery Styles --- */
-.delivery-content {
+/* Functional Filters Row */
+.orders-filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: #f8fafc;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.filter-chip {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.orders-list-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   flex: 1;
 }
 
-.product-display {
+.order-item-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  position: relative;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  transition: background 0.2s ease;
 }
 
-.product-image {
-  width: 90px;
-  height: 110px;
-  object-fit: contain;
+.order-item-row:hover {
+  background: #f1f5f9;
 }
 
-.product-info-group {
+.order-item-icon-box {
+  width: 40px;
+  height: 40px;
+  background: #e0f2fe;
+  color: #0284c7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.order-item-details {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-.product-name {
-  font-size: 16px;
-  font-weight: 650;
+.order-date-text {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.order-title-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.order-item-name {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.order-qty-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #475569;
+  background: #e2e8f0;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.order-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.order-status-pill.delivered {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.order-status-pill.transit {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.no-orders-message {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.view-all-bottom-btn {
+  width: 100%;
+  background: #0052ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.view-all-bottom-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   3. UPCOMING DELIVERY CARD BOX (Column 3)
+   ========================================== */
+.upcoming-delivery-card-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Map Preview Mock */
+.delivery-map-preview-box {
+  position: relative;
+  height: 150px;
+  background: #f1f5f9;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 16px 0;
+  border: 1px solid #e2e8f0;
+}
+
+.map-road-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.6;
+}
+
+.delivery-route-line {
+  position: absolute;
+  top: 45px;
+  left: 30px;
+  width: 140px;
+  height: 50px;
+  border-top: 4px dashed #2563eb;
+  border-right: 4px dashed #2563eb;
+  border-top-right-radius: 16px;
+}
+
+.delivery-truck-pin {
+  position: absolute;
+  top: 35px;
+  right: 80px;
+  width: 34px;
+  height: 34px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  animation: pulseTruck 2s infinite;
+}
+
+@keyframes pulseTruck {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+/* Delivery Executive Card */
+.delivery-executive-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 16px;
+}
+
+.executive-avatar-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.executive-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.executive-info-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.executive-name {
+  font-size: 0.95rem;
+  font-weight: 800;
   color: #0f172a;
   margin: 0;
 }
 
-.qty-badge {
-  background-color: #eff6ff;
-  color: #2563eb;
-  font-size: 12px;
+.executive-role {
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
-  width: fit-content;
-}
-
-.delivery-details {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  border-top: 1px solid #f1f5f9;
-  border-bottom: 1px solid #f1f5f9;
-  padding: 16px 0;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.detail-icon {
   color: #64748b;
-  font-size: 18px;
-  margin-top: 2px;
+  margin: 2px 0 0 0;
 }
 
-.detail-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-label {
-  font-size: 12px;
-  color: #64748b;
-}
-
-.detail-value {
-  font-size: 14px;
-  font-weight: 500;
-  color: #0f172a;
-}
-
-.primary-btn {
-  background-color: #2563eb;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
-  font-weight: 500;
+.call-executive-btn {
+  width: 36px;
+  height: 36px;
+  background: #e0f2fe;
+  color: #0284c7;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  width: 100%;
-}
-
-.primary-btn:hover {
-  background-color: #1d4ed8;
-}
-
-/* --- Recent Orders Styles --- */
-.orders-table-wrapper {
-  overflow-x: auto;
-  flex: 1;
-}
-
-.orders-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.orders-table th {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  padding-bottom: 14px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.orders-table td {
-  padding: 14px 0;
-  font-size: 14px;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.order-id-link {
-  color: #2563eb;
-  font-weight: 500;
+  transition: all 0.2s ease;
   text-decoration: none;
 }
 
-.order-id-link:hover {
-  text-decoration: underline;
+.call-executive-btn:hover {
+  background: #bae6fd;
+  transform: scale(1.05);
 }
 
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  display: inline-block;
-}
-
-.status-badge.delivered {
-  background-color: #f0fdf4;
-  color: #16a34a;
-}
-
-.status-badge.cancelled {
-  background-color: #fef2f2;
-  color: #dc2626;
-}
-
-/* --- Account Summary Styles --- */
-.summary-content {
+.delivery-status-update-row {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 4px;
 }
 
-.summary-item {
+.status-flex {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f1f5f9;
+  align-items: center;
+  gap: 8px;
 }
 
-.summary-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.status-dot-green {
+  width: 9px;
+  height: 9px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
 }
 
-.summary-label {
-  font-size: 13px;
-  color: #64748b;
-}
-
-.summary-value {
-  font-size: 16px;
-  font-weight: 600;
+.status-text-bold {
+  font-size: 0.85rem;
+  font-weight: 800;
   color: #0f172a;
 }
 
-/* --- Responsive Breakpoints --- */
-@media (max-width: 1100px) {
-  .dashboard-container {
-    grid-template-columns: 1fr 1fr;
+.eta-text-box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.track-delivery-btn {
+  width: 100%;
+  background: #0052ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.track-delivery-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================== */
+@media (max-width: 1200px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  .dashboard-card:last-child {
-    grid-column: span 2;
+
+  .dashboard-content-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .dashboard-container {
-    grid-template-columns: 1fr;
-    padding: 12px;
-  }
-  .dashboard-card:last-child {
-    grid-column: span 1;
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

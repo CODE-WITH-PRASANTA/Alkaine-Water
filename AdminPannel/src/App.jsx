@@ -5,7 +5,6 @@ import "./App.css";
 // Layout
 import MainLayout from "./Layout/MainLayout/MainLayout";
 
-// Components / Pages
 import Login from "./Components/Login/Login";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import OurTeam from "./Components/OurTeam/OurTeam";
@@ -34,14 +33,16 @@ import AddExpense from "./Components/AddExpense/AddExpense";
 import SubscriptionManagement from "./Pages/SubscriptionManagement/SubscriptionManagement";
 import DeliveryId from "./Pages/DeliveryId/DeliveryId";
 import ManageStock from "./Components/ManageStock/ManageStock";
+
 import StockManagement from "./Components/StockManagement/StockManagement";
+import LeaveRequest from "./Components/LeaveRequest/LeaveRequest";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login />} />Login 
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
@@ -77,6 +78,8 @@ const App = () => {
             <Route path="/wdms/damage-stock" element={<DamagedStock />} />
             <Route path="/wdms/vehicles" element={<Vehicles />} />
             <Route path="/wdms/invoice" element={<InvoiceManagement />} />
+            <Route path="/wdms/stock/manage" element={<ManageStock/>}/>
+            <Route path="/wdms/leave-request" element={<LeaveRequest/>}/>
 
             {/* Product Routes */}
             <Route path="/products/subscription" element={<SubscriptionManagement />} />

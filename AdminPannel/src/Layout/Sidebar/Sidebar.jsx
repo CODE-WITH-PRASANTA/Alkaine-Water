@@ -22,8 +22,9 @@ import {
   BookmarkCheck,
   Box,
   BarChart3,
-  CreditCard,     // For Subscription
-  Badge,          // For Delivery Boy ID
+  CreditCard,    // For Subscription
+  Badge,         // For Delivery Boy ID
+  CalendarCheck, // Added for Leave Request
 } from "lucide-react";
 import './Sidebar.css';
 
@@ -51,25 +52,25 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
     },
     
     {
-  type: "link",
-  icon: <Users size={20} />,
-  text: "Testimonials",
-  path: "/products/testimonials",
-},
+      type: "link",
+      icon: <Users size={20} />,
+      text: "Testimonials",
+      path: "/products/testimonials",
+    },
 
-{
-  type: "link",
-  icon: <CreditCard size={20} />,
-  text: "Subscription Management",
-  path: "/products/subscription",
-},
+    {
+      type: "link",
+      icon: <CreditCard size={20} />,
+      text: "Subscription Management",
+      path: "/products/subscription",
+    },
 
-{
-  type: "link",
-  icon: <Badge size={20} />,
-  text: "Delivery Boy ID",
-  path: "/products/id-generate",
-},
+    {
+      type: "link",
+      icon: <Badge size={20} />,
+      text: "Delivery Boy ID",
+      path: "/products/id-generate",
+    },
     
     {
       type: 'dropdown',
@@ -119,6 +120,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
     },
 
     { type: 'link', icon: <ClipboardList size={20} />, text: 'Order Management', path: '/wdms/orders' },
+    { type: 'link', icon: <CalendarCheck size={20} />, text: 'Leave Request', path: '/wdms/leave-request' },
     { type: 'link', icon: <DollarSign size={20} />, text: 'Payment Management', path: '/wdms/payments' },
     { type: 'link', icon: <Truck size={20} />, text: 'Delivery Boy Assign', path: '/wdms/assign-delivery' },
     { type: 'link', icon: <Map size={20} />, text: 'Route Management', path: '/wdms/route-management' },

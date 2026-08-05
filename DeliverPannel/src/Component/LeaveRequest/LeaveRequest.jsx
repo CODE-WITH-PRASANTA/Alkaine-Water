@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Users, Clock, CheckCircle2, XCircle, Search, RotateCcw, 
-  Calendar, Download, Eye, ChevronLeft, ChevronRight, ArrowRight 
+  Calendar, Download, Eye, ChevronLeft, ChevronRight, ArrowRight, 
+  X, Phone, MapPin, AlertCircle, Edit3, MessageSquare, Check
 } from 'lucide-react';
 import './LeaveRequest.css';
 
@@ -16,7 +17,8 @@ const initialRequests = [
     from: '25 Jul 2026',
     to: '27 Jul 2026',
     days: 3,
-    reason: 'High fever and doctor advised...',
+    reason: 'High fever and doctor advised rest for 3 days due to viral infection.',
+    adminNotes: 'Awaiting medical certificate upload.',
     appliedOnDate: '24 Jul 2026',
     appliedOnTime: '10:30 AM',
     status: 'Pending',
@@ -33,7 +35,8 @@ const initialRequests = [
     from: '20 Jul 2026',
     to: '20 Jul 2026',
     days: 1,
-    reason: 'Personal work',
+    reason: 'Personal work related to bank documentation.',
+    adminNotes: 'Verified with team lead.',
     appliedOnDate: '19 Jul 2026',
     appliedOnTime: '09:15 AM',
     status: 'Approved',
@@ -50,7 +53,8 @@ const initialRequests = [
     from: '18 Jul 2026',
     to: '19 Jul 2026',
     days: 2,
-    reason: 'Family emergency',
+    reason: 'Family emergency requiring immediate attention at home.',
+    adminNotes: 'Staff availability was low on these dates.',
     appliedOnDate: '17 Jul 2026',
     appliedOnTime: '04:45 PM',
     status: 'Rejected',
@@ -67,7 +71,8 @@ const initialRequests = [
     from: '15 Jul 2026',
     to: '15 Jul 2026',
     days: 1,
-    reason: 'Going to hometown',
+    reason: 'Going to hometown for a family function.',
+    adminNotes: '',
     appliedOnDate: '14 Jul 2026',
     appliedOnTime: '11:20 AM',
     status: 'Approved',
@@ -84,7 +89,8 @@ const initialRequests = [
     from: '12 Jul 2026',
     to: '14 Jul 2026',
     days: 3,
-    reason: 'Viral infection',
+    reason: 'Viral infection and severe headache.',
+    adminNotes: '',
     appliedOnDate: '12 Jul 2026',
     appliedOnTime: '08:10 AM',
     status: 'Pending',
@@ -94,6 +100,7 @@ const initialRequests = [
 ];
 
 const LeaveRequest = () => {
+  const [requests, setRequests] = useState(initialRequests);
   const [searchTerm, setSearchTerm] = useState('');
   const [leaveType, setLeaveType] = useState('All');
   const [status, setStatus] = useState('All');
@@ -101,8 +108,16 @@ const LeaveRequest = () => {
   const [dateRange, setDateRange] = useState('01/07/2026 - 31/07/2026');
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Selected request for Details Modal
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  // States for Popup Reason/Comment Editor Modal
+  const [isEditingReason, setIsEditingReason] = useState(false);
+  const [editedReason, setEditedReason] = useState('');
+  const [adminNotesText, setAdminNotesText] = useState('');
+
   // Filter Logic
-  const filteredRequests = initialRequests.filter(req => {
+  const filteredRequests = requests.filter(req => {
     const matchesSearch = req.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           req.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLeaveType = leaveType === 'All' || req.leaveType === leaveType;
@@ -122,6 +137,60 @@ const LeaveRequest = () => {
 
   const handleExport = () => {
     alert("Exporting leave request data...");
+  };
+
+  // Open Main Modal
+  const handleOpenModal = (req) => {
+    setSelectedRequest(req);
+    setEditedReason(req.reason);
+    setAdminNotesText(req.adminNotes || '');
+    setIsEditingReason(false);
+  };
+
+  // Save updated Reason/Notes from the Popup Form
+  const handleSaveReasonForm = (e) => {
+    e.preventDefault();
+    
+    const updated = requests.map(req => {
+      if (req.id === selectedRequest.id) {
+        return { 
+          ...req, 
+          reason: editedReason,
+          adminNotes: adminNotesText
+        };
+      }
+      return req;
+    });
+
+    setRequests(updated);
+    setSelectedRequest(prev => ({
+      ...prev,
+      reason: editedReason,
+      adminNotes: adminNotesText
+    }));
+    setIsEditingReason(false);
+  };
+
+  // Status Change inside Modal
+  const handleStatusChange = (id, newStatus) => {
+    const updated = requests.map(req => {
+      if (req.id === id) {
+        let statusClass = 'lr-status-pending';
+        if (newStatus === 'Approved') statusClass = 'lr-status-approved';
+        if (newStatus === 'Rejected') statusClass = 'lr-status-rejected';
+        return { ...req, status: newStatus, statusClass };
+      }
+      return req;
+    });
+
+    setRequests(updated);
+    
+    if (selectedRequest && selectedRequest.id === id) {
+      let statusClass = 'lr-status-pending';
+      if (newStatus === 'Approved') statusClass = 'lr-status-approved';
+      if (newStatus === 'Rejected') statusClass = 'lr-status-rejected';
+      setSelectedRequest({ ...selectedRequest, status: newStatus, statusClass });
+    }
   };
 
   return (
@@ -314,7 +383,7 @@ const LeaveRequest = () => {
                             </span>
                           </td>
                           <td>
-                            <button className="lr-action-btn">
+                            <button className="lr-action-btn" onClick={() => handleOpenModal(row)}>
                               <Eye size={14} /> View
                             </button>
                           </td>
@@ -333,7 +402,7 @@ const LeaveRequest = () => {
 
               {/* Pagination */}
               <div className="lr-pagination-wrap">
-                <p className="lr-pagination-text">Showing 1 to 5 of 42 entries</p>
+                <p className="lr-pagination-text">Showing 1 to {filteredRequests.length} of 42 entries</p>
                 <div className="lr-pagination-nav">
                   <button className="lr-page-btn" disabled><ChevronLeft size={16} /></button>
                   <button className={`lr-page-btn ${currentPage === 1 ? 'active' : ''}`} onClick={() => setCurrentPage(1)}>1</button>
@@ -481,6 +550,156 @@ const LeaveRequest = () => {
         </footer>
 
       </main>
+
+      {/* POPUP MODAL FOR LEAVE DETAILS */}
+      {selectedRequest && (
+        <div className="lr-modal-overlay" onClick={() => setSelectedRequest(null)}>
+          <div className="lr-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="lr-modal-header">
+              <h3>Leave Request Details</h3>
+              <button className="lr-modal-close" onClick={() => setSelectedRequest(null)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="lr-modal-body">
+              {/* Profile Bar */}
+              <div className="lr-modal-profile">
+                <img src={selectedRequest.avatar} alt={selectedRequest.name} className="lr-modal-avatar" />
+                <div>
+                  <h4>{selectedRequest.name}</h4>
+                  <p className="lr-modal-sub"><Phone size={12} /> {selectedRequest.phone}</p>
+                  <p className="lr-modal-sub"><MapPin size={12} /> {selectedRequest.branch} Branch</p>
+                </div>
+                <div className="lr-modal-badge-right">
+                  <span className={`lr-status-badge ${selectedRequest.statusClass}`}>
+                    {selectedRequest.status === 'Pending' && <Clock size={12} />}
+                    {selectedRequest.status === 'Approved' && <CheckCircle2 size={12} />}
+                    {selectedRequest.status === 'Rejected' && <XCircle size={12} />}
+                    {selectedRequest.status}
+                  </span>
+                </div>
+              </div>
+
+              <hr className="lr-modal-divider" />
+
+              {/* Grid Information */}
+              <div className="lr-modal-grid">
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">Employee ID</span>
+                  <span className="lr-info-value">{selectedRequest.id}</span>
+                </div>
+
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">Leave Type</span>
+                  <span className={`lr-badge ${selectedRequest.leaveTypeClass}`}>{selectedRequest.leaveType}</span>
+                </div>
+
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">From Date</span>
+                  <span className="lr-info-value">{selectedRequest.from}</span>
+                </div>
+
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">To Date</span>
+                  <span className="lr-info-value">{selectedRequest.to}</span>
+                </div>
+
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">Total Duration</span>
+                  <span className="lr-info-value">{selectedRequest.days} Day(s)</span>
+                </div>
+
+                <div className="lr-modal-info-item">
+                  <span className="lr-info-label">Applied On</span>
+                  <span className="lr-info-value">{selectedRequest.appliedOnDate} at {selectedRequest.appliedOnTime}</span>
+                </div>
+              </div>
+
+              {/* Interactive Reason Section & Form Toggle */}
+              <div className="lr-modal-reason-box">
+                <div className="lr-reason-header">
+                  <span className="lr-info-label"><AlertCircle size={14} /> Reason for Leave</span>
+                  <button 
+                    type="button" 
+                    className="lr-edit-reason-btn"
+                    onClick={() => setIsEditingReason(!isEditingReason)}
+                  >
+                    <Edit3 size={12} /> {isEditingReason ? 'Cancel Editing' : 'Edit / Add Notes'}
+                  </button>
+                </div>
+
+                {!isEditingReason ? (
+                  // Display View
+                  <div className="lr-reason-display">
+                    <p className="lr-reason-text">{selectedRequest.reason}</p>
+                    {selectedRequest.adminNotes && (
+                      <div className="lr-admin-notes-tag">
+                        <MessageSquare size={13} />
+                        <div>
+                          <strong>Admin Note:</strong> {selectedRequest.adminNotes}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Popup Form Inside Reason Section
+                  <form onSubmit={handleSaveReasonForm} className="lr-reason-form-popup">
+                    <div className="lr-form-group">
+                      <label>Employee's Reason</label>
+                      <textarea 
+                        rows="3"
+                        value={editedReason}
+                        onChange={(e) => setEditedReason(e.target.value)}
+                        placeholder="Enter modified reason..."
+                        required
+                      />
+                    </div>
+
+                    <div className="lr-form-group">
+                      <label>Manager / Admin Internal Comment</label>
+                      <input 
+                        type="text"
+                        value={adminNotesText}
+                        onChange={(e) => setAdminNotesText(e.target.value)}
+                        placeholder="e.g. Document verified, approved via phone call..."
+                      />
+                    </div>
+
+                    <div className="lr-form-actions">
+                      <button type="submit" className="lr-btn lr-btn-sm lr-btn-primary">
+                        <Check size={14} /> Save Updates
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="lr-modal-footer">
+              <button className="lr-btn lr-btn-outline" onClick={() => setSelectedRequest(null)}>
+                Close
+              </button>
+              
+              <div className="lr-modal-action-btns">
+                <button 
+                  className="lr-btn lr-btn-danger" 
+                  onClick={() => handleStatusChange(selectedRequest.id, 'Rejected')}
+                >
+                  <XCircle size={16} /> Reject
+                </button>
+                <button 
+                  className="lr-btn lr-btn-success" 
+                  onClick={() => handleStatusChange(selectedRequest.id, 'Approved')}
+                >
+                  <CheckCircle2 size={16} /> Approve
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

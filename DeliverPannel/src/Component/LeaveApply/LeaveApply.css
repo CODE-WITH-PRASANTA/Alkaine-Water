@@ -56,7 +56,6 @@
 
 /* ---------- Main Layout ---------- */
 .leave-apply-main {
-  max-width: 80rem;
   margin: 0 auto;
   padding: 1.5rem 1.5rem 2rem;
 }
@@ -372,7 +371,7 @@
 }
 
 .leave-apply-upload-filename {
-  max-width: 200px;
+  
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

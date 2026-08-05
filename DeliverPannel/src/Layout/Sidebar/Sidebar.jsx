@@ -12,16 +12,16 @@ import {
   Settings,
   User,
   LogOut,
-  CalendarPlus,
-  FileText,
-  X
+  CalendarPlus, // Leave Apply
+  FileText,     // Leave Request
+  X,            // Mobile close icon
+  User          // Profile icon (replaced duplicate Settings)
 } from "lucide-react";
 import { FaWineBottle } from 'react-icons/fa';
 import './Sidebar.css';
 
 const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
-  const location = useLocation();
-
+  // Navigation items configuration
   const menuItems = [
     { type: 'link', icon: <Home size={20} />, text: 'Dashboard', path: '/' },
     { type: 'link', icon: <ClipboardList size={20} />, text: 'Orders', path: '/wdms/orders' },
@@ -30,6 +30,8 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
     { type: 'link', icon: <Truck size={20} />, text: 'Vehicle Stock', path: '/wdms/vehicle-stock' },
     { type: 'link', icon: <RotateCcw size={20} />, text: 'Empty Return', path: '/wdms/empty-return' },
     { type: 'link', icon: <FaWineBottle size={20} />, text: 'Extra Stock', path: '/wdms/extra-stock' },
+
+    // Leave Management items
     { type: 'link', icon: <CalendarPlus size={20} />, text: 'Leave Apply', path: '/wdms/leave-apply' },
     { type: 'link', icon: <FileText size={20} />, text: 'Leave Request', path: '/wdms/leave-request' },
     { type: 'link', icon: <CreditCard size={20} />, text: 'Payments', path: '/wdms/payments' },
@@ -38,7 +40,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
     { type: 'link', icon: <User size={20} />, text: 'My Profile', path: '/wdms/profile' },
   ];
 
-  // Prevent scrolling when mobile drawer is open & handle Escape key
+  // Close on Escape key press and prevent body scroll when mobile menu is open
   useEffect(() => {
     if (!isMobileOpen) return;
 
@@ -56,6 +58,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
     };
   }, [isMobileOpen, onClose]);
 
+  // Close sidebar on mobile item tap
   const handleNavClick = () => {
     if (window.innerWidth <= 768 && onClose) {
       onClose();
@@ -64,7 +67,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Mobile Backdrop */}
       {isMobileOpen && <div className="Sidebar-backdrop" onClick={onClose} />}
 
       <aside className={`Sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
@@ -81,7 +84,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
           <X size={20} />
         </button>
 
-        {/* Brand/Logo */}
+        {/* Brand / Logo Section */}
         <div className="Sidebar-logo">
           <div className="Sidebar-logo-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -99,7 +102,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
           )}
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Section */}
         <nav className="Sidebar-nav">
           {menuItems.map((item, index) => {
             const isActive = location.pathname === item.path;
@@ -129,7 +132,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
           </button>
         </nav>
 
-        {/* Promo Card */}
+        {/* Promotional Card Visual */}
         {!isCollapsed && (
           <div className="Sidebar-promo">
             <div className="Sidebar-promo-shine" />

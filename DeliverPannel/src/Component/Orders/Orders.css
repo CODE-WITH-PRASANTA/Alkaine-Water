@@ -27,7 +27,6 @@
 /* Container Structure */
 .orders-theme-blue-container {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  max-width: 100%;
   margin: 24px auto;
   padding: 20px;
   background-color: var(--blue-bg-container);
@@ -250,7 +249,7 @@
 .modal-blue-content {
   background-color: #ffffff;
   width: 100%;
-  max-width: 380px;
+ max-width : 380px;
   border-radius: 18px;
   position: relative;
   box-shadow: 0 12px 40px rgba(15, 45, 74, 0.25);

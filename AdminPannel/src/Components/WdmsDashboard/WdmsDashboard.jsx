@@ -1,368 +1,241 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Droplet, 
-  Layers, 
-  Users, 
-  TrendingUp, 
-  DollarSign, 
-  ShoppingBag,
-  UserCheck,
-  MapPin,
-  AlertCircle,
-  ChevronRight,
-  ChevronDown,
-  Eye,
-  Clock,
-  Package,
-  Truck,
-  Filter,
-  Search,
-  X
-} from 'lucide-react';
+  FiDollarSign, 
+  FiShoppingBag, 
+  FiUsers, 
+  FiTruck, 
+  FiTrendingUp, 
+  FiTrendingDown,
+  FiChevronDown 
+} from 'react-icons/fi';
+import { 
+  ResponsiveContainer, 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  PieChart, 
+  Pie, 
+  Cell 
+} from 'recharts';
 import './WdmsDashboard.css';
 
-const WdmsDashboard = () => {
-  const [showAllStock, setShowAllStock] = useState(false);
-  const [showAllDelivery, setShowAllDelivery] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+// Metrics Data
+const metrics = [
+  {
+    id: 1,
+    title: 'Total Revenue',
+    value: '₹12,45,890',
+    change: '12.5%',
+    isPositive: true,
+    icon: <FiDollarSign className="metric-icon blue-icon" />,
+    bgClass: 'blue-bg'
+  },
+  {
+    id: 2,
+    title: 'Total Orders',
+    value: '1,254',
+    change: '8.2%',
+    isPositive: true,
+    icon: <FiShoppingBag className="metric-icon green-icon" />,
+    bgClass: 'green-bg'
+  },
+  {
+    id: 3,
+    title: 'Total Customers',
+    value: '2,345',
+    change: '10.1%',
+    isPositive: true,
+    icon: <FiUsers className="metric-icon purple-icon" />,
+    bgClass: 'purple-bg'
+  },
+  {
+    id: 4,
+    title: 'Pending Deliveries',
+    value: '86',
+    change: '3.4%',
+    isPositive: false,
+    icon: <FiTruck className="metric-icon yellow-icon" />,
+    bgClass: 'yellow-bg'
+  }
+];
 
-  // KPI Cards Data
-  const kpiCards = [
-    { 
-      title: 'Total Water Delivered', 
-      value: '12,450 L', 
-      subtext: 'This Month', 
-      change: '+12%', 
-      icon: <Droplet size={24} />, 
-      color: 'blue',
-      trend: 'up'
-    },
-    { 
-      title: 'Active Stock (20L Jars)', 
-      value: '840 units', 
-      subtext: 'In Warehouse', 
-      change: '-3%', 
-      icon: <Layers size={24} />, 
-      color: 'teal',
-      trend: 'down'
-    },
-    { 
-      title: 'Total Active Customers', 
-      value: '1,204', 
-      subtext: 'Subscribed profiles', 
-      change: '+8%', 
-      icon: <Users size={24} />, 
-      color: 'indigo',
-      trend: 'up'
-    },
-    { 
-      title: 'Pending Orders', 
-      value: '42 Orders', 
-      subtext: 'Awaiting dispatch', 
-      change: 'Action Required', 
-      icon: <ShoppingBag size={24} />, 
-      color: 'amber',
-      trend: 'warning'
-    },
-    { 
-      title: 'Revenue Collected', 
-      value: '$8,240', 
-      subtext: 'This Month', 
-      change: '+15%', 
-      icon: <DollarSign size={24} />, 
-      color: 'emerald',
-      trend: 'up'
-    },
-    { 
-      title: 'Delivery Boys Active', 
-      value: '18 / 22', 
-      subtext: 'On-field tracking', 
-      change: '81% capacity', 
-      icon: <UserCheck size={24} />, 
-      color: 'purple',
-      trend: 'neutral'
-    },
-  ];
+// Area Chart Data (Sales Overview)
+const salesData = [
+  { date: 'May 15', amount: 60000 },
+  { date: 'May 16', amount: 90000 },
+  { date: 'May 17', amount: 55000 },
+  { date: 'May 18', amount: 85000 },
+  { date: 'May 19', amount: 120000 },
+  { date: 'May 20', amount: 100000 },
+  { date: 'May 21', amount: 145000 },
+  { date: 'May 22', amount: 110000 },
+  { date: 'May 23', amount: 90000 },
+  { date: 'May 24', amount: 70000 },
+  { date: 'May 25', amount: 105000 },
+  { date: 'May 26', amount: 135000 },
+  { date: 'May 27', amount: 150000 },
+];
 
-  // Stock Inventory Data
-  const stockInventory = [
-    { id: 'ST-01', item: '20L Purified Water Jar', capacity: '1,000 units', available: '620 units', status: 'Optimal', percentage: 62 },
-    { id: 'ST-02', item: '15L Alkaline Water Jar', capacity: '500 units', available: '180 units', status: 'Low Stock', percentage: 36 },
-    { id: 'ST-03', item: '5L Dispenser Bottle', capacity: '300 units', available: '40 units', status: 'Critical', percentage: 13 },
-    { id: 'ST-04', item: '10L Mineral Water Can', capacity: '750 units', available: '450 units', status: 'Optimal', percentage: 60 },
-    { id: 'ST-05', item: '2L PET Bottle', capacity: '200 units', available: '25 units', status: 'Critical', percentage: 12 },
-    { id: 'ST-06', item: '25L Bulk Container', capacity: '120 units', available: '95 units', status: 'Low Stock', percentage: 79 },
-  ];
-
-  // Delivery Staff Data
-  const deliveryStaff = [
-    { name: 'Rahul Sharma', zone: 'North Sector A', assignedOrders: 5, status: 'On Delivery', rating: 4.8, experience: '2 years' },
-    { name: 'Amit Mishra', zone: 'Downtown Corporate', assignedOrders: 8, status: 'On Delivery', rating: 4.9, experience: '3 years' },
-    { name: 'Subrat Sahoo', zone: 'West Residential', assignedOrders: 0, status: 'Idle (Available)', rating: 4.6, experience: '1 year' },
-    { name: 'Priya Patel', zone: 'East Industrial', assignedOrders: 3, status: 'On Delivery', rating: 4.7, experience: '2.5 years' },
-    { name: 'Vikram Singh', zone: 'South Township', assignedOrders: 6, status: 'On Delivery', rating: 4.5, experience: '1.5 years' },
-    { name: 'Deepak Kumar', zone: 'Central Business', assignedOrders: 0, status: 'Idle (Available)', rating: 4.8, experience: '2 years' },
-  ];
-
-  const getDisplayStock = () => {
-    let stock = showAllStock ? stockInventory : stockInventory.slice(0, 3);
-    if (filterStatus !== 'all') {
-      stock = stock.filter(item => item.status.toLowerCase() === filterStatus.toLowerCase());
-    }
-    if (searchTerm) {
-      stock = stock.filter(item => 
-        item.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.id.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    return stock;
-  };
-
-  const getDisplayDelivery = () => {
-    return showAllDelivery ? deliveryStaff : deliveryStaff.slice(0, 3);
-  };
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Optimal': return 'optimal';
-      case 'Low Stock': return 'low-stock';
-      case 'Critical': return 'critical';
-      default: return 'optimal';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'On Delivery': return '🚚';
-      case 'Idle (Available)': return '✅';
-      default: return '⏳';
-    }
-  };
-
-  return (
-    <div className="wdms-dashboard">
-      
-      {/* Header */}
-      <div className="dashboard-header">
-        <div className="header-left">
-          <h1 className="dashboard-title">WDMS Dashboard</h1>
-          <p className="dashboard-subtitle">Water Delivery Management System Overview</p>
-        </div>
+// Custom Tooltip for Area Chart
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-chart-tooltip">
+        <p className="tooltip-amount">₹{payload[0].value.toLocaleString('en-IN')}</p>
+        <p className="tooltip-date">May 18, 2025</p>
       </div>
+    );
+  }
+  return null;
+};
 
-      {/* SECTION 1: Analytics & Metrics Grid */}
-      <section className="wdms-section-metrics">
-        <div className="section-header">
-          <h2 className="section-title">Key Performance Indicators</h2>
-          <div className="section-actions">
-            <button className="view-all-btn">
-              <Eye size={16} />
-              View Reports
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-        <div className="metrics-grid">
-          {kpiCards.map((card, index) => (
-            <div key={index} className={`kpi-card card-border-${card.color}`}>
-              <div className="kpi-card-header">
-                <span className={`kpi-icon-wrapper icon-bg-${card.color}`}>
-                  {card.icon}
-                </span>
-                <span className={`kpi-badge badge-${card.color} ${card.trend === 'up' ? 'trend-up' : card.trend === 'down' ? 'trend-down' : ''}`}>
-                  {card.change}
-                </span>
+// Donut Chart Data (Order Status)
+const orderStatusData = [
+  { name: 'Delivered', value: 950, percentage: '75.8%', color: '#4ADE80' },
+  { name: 'In Transit', value: 180, percentage: '14.3%', color: '#3B82F6' },
+  { name: 'Pending', value: 90, percentage: '7.2%', color: '#FBBF24' },
+  { name: 'Cancelled', value: 34, percentage: '2.7%', color: '#F87171' },
+];
+
+const WdmsDashboard = () => {
+  return (
+    <div className="wdms-dashboard-wrapper">
+      <div className="wdms-dashboard-container">
+        
+        {/* Top 4 Metrics Cards Grid */}
+        <div className="wdms-metrics-grid">
+          {metrics.map((metric) => (
+            <div key={metric.id} className="wdms-metric-card">
+              <div className="metric-info">
+                <span className="metric-title">{metric.title}</span>
+                <h2 className="metric-value">{metric.value}</h2>
+                <div className={`metric-change ${metric.isPositive ? 'positive' : 'negative'}`}>
+                  {metric.isPositive ? <FiTrendingUp /> : <FiTrendingDown />}
+                  <span>{metric.change}</span>
+                  <span className="change-text">from last month</span>
+                </div>
               </div>
-              <div className="kpi-card-body">
-                <h3 className="kpi-value">{card.value}</h3>
-                <p className="kpi-title">{card.title}</p>
-                <p className="kpi-subtext">{card.subtext}</p>
-              </div>
-              <div className="kpi-progress">
-                <div className={`progress-bar progress-${card.color}`} style={{ width: '75%' }}></div>
+              <div className={`metric-icon-box ${metric.bgClass}`}>
+                {metric.icon}
               </div>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* LOWER DATA WRAPPER PANEL */}
-      <div className="wdms-split-layout">
-        
-        {/* SECTION 2: Water Inventory Stock Tracker */}
-        <section className="wdms-section-stock">
-          <div className="section-panel-header">
-            <div className="panel-header-left">
-              <h3 className="panel-title">Water Stock Monitor</h3>
-              <span className="panel-subtitle">Live warehouse capacity counters</span>
+        {/* Charts Main Section (Sales Overview & Order Status) */}
+        <div className="wdms-charts-grid">
+          
+          {/* Left Chart: Sales Overview */}
+          <div className="wdms-chart-card sales-overview-card">
+            <div className="chart-card-header">
+              <h3 className="chart-title">Sales Overview</h3>
+              <div className="chart-dropdown">
+                <span>Last 7 Days</span>
+                <FiChevronDown />
+              </div>
             </div>
-            <button 
-              className="view-all-btn"
-              onClick={() => setShowAllStock(!showAllStock)}
-            >
-              {showAllStock ? 'Show Less' : 'View All'}
-              <ChevronDown size={16} className={showAllStock ? 'rotate' : ''} />
-            </button>
-          </div>
 
-          {/* Search and Filter */}
-          <div className="stock-controls">
-            <div className="search-wrapper">
-              <Search size={18} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search stock items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-              {searchTerm && (
-                <button className="clear-search" onClick={() => setSearchTerm('')}>
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-            <div className="filter-wrapper">
-              <Filter size={18} />
-              <select 
-                className="filter-select"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="all">All Status</option>
-                <option value="optimal">Optimal</option>
-                <option value="low stock">Low Stock</option>
-                <option value="critical">Critical</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="table-responsive-wrapper">
-            <table className="stock-table">
-              <thead>
-                <tr>
-                  <th>Item ID</th>
-                  <th>Item Description</th>
-                  <th>Total Capacity</th>
-                  <th>Available Stock</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getDisplayStock().length > 0 ? (
-                  getDisplayStock().map((item, idx) => (
-                    <tr key={idx}>
-                      <td><span className="item-id">{item.id}</span></td>
-                      <td className="font-semibold">{item.item}</td>
-                      <td>{item.capacity}</td>
-                      <td>
-                        <div className="stock-progress-bar-container">
-                          <div className="stock-progress-bg">
-                            <div 
-                              className={`stock-progress-fill progress-${getStatusColor(item.status)}`}
-                              style={{ width: `${item.percentage}%` }}
-                            ></div>
-                          </div>
-                          <span className="stock-counter">{item.available}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`status-pill pill-${getStatusColor(item.status)}`}>
-                          {item.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="no-data">
-                      <div className="no-data-content">
-                        <Package size={40} />
-                        <p>No stock items found</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* SECTION 3: Delivery Executive Allocation Matrix */}
-        <section className="wdms-section-delivery">
-          <div className="section-panel-header">
-            <div className="panel-header-left">
-              <h3 className="panel-title">Delivery Personnel</h3>
-              <span className="panel-subtitle">On-field logistical breakdown</span>
-            </div>
-            <button 
-              className="view-all-btn"
-              onClick={() => setShowAllDelivery(!showAllDelivery)}
-            >
-              {showAllDelivery ? 'Show Less' : 'View All'}
-              <ChevronDown size={16} className={showAllDelivery ? 'rotate' : ''} />
-            </button>
-          </div>
-
-          <div className="delivery-stats-summary">
-            <div className="delivery-stat">
-              <span className="stat-label">Active</span>
-              <span className="stat-value active-count">4</span>
-            </div>
-            <div className="delivery-stat">
-              <span className="stat-label">Idle</span>
-              <span className="stat-value idle-count">2</span>
-            </div>
-            <div className="delivery-stat">
-              <span className="stat-label">Total Orders</span>
-              <span className="stat-value total-orders">22</span>
+            <div className="chart-body">
+              <ResponsiveContainer width="100%" height={260}>
+                <AreaChart data={salesData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis 
+                    dataKey="date" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#888888', fontSize: 12 }} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#888888', fontSize: 11 }}
+                    tickFormatter={(value) => {
+                      if (value === 0) return '₹0';
+                      if (value >= 100000) return `₹${value / 100000}L`;
+                      if (value >= 1000) return `₹${value / 1000}K`;
+                      return value;
+                    }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="amount" 
+                    stroke="#3B82F6" 
+                    strokeWidth={2.5} 
+                    fill="url(#salesGradient)" 
+                    dot={{ r: 4, fill: '#3B82F6', strokeWidth: 2, stroke: '#FFFFFF' }}
+                    activeDot={{ r: 6, fill: '#2563EB', strokeWidth: 3, stroke: '#FFFFFF' }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="delivery-list">
-            {getDisplayDelivery().map((boy, idx) => (
-              <div key={idx} className="delivery-boy-row">
-                <div className="delivery-boy-info">
-                  <div className="boy-avatar">
-                    {boy.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="boy-name">{boy.name}</p>
-                    <p className="boy-zone">
-                      <MapPin size={12} /> {boy.zone}
-                    </p>
-                    <p className="boy-rating">
-                      ⭐ {boy.rating} · {boy.experience}
-                    </p>
-                  </div>
-                </div>
-                <div className="delivery-boy-stats">
-                  <span className="orders-count-badge">
-                    <ShoppingBag size={12} />
-                    {boy.assignedOrders} Orders
-                  </span>
-                  <span className={`status-indicator indicator-${boy.status.toLowerCase().includes('idle') ? 'idle' : 'active'}`}>
-                    {getStatusIcon(boy.status)} {boy.status}
-                  </span>
+          {/* Right Chart: Order Status */}
+          <div className="wdms-chart-card order-status-card">
+            <div className="chart-card-header">
+              <h3 className="chart-title">Order Status</h3>
+              <div className="chart-dropdown">
+                <span>This Month</span>
+                <FiChevronDown />
+              </div>
+            </div>
+
+            <div className="order-status-body">
+              {/* Donut Chart with Center Text */}
+              <div className="donut-chart-wrapper">
+                <ResponsiveContainer width={200} height={200}>
+                  <PieChart>
+                    <Pie
+                      data={orderStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={88}
+                      paddingAngle={2}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {orderStatusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="donut-center-text">
+                  <h3 className="center-value">1,254</h3>
+                  <p className="center-label">Total</p>
                 </div>
               </div>
-            ))}
-            {getDisplayDelivery().length === 0 && (
-              <div className="no-data-content">
-                <Truck size={40} />
-                <p>No delivery personnel found</p>
+
+              {/* Status Legend List */}
+              <div className="status-legend-list">
+                {orderStatusData.map((item, index) => (
+                  <div key={index} className="legend-item">
+                    <div className="legend-label">
+                      <span className="legend-dot" style={{ backgroundColor: item.color }}></span>
+                      <span className="legend-name">{item.name}</span>
+                    </div>
+                    <div className="legend-stats">
+                      <span className="legend-count">{item.value}</span>
+                      <span className="legend-percentage">({item.percentage})</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
+
+            </div>
           </div>
 
-          <div className="delivery-footer">
-            <button className="assign-btn">
-              <UserCheck size={16} />
-              Assign New Delivery
-            </button>
-          </div>
-        </section>
+        </div>
 
       </div>
     </div>

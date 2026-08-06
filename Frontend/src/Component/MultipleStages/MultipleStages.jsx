@@ -3,10 +3,10 @@ import './MultipleStages.css';
 import mountainImage from '../../assets/m1.jpg'; // Ensure you have your image here
 
 const stats = [
-  { value: "167m", title: "Water Source Depth", desc: "Natural water with no additives or processing, created by nature for your body" },
-  { value: "12.5k", title: "Bottles per Month", desc: "Natural water with no additives or processing, created by nature for your body" },
-  { value: "46", title: "Nominations Won", desc: "Natural water with no additives or processing, created by nature for your body" },
-  { value: "180+", title: "Countries Drink", desc: "Natural water with no additives or processing, created by nature for your body" }
+  { value: "167m", title: "Water Source Depth", desc: "Protected deep underground to preserve nature's untouched mineral balance." },
+  { value: "12.5k", title: "Bottles per Month", desc: "Delivering fresh, crystal-clear water to thousands of homes each mont." },
+  { value: "46", title: "Nominations Won", desc: " Award-winning water crafted by nature and perfected through purity." },
+  { value: "180+", title: "Countries Drink", desc: "Fueling health, vitality, and optimal hydration across the globe." }
 ];
 
 const MultipleStages = () => {
@@ -14,8 +14,8 @@ const MultipleStages = () => {
     <section className="ms-container">
       <div className="ms-header">
         <h2 className="ms-title">
-          Our water undergoes <span className="ms-highlight">multiple stages</span> of purification and<br /> 
-          contains no artificial additives. We work to make it possible.
+         Alka Drops:  <span className="ms-highlight">Multi-stage</span> purified water with    zero<br /> 
+          artificial additives—making pure hydration accessible to all.
         </h2>
       </div>
 

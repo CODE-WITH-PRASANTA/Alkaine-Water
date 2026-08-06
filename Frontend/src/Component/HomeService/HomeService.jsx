@@ -2,8 +2,8 @@ import React from 'react';
 import './HomeService.css';
 
 // Premium imagery representing pure filtration and distribution assets
-import imgCard1 from '../../assets/Water1.jpg'; 
-import imgCard2 from '../../assets/Water2.jpg'; 
+
+import imgCard2 from '../../assets/Alka Drops Dispenser.png'; 
 import imgCard3 from '../../assets/Water3.jpg';
 
 const HomeService = () => {
@@ -23,29 +23,7 @@ const HomeService = () => {
       {/* Main Responsive Grid Container */}
       <div className="services-grid">
         
-        {/* Service 1: Water Trailers */}
-        <div className="service-card">
-          <div className="card-top-accent">
-            <div className="card-image-container">
-              <img src={imgCard1} alt="Bulk water trailers and tankers managed by Alka Drops in Bhubaneswar" />
-            </div>
-            <div className="card-icon-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M23 12h-2.11c-.41-1.16-1.51-2-2.82-2H15V4c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-3l2-3.14V12zm-17 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5 0.67 1.5 1.5-.67 1.5-1.5 1.5zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5 0.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-              </svg>
-            </div>
-          </div>
-          <div className="card-body-content">
-            <h3 className="card-title">Water Trailers</h3>
-            <p className="card-description">
-              High-capacity mobile distribution units engineered for construction projects, large corporate events, and emergency reserves. As the best water supplier in Odisha, we guarantee timely dispatch to keep your operations running smoothly.
-            </p>
-            <a href="#trailers" className="card-text-link" aria-label="Learn more about our water trailer solutions">
-              <span className="arrow-icon">➤</span> READ MORE
-            </a>
-          </div>
-        </div>
-
+        
         {/* Service 2: Water Dispenser */}
         <div className="service-card">
           <div className="card-top-accent">
@@ -61,7 +39,7 @@ const HomeService = () => {
           <div className="card-body-content">
             <h3 className="card-title">Water Dispenser</h3>
             <p className="card-description">
-              Sleek, modern climate-controlled purification units tailored specifically for corporate workspaces and residential living. Get immediate access to refreshing wellness water, backed by regular sanitary servicing from our technicians.
+              Experience superior hydration with our sleek, climate-controlled alkaline water purification units—engineered for modern corporate workspaces and residential homes. Enjoy instant access to mineral-rich pH 8.5+ wellness water, supported by routine sanitary maintenance and expert technical servicing.
             </p>
             <a href="#dispensers" className="card-text-link" aria-label="Learn more about our water dispenser rentals and setups">
               <span className="arrow-icon">➤</span> READ MORE
@@ -84,7 +62,7 @@ const HomeService = () => {
           <div className="card-body-content">
             <h3 className="card-title">Bottled Water</h3>
             <p className="card-description">
-              Perfectly sealed, mineral-rich everyday hydration batches. Recognized widely as the best Bhubaneswar water supplier, our packaged drinking water undergoes rigid multi-stage filtration checks to meet uncompromising safety protocols.
+              Savor pure, perfectly sealed everyday hydration batches delivered directly to your doorstep. As a leading Bhubaneswar water supplier, our packaged drinking water undergoes rigid multi-stage purification and quality checks to meet uncompromising health and safety standards.
             </p>
             <a href="#bottles" className="card-text-link" aria-label="Learn more about our packaged mineral bottled water delivery">
               <span className="arrow-icon">➤</span> READ MORE

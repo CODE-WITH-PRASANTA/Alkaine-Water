@@ -12,7 +12,7 @@ const testimonialsData = [
     id: 1,
     stars: 4,
     title: "I've had the Best Experience",
-    text: "We are extremely happy with Aguapure's service. They are very prompt. Billing always correct. And they give plenty of notice of the next delivery it is very easy.",
+    text: "We are extremely happy with Alka Drops's service. They are very prompt. Billing always correct. And they give plenty of notice of the next delivery it is very easy.",
     name: "RODHA THELMA",
     location: "California",
     avatar: avatar1
@@ -30,7 +30,7 @@ const testimonialsData = [
     id: 3,
     stars: 5,
     title: "Team was Very Professional",
-    text: "I went to the Aguapure water office to speak with someone in person about Aguapure services. The team was very professional and answered all my questions.",
+    text: "I went to the Alka Drops water office to speak with someone in person about Alka Drops services. The team was very professional and answered all my questions.",
     name: "LUKE NOBERT",
     location: "Los Angeles",
     avatar: avatar3
@@ -39,7 +39,7 @@ const testimonialsData = [
     id: 4,
     stars: 3,
     title: "The Water is Delicious",
-    text: "I went to the Aguapure water office to speak with someone in person about Aguapure services. The team was very professional and answered all my questions.",
+    text: "I went to the Alka Drops water office to speak with someone in person about Alka Drops services. The team was very professional and answered all my questions.",
     name: "LUKE NOBERT",
     location: "Los Angeles",
     avatar: avatar4

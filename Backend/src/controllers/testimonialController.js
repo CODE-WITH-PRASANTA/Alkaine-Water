@@ -1,186 +1,72 @@
-const Testimonial = require("../models/testimonial");
-const fs = require("fs");
-const path = require("path");
+// Check your src/models/ folder and match the exact filename here
+const Testimonial = require("../models/testimonial"); 
 
-exports.createTestimonial = async (req, res) => {
+const getAllTestimonials = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Image is required",
-      });
-    }
-
-    const testimonial = await Testimonial.create({
-      name: req.body.name,
-      address: req.body.address,
-      description: req.body.description,
-      rating: req.body.rating,
-      image: req.file.filename,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Testimonial created successfully",
-      data: testimonial,
-    });
+    const testimonials = await Testimonial.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: testimonials });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.getTestimonials = async (req, res) => {
+const createTestimonial = async (req, res) => {
   try {
-    const testimonials = await Testimonial.find()
-      .sort({ createdAt: -1 });
+    const { name, role, message, rating } = req.body;
+    const image = req.file ? req.file.filename : null;
 
-    res.status(200).json({
-      success: true,
-      count: testimonials.length,
-      data: testimonials,
+    const newTestimonial = await Testimonial.create({
+      name,
+      role,
+      message,
+      rating,
+      image,
     });
+
+    res.status(201).json({ success: true, data: newTestimonial });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
-exports.getSingleTestimonial = async (req, res) => {
+const updateTestimonial = async (req, res) => {
   try {
-    const testimonial =
-      await Testimonial.findById(req.params.id);
-
-    if (!testimonial) {
-      return res.status(404).json({
-        success: false,
-        message: "Testimonial not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: testimonial,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-exports.updateTestimonial = async (req, res) => {
-  try {
-    const testimonial =
-      await Testimonial.findById(req.params.id);
-
-    if (!testimonial) {
-      return res.status(404).json({
-        success: false,
-        message: "Testimonial not found",
-      });
-    }
-
-    let image = testimonial.image;
-
+    const updateData = { ...req.body };
     if (req.file) {
-      const oldImage = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "testimonial",
-        testimonial.image
-      );
-
-      if (fs.existsSync(oldImage)) {
-        fs.unlinkSync(oldImage);
-      }
-
-      image = req.file.filename;
+      updateData.image = req.file.filename;
     }
 
-    const updated =
-      await Testimonial.findByIdAndUpdate(
-        req.params.id,
-        {
-          name:
-            req.body.name || testimonial.name,
+    const updated = await Testimonial.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
 
-          address:
-            req.body.address ||
-            testimonial.address,
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Testimonial not found" });
+    }
 
-          description:
-            req.body.description ||
-            testimonial.description,
-
-          rating:
-            req.body.rating ||
-            testimonial.rating,
-
-          image,
-        },
-        {
-          returnDocument: "after",
-        }
-      );
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Testimonial updated successfully",
-      data: updated,
-    });
+    res.status(200).json({ success: true, data: updated });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
-exports.deleteTestimonial = async (req, res) => {
+const deleteTestimonial = async (req, res) => {
   try {
-    const testimonial =
-      await Testimonial.findById(req.params.id);
-
-    if (!testimonial) {
-      return res.status(404).json({
-        success: false,
-        message: "Testimonial not found",
-      });
+    const deleted = await Testimonial.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Testimonial not found" });
     }
-
-    const imagePath = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "testimonial",
-      testimonial.image
-    );
-
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
-
-    await Testimonial.findByIdAndDelete(
-      req.params.id
-    );
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Testimonial deleted successfully",
-    });
+    res.status(200).json({ success: true, message: "Testimonial deleted successfully" });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
+};
+
+module.exports = {
+  getAllTestimonials,
+  createTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
 };

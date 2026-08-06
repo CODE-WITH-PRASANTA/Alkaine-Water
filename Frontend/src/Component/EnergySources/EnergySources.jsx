@@ -5,16 +5,17 @@ import bulbsImage from '../../assets/bulbs.jpg';
 
 const EnergySources = () => {
   const benefits = [
-    "Increased Energy", "Better Sleep", "Strong Immunity", 
-    "Healthy Heart", "Weight Control", "Longevity", 
-    "Healthy Skin", "Good Digestion", "Mood Improvement", "Bone Strength"
+     "Energy Boost", "Strong Immunity", "Weight Support",
+     "Healthy Skin", "Mood Balance","Better Sleep",
+     "Heart Health", "Longevity", "Good Digestion", "Bone Strength"
+   
   ];
 
   return (
     <section className="energy-container">
       {/* Left Column */}
       <div className="energy-text-section">
-        <h2 className="energy-title">Health starts with the right water as a source of energy</h2>
+        <h2 className="energy-title">Oxygenated, mineral-rich Alka Drops work in harmony with your body for total wellness</h2>
         <div className="benefits-grid">
           {benefits.map((item, index) => (
             <div key={index} className="benefit-item">

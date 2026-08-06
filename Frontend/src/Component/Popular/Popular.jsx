@@ -3,10 +3,10 @@ import './Popular.css';
 import waterImage from '../../assets/ak.jpg'; // Ensure your image is named correctly
 
 const questions = [
-  "Where does your drinking water come from?",
-  "Do you offer water delivery services for homes and offices?",
-  "What sizes of water bottles or containers do you offer?",
-  "Is your bottled water safe for infants and young children?"
+  "What are Alka Drops and how do they work?",
+  "How do Alka Drops compare to pre-bottled alkaline water?",
+  "Are Alka Drops safe for daily long-term consumption?",
+  "Do Alka Drops help with workout recovery and fatigue?"
 ];
 
 const Popular = () => {

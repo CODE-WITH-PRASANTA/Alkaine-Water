@@ -326,7 +326,7 @@ const Shop = () => {
                     </div>
                     <h4 className="ShopProductCardItemTitleName">{product.name}</h4>
                     <p className="ShopProductCardItemShortDesc">
-                      Clean drinking water should be available to everyone. We work to make it possible.
+                      Pure, family-sized alkaline water enriched with vital minerals for everyday cellular energy
                     </p>
                     <div className="ShopProductCardPricingRow">
                       {product.isSale && (

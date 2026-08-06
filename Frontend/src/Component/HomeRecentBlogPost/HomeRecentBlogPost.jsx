@@ -15,16 +15,16 @@ const HomeRecentBlogPost = () => {
       title: 'Packaged Water: What Things to Consider?',
       date: 'August 12, 2021',
       author: 'By admin',
-      desc: 'That they cannot forest the pain trouble that are bound to ensue equal. Foresee the ...'
+      desc: 'Learn how to select certified, multi-stage filtered packaged drinking water that maintains optimal pH balance and essential minerals for daily health.'
     },
     {
       id: 2,
       tag: 'LATEST NEWS',
       image: blogImg2,
-      title: 'Top Benefits of Having Our Mobile App',
+      title: 'Top Benefits of Using the Alka Drops Delivery Appp',
       date: 'August 12, 2021',
       author: 'By admin',
-      desc: 'To take a trivial example which of ever undertakes laborious. Foresee the pain and trouble ...'
+      desc: 'Effortlessly schedule refill orders, track doorstep deliveries in real-time, and manage water subscriptions across Bhubaneswar in just a few tap.'
     },
     {
       id: 3,

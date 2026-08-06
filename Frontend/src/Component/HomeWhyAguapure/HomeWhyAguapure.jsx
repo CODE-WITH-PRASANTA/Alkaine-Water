@@ -9,7 +9,7 @@ const HomeWhyAguapure = () => {
     {
       id: 1,
       title: 'High Quality',
-      desc: 'Take a trivial example which ever undertake laboris physical some advantage.',
+      desc: 'Multi-stage advanced filtration ensures essential minerals like Calcium and Magnesium are preserved for optimum hydration.',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-13-7-13S5 10.7 5 15a7 7 0 0 0 7 7z"/>
@@ -20,7 +20,7 @@ const HomeWhyAguapure = () => {
     {
       id: 2,
       title: 'No Contract',
-      desc: 'Righteous indignation & dislike men who are beguiled the charms blinded desire.',
+      desc: 'Flexible ordering with complete freedom—no lock-in contracts or hidden commitment fees for homes or offices.',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -34,7 +34,7 @@ const HomeWhyAguapure = () => {
     {
       id: 3,
       title: 'Reliable',
-      desc: 'Equal blame belongs those who fail in their duty through weaknes of shrinking.',
+      desc: 'Trusted Bhubaneswar water suppliers ensuring seamless, scheduled delivery of fresh packaged drinking water daily..',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -45,7 +45,7 @@ const HomeWhyAguapure = () => {
     {
       id: 4,
       title: 'Certified',
-      desc: 'Quisque cursus sit amet ligula a aliquam. Etiam et aliquam eros,',
+      desc: 'Tested and certified to meet rigid health, safety, and purity benchmarks for uncompromising water quality.',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="8" r="7"/>
@@ -56,7 +56,7 @@ const HomeWhyAguapure = () => {
     {
       id: 5,
       title: 'Affordable',
-      desc: 'Nam quam nibh, lobortis sit amet turpis non, sollicitudin viverra leo.',
+      desc: 'Get premium-grade alkaline drinking water at competitive prices with transparent subscription and bulk discounts.',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="12" y1="1" x2="12" y2="23"/>
@@ -67,7 +67,7 @@ const HomeWhyAguapure = () => {
     {
       id: 6,
       title: 'Fast Delivery',
-      desc: 'In convallis diam et mauris interdum scelerisque. Morbi tincidunt.',
+      desc: 'Prompt and safe doorstep dispatch across Bhubaneswar, making clean mineral water accessible whenever you need it',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="1" y="3" width="15" height="13"/>

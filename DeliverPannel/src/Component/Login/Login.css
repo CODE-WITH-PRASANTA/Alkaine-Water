@@ -1,0 +1,446 @@
+/* =========================================
+   CONTAINER & BASE LAYOUT
+   ========================================= */
+.Login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eef5ff;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.Login-card {
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  min-height: 580px;
+  background-color: #ffffff;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   LEFT SIDE: FORM SECTION
+   ========================================= */
+.Login-left {
+  flex: 1;
+  padding: 45px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #ffffff;
+}
+
+/* Brand Header */
+.Login-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.Login-logo-img {
+  max-height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.Login-logo-fallback {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1d72f2, #7d3ef2);
+  color: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.Login-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.Login-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.Login-brand-subtitle {
+  font-size: 9px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+/* Form Header */
+.Login-header {
+  margin-bottom: 25px;
+}
+
+.Login-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a2b49;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.Login-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Feedback Toasts */
+.Login-toast {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.Login-toast-success {
+  background-color: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #047857;
+}
+
+.Login-toast-error {
+  background-color: #fef2f2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+}
+
+/* Input Fields */
+.Login-form {
+  width: 100%;
+}
+
+.Login-input-group {
+  margin-bottom: 18px;
+}
+
+.Login-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.Login-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  background-color: #f8fafc;
+  font-size: 13px;
+  color: #334155;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.Login-input:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.Login-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.Login-password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.Login-password-toggle:hover {
+  color: #475569;
+}
+
+/* Remember Me & Forgot Password */
+.Login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  font-size: 13px;
+}
+
+.Login-remember-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.Login-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.Login-forgot-link {
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.Login-forgot-link:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+/* Submit Button */
+.Login-submit-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, #1d6df1 0%, #6037e8 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.Login-submit-btn:hover {
+  opacity: 0.95;
+}
+
+.Login-submit-btn:active {
+  transform: scale(0.99);
+}
+
+.Login-footer-text {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 20px;
+  text-align: left;
+}
+
+/* =========================================
+   RIGHT SIDE: 3D PLATFORM ILLUSTRATION
+   ========================================= */
+/* =========================================
+   RIGHT SIDE: IMAGE SECTION
+   ========================================= */
+.Login-right {
+  flex: 1.1;
+  background-color: #f6faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 40px;
+}
+
+.Login-image-wrapper {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Login-right-img {
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(37, 99, 235, 0.12));
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (ALL DEVICES)
+   ========================================= */
+@media (max-width: 900px) {
+  .Login-card {
+    flex-direction: column;
+    max-width: 500px;
+    min-height: auto;
+  }
+
+  .Login-right {
+    min-height: 250px;
+    padding: 30px 20px;
+  }
+
+  .Login-image-wrapper {
+    max-width: 260px;
+  }
+
+  .Login-left {
+    padding: 35px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Login-container {
+    padding: 12px;
+  }
+
+  .Login-left {
+    padding: 25px 20px;
+  }
+
+  .Login-title {
+    font-size: 26px;
+  }
+
+  .Login-options {
+    flex-direction: row;
+    font-size: 12px;
+  }
+}
+.Login-illustration {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Isometric Platforms */
+.Login-platform {
+  width: 200px;
+  height: 110px;
+  position: absolute;
+  transform: rotateX(60deg) rotateZ(-45deg);
+  border-radius: 28px;
+}
+
+/* Top Transparent Wireframe Platform */
+.Login-platform-top {
+  top: 15px;
+  border: 2px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 0 10px rgba(203, 213, 225, 0.3);
+  z-index: 2;
+}
+
+/* Connecting Dotted Guides */
+.Login-connections {
+  position: absolute;
+  width: 190px;
+  height: 120px;
+  top: 75px;
+  z-index: 1;
+}
+
+.Login-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 2px dashed #cbd5e1;
+}
+
+.line-left {
+  left: 0;
+}
+
+.line-right {
+  right: 0;
+}
+
+/* Bottom Glowing Purple Gradient Platform */
+.Login-platform-bottom {
+  bottom: 25px;
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  box-shadow: 0 25px 35px rgba(124, 58, 237, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1;
+}
+
+.Login-platform-bottom::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.08) 10px,
+    rgba(255, 255, 255, 0.08) 20px
+  );
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (ALL DEVICES)
+   ========================================= */
+@media (max-width: 900px) {
+  .Login-card {
+    flex-direction: column;
+    max-width: 500px;
+    min-height: auto;
+  }
+
+  .Login-right {
+    min-height: 280px;
+    padding: 20px;
+  }
+
+  .Login-illustration {
+    transform: scale(0.85);
+  }
+
+  .Login-left {
+    padding: 35px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Login-container {
+    padding: 12px;
+  }
+
+  .Login-left {
+    padding: 25px 20px;
+  }
+
+  .Login-title {
+    font-size: 26px;
+  }
+
+  .Login-options {
+    flex-direction: row;
+    font-size: 12px;
+  }
+}

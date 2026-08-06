@@ -1,6 +1,6 @@
 /* --- Base Theme Setup (White & Blue) --- */
 .customers-container {
-  max-width: 100%;
+  /* max-width: 100%; */
   margin: 2rem auto;
   padding: 0 1.5rem;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

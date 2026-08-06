@@ -22,7 +22,7 @@ const Natural = () => {
           Natural water with no additives or processing, created by nature
         </h2>
         <p className="natural-description">
-          We use only safe materials and modern technologies to preserve the freshness of water until the last sip. Clean drinking water should be available to everyone. We work to make it possible.
+          Clean, revitalizing drinking water should be accessible to everyone. At Alka Drops, we utilize safe, high-grade materials and advanced filtration technology to preserve the raw freshness of water down to the very last sip.
         </p>
         
         <div className="natural-features">

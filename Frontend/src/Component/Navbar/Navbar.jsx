@@ -1,7 +1,7 @@
 // Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import './Navbar.css';
-import logo from '../../assets/logo-1.png'; // Import your logo image asset here
+import logo from '../../assets/ALKA DROPS LOGO.png'; // Import your logo image asset here
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

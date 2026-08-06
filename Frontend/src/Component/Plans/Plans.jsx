@@ -7,10 +7,10 @@ const Plans = () => {
     {
       id: "basic",
       title: "Basic Plan",
-      subtitle: "*RATES ARE SUBJECT TO CHANGE",
+      subtitle: "*Home & Small Families",
       price: "1,499",
       period: "MO",
-      desc: "Perfect premium package for nuclear families looking for clean, daily drinking health alternatives.",
+      desc: "Ideal for small families prioritizing pure, additive-free daily health..",
       features: [
         { text: "Free Delivery", icon: <FaTruck /> },
         { text: "Max 10 Bottles / Month", icon: <FaWater /> },
@@ -39,10 +39,10 @@ const Plans = () => {
     {
       id: "advanced",
       title: "Advanced Plan",
-      subtitle: "*RATES ARE SUBJECT TO CHANGE",
+      subtitle: "*Workplaces, Gyms & Studios",
       price: "2,199",
       period: "MO",
-      desc: "Designed exclusively for medium offices and fitness centers prioritizing active lifestyle wellness.",
+      desc: "Built for offices and gyms dedicated to peak team performance and wellness..",
       features: [
         { text: "Free Delivery", icon: <FaTruck /> },
         { text: "Max 10 Bottles / Month", icon: <FaWater /> },

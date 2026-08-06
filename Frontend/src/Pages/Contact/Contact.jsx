@@ -104,7 +104,7 @@ const Contact = () => {
             </h2>
             
             <p className="ContactFormDescription">
-              Get in touch with us! Whether you are seeking assistance, looking to collaborate, or simply wanting to share feedback, we are here to support you. Reach out, and a member of our team will get back to you shortly.
+             Get in touch with us! Whether you are seeking order assistance, looking to inquire about bulk water deliveries,Reach out,and a member of our team will get back to you shortly.
             </p>
             
             <div className="ContactFormInfoList">

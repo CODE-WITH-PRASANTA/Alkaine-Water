@@ -1,22 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, ChevronDown, Bell, Search, User, LogOut, Shield, Info, AlertTriangle, CreditCard, ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Menu, ChevronDown, Bell, User, LogOut, Shield, Info, AlertTriangle, CreditCard, ShoppingBag } from 'lucide-react';
 import './Topbar.css';
 
 const Topbar = ({ toggleSidebar }) => {
+  const navigate = useNavigate();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsRef = useRef(null);
+  const userRef = useRef(null);
 
-  // Close notifications if clicked outside
+  const currentUser = {
+    name: 'Jane Doe',
+    role: 'Administrator',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+  };
+
+  // Close notifications/user dropdown if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
         setNotificationsOpen(false);
       }
+      if (userRef.current && !userRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    setUserDropdownOpen(false);
+
+    // Clear the same session keys Login.jsx sets on sign-in
+    sessionStorage.removeItem('isAdminAuthenticated');
+    sessionStorage.removeItem('deliveryPartner');
+
+    navigate('/login', { replace: true });
+  };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  const firstName = currentUser.name.split(' ')[0];
 
   return (
     <header className="Topbar">
@@ -24,30 +56,26 @@ const Topbar = ({ toggleSidebar }) => {
         <button className="Topbar-toggle-btn" onClick={toggleSidebar} aria-label="Toggle Sidebar">
           <Menu size={22} />
         </button>
-        <div className="Topbar-path">
-          <span className="Topbar-path-parent">Deliver</span>
-          <span className="Topbar-path-separator">/</span>
-          <span className="Topbar-path-current">Dashboard</span>
+
+        <div className="Topbar-greeting">
+          <h2 className="Topbar-greeting-title">
+            {getGreeting()}, <span className="Topbar-greeting-name">{firstName}</span> <span className="Topbar-wave">👋</span>
+          </h2>
+          <p className="Topbar-greeting-subtitle">Stay hydrated, Stay healthy, Keep delivering happiness.</p>
         </div>
       </div>
 
       <div className="Topbar-right">
-        <div className="Topbar-search-box">
-          <Search size={18} className="Topbar-search-icon" />
-          <input type="text" placeholder="Search..." className="Topbar-search-input" />
-        </div>
-
-        {/* --- MODIFIED NOTIFICATION SECTION --- */}
         <div className="Topbar-notification-wrapper" ref={notificationsRef}>
-          <button 
-            className="Topbar-action-btn" 
+          <button
+            className="Topbar-action-btn"
             onClick={() => setNotificationsOpen(!notificationsOpen)}
+            aria-label="Notifications"
           >
             <Bell size={20} />
             <span className="Topbar-badge">3</span>
           </button>
 
-          {/* New Notification Popup Card - accurate design from reference */}
           <div className={`Topbar-notification-popup ${notificationsOpen ? 'is-open' : ''}`}>
             <div className="Notification-header">
               <div className="Notification-header-info">
@@ -55,7 +83,7 @@ const Topbar = ({ toggleSidebar }) => {
                 <h3 className="Notification-title">Notifications</h3>
               </div>
             </div>
-            
+
             <div className="Notification-list">
               <div className="Notification-item">
                 <div className="Notification-icon-wrapper info">
@@ -101,23 +129,25 @@ const Topbar = ({ toggleSidebar }) => {
                 <span className="Notification-time">09:20 AM</span>
               </div>
             </div>
-            
+
             <div className="Notification-footer">
               <a href="#viewall" className="Notification-viewall">View All</a>
             </div>
           </div>
         </div>
-        {/* --- END MODIFIED SECTION --- */}
 
-        <div className="Topbar-user" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
-          <img 
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
-            alt="User Avatar" 
-            className="Topbar-avatar" 
-          />
+        <div className="Topbar-user" ref={userRef} onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
+          <div className="Topbar-avatar-wrap">
+            <img
+              src={currentUser.avatar}
+              alt="User Avatar"
+              className="Topbar-avatar"
+            />
+            <span className="Topbar-avatar-status" />
+          </div>
           <div className="Topbar-user-info">
-            <span className="Topbar-username">Jane Doe</span>
-            <span className="Topbar-role">Administrator</span>
+            <span className="Topbar-username">{currentUser.name}</span>
+            <span className="Topbar-role">{currentUser.role}</span>
           </div>
           <ChevronDown size={16} className={`Topbar-chevron ${userDropdownOpen ? 'open' : ''}`} />
 
@@ -130,7 +160,7 @@ const Topbar = ({ toggleSidebar }) => {
                 <Shield size={16} /> Security
               </a>
               <div className="Topbar-dropdown-divider"></div>
-              <a href="#logout" className="Topbar-dropdown-item logout">
+              <a href="#logout" className="Topbar-dropdown-item logout" onClick={handleLogout}>
                 <LogOut size={16} /> Logout
               </a>
             </div>

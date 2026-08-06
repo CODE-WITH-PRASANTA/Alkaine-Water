@@ -14,8 +14,15 @@ const testimonialRoutes = require("./src/routes/testimonialRoutes");
 const contactRoutes = require("./src/routes/contactRoutes");
 const blogRoutes = require("./src/routes/blogRoutes");
 const manageRoutes = require("./src/routes/manageRoutes");
-const vehicleRoutes =require("./src/routes/vehicleRoutes");
-const damageRoutes = require("./src/routes/damageRoutes");
+const vehicleRoutes = require("./src/routes/vehicleRoutes");
+
+const deliveryRoutes = require("./src/routes/deliveryRoutes");
+const boysassigneRoutes = require("./src/routes/boyassigneRoutes");
+const routeRoutes = require("./src/routes/routeRoutes");
+const damagedStockRoutes = require("./src/routes/damagedStockRoutes");
+const productRoutes = require("./src/routes/productRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+
 // Connect Database
 connectDB();
 
@@ -23,8 +30,12 @@ const app = express();
 
 // ================= Middleware =================
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// FIX: raised limit from default 100kb -> 15mb so base64 images in
+// JSON bodies (e.g. Route Assignment "image" field) don't get rejected
+// by body-parser before they even reach your controllers.
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 // ================= Static Folder =================
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -37,7 +48,13 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/blog", blogRoutes);
 app.use("/api/vehicle", vehicleRoutes);
 app.use("/api/manage", manageRoutes);
-app.use("/api/damage", damageRoutes);
+
+app.use("/api/delivery", deliveryRoutes);
+app.use("/api/boysassigne", boysassigneRoutes);
+app.use("/api/routeRoutes", routeRoutes);
+app.use("/api/damage", damagedStockRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/auth", authRoutes);
 
 // ================= Home Route =================
 app.get("/", (req, res) => {
@@ -56,15 +73,14 @@ app.use((req, res, next) => {
 });
 
 // ================= Global Error-Handling Middleware =================
-// This catches file upload structure, Multer, limits, and runtime engine crashes
 app.use((err, req, res, next) => {
   console.error("GLOBAL SERVER ERROR:", err);
-  
+
   // If Multer error occurs (e.g. invalid file, file limit exceeded)
   if (err instanceof require("multer").MulterError) {
     return res.status(400).json({
       success: false,
-      message: `File Upload Error: ${err.message}`
+      message: `File Upload Error: ${err.message}`,
     });
   }
 
@@ -72,14 +88,33 @@ app.use((err, req, res, next) => {
   if (err.message && err.message.includes("Only JPG, JPEG, PNG")) {
     return res.status(400).json({
       success: false,
-      message: err.message
+      message: err.message,
+    });
+  }
+
+  // FIX: body-parser throws this when express.json() body exceeds
+  // its size limit — was previously falling through to the generic
+  // 500 fallback below with no useful message.
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      success: false,
+      message: "Uploaded data is too large. Please use an image under 15MB.",
+    });
+  }
+
+  // FIX: malformed JSON body (e.g. broken base64 string) also needs
+  // its own case instead of falling into the generic 500.
+  if (err.type === "entity.parse.failed" || err instanceof SyntaxError) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid JSON in request body.",
     });
   }
 
   // Fallback for any other unexpected system crashes
   res.status(500).json({
     success: false,
-    message: err.message || "An unexpected system error occurred"
+    message: err.message || "An unexpected system error occurred",
   });
 });
 

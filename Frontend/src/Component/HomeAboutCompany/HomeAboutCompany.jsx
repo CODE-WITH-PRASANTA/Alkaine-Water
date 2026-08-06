@@ -11,12 +11,12 @@ const HomeAboutCompany = () => {
   const tabData = {
     1: {
       title: "Family Owned & Operated for 30 Years",
-      description: "Extremely painful nor again there anyone who loves pursues desires to obtain pain of itself because it is because occasionally.",
+      description: "We combine decades of local heritage with cutting-edge alkaline purification technology to deliver pure, mineral-rich hydration directly to homes and corporate offices.",
       image: imgTab1, 
     },
     2: {
       title: "Family Owned & Company Goal Values",
-      description: "Fusce at porttitor arcu. Nullam pellentesque leo id erat commodo, id laoreet nunc vehicula. Nullam sodales tempus fermentum.",
+      description: "Our mission is simple: to make healthy, pH 8.5+ mineral water accessible across Odisha. Guided by strict multi-stage filtration protocols, eco-conscious delivery practices, and customer-first service, we set the standard for daily drinking water purity.",
       image: imgTab2,
     }
   };

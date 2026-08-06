@@ -1,188 +1,300 @@
-import React, { useState } from 'react';
-import { 
-  ChevronDown, 
-  CalendarDays, 
-  CalendarClock, 
-  MapPin, 
-  MessageSquareWarning 
-} from 'lucide-react';
-import './WaterConsumption.css';
+import React from "react";
+import {
+  Droplet,
+  Zap,
+  ShieldCheck,
+  Truck,
+  Lock,
+  Headphones,
+  Check,
+  Sparkles,
+  Gift,
+  Wallet,
+  ArrowRight,
+} from "lucide-react";
+import "./WaterConsumption.css";
+
+/* =========================================================================
+   Icon art — layered SVGs with light/shadow so they read as "product"
+   illustrations rather than flat glyphs.
+   ========================================================================= */
+
+const BottleIcon = ({ size = 46, tone = "blue" }) => {
+  const tones = {
+    blue: { top: "#dbeafe", bottom: "#3b82f6", ring: "#1d4ed8", label: "#1d4ed8" },
+    gold: { top: "#fef3c7", bottom: "#f59e0b", ring: "#b45309", label: "#b45309" },
+  };
+  const c = tones[tone];
+  const uid = React.useId();
+  return (
+    <svg width={size} height={size * 1.75} viewBox="0 0 60 105" fill="none">
+      <ellipse cx="30" cy="99" rx="19" ry="4" fill="#0f172a" opacity="0.08" />
+      <rect x="24" y="2" width="12" height="9" rx="2.5" fill={c.bottom} />
+      <rect x="19" y="9" width="22" height="8" rx="3" fill={c.ring} />
+      <path
+        d="M17 17 H43 C45 17 46.5 19 46.3 21 L48 33 C51.5 39.5 53.5 47.5 53.5 57 V88 C53.5 95 47.5 98.5 40 98.5 H20 C12.5 98.5 6.5 95 6.5 88 V57 C6.5 47.5 8.5 39.5 12 33 L13.7 21 C13.5 19 15 17 17 17 Z"
+        fill={`url(#${uid}-body)`}
+        stroke={c.ring}
+        strokeWidth="1.4"
+      />
+      <path
+        d="M11 44 C13.5 39.5 16 36.5 18.5 34.5"
+        stroke="#ffffff"
+        strokeOpacity="0.65"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M46 58 C48 66 48 76 46 86"
+        stroke="#ffffff"
+        strokeOpacity="0.25"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <rect x="10" y="50" width="40" height="28" rx="5" fill="#ffffff" fillOpacity="0.95" />
+      <rect x="10" y="50" width="40" height="28" rx="5" stroke={c.ring} strokeOpacity="0.15" />
+      <text x="30" y="61.5" textAnchor="middle" fontSize="9.5" fontWeight="800" fill={c.label} fontFamily="Inter, sans-serif" letterSpacing="0.5">
+        ALKA
+      </text>
+      <text x="30" y="72" textAnchor="middle" fontSize="6.2" fontWeight="700" fill={c.bottom} fontFamily="Inter, sans-serif" letterSpacing="2">
+        DROPS
+      </text>
+      <defs>
+        <linearGradient id={`${uid}-body`} x1="6.5" y1="17" x2="53.5" y2="98.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor={c.top} />
+          <stop offset="1" stopColor={c.bottom} />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
+
+const GiftIcon = ({ size = 60 }) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <ellipse cx="32" cy="57" rx="20" ry="3.5" fill="#0f172a" opacity="0.08" />
+    <rect x="9" y="27" width="46" height="28" rx="4" fill="url(#giftBoxGrad)" />
+    <rect x="9" y="27" width="46" height="10" fill="#0ea86b" />
+    <rect x="27" y="27" width="10" height="28" fill="#059862" />
+    <path d="M32 27c-4-11-17-13-17-3.2 0 5.4 8.5 6.6 17 3.2Z" fill="url(#giftBowGrad1)" />
+    <path d="M32 27c4-11 17-13 17-3.2 0 5.4-8.5 6.6-17 3.2Z" fill="url(#giftBowGrad2)" />
+    <circle cx="32" cy="27" r="3.4" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+    <rect x="9" y="27" width="46" height="28" rx="4" stroke="#047857" strokeOpacity="0.25" />
+    <defs>
+      <linearGradient id="giftBoxGrad" x1="9" y1="27" x2="55" y2="55" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#34d399" />
+        <stop offset="1" stopColor="#10b981" />
+      </linearGradient>
+      <linearGradient id="giftBowGrad1" x1="15" y1="17" x2="32" y2="27" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#fde047" />
+        <stop offset="1" stopColor="#f59e0b" />
+      </linearGradient>
+      <linearGradient id="giftBowGrad2" x1="32" y1="17" x2="49" y2="27" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#fbbf24" />
+        <stop offset="1" stopColor="#d97706" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const WalletIcon = ({ size = 60 }) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <ellipse cx="30" cy="52" rx="21" ry="3.5" fill="#0f172a" opacity="0.08" />
+    <rect x="5" y="15" width="47" height="35" rx="7" fill="url(#walletBodyGrad)" />
+    <rect x="5" y="24" width="47" height="6.5" fill="#fbbf24" opacity="0.95" />
+    <rect x="5" y="15" width="47" height="35" rx="7" stroke="#1e3a8a" strokeOpacity="0.3" />
+    <rect x="33" y="29" width="21" height="15" rx="4.5" fill="url(#walletClaspGrad)" />
+    <circle cx="43.5" cy="36.5" r="2.7" fill="#fde68a" stroke="#b45309" strokeWidth="0.8" />
+    <path d="M9 20 L48 20" stroke="#ffffff" strokeOpacity="0.35" strokeWidth="2" strokeLinecap="round" />
+    <defs>
+      <linearGradient id="walletBodyGrad" x1="5" y1="15" x2="52" y2="50" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#3b82f6" />
+        <stop offset="1" stopColor="#1e3a8a" />
+      </linearGradient>
+      <linearGradient id="walletClaspGrad" x1="33" y1="29" x2="54" y2="44" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#1e293b" />
+        <stop offset="1" stopColor="#0f172a" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+/* =========================================================================
+   Data
+   ========================================================================= */
+
+const plans = [
+  {
+    name: "Basic Plan",
+    bottles: "15 Bottles / Month",
+    features: ["Daily Delivery", "Free Delivery"],
+    price: "699",
+    popular: false,
+    tone: "blue",
+  },
+  {
+    name: "Premium Plan",
+    bottles: "30 Bottles / Month",
+    features: ["Daily Delivery", "Free Delivery", "Priority Support"],
+    price: "1,299",
+    popular: true,
+    tone: "gold",
+  },
+  {
+    name: "Family Plan",
+    bottles: "60 Bottles / Month",
+    features: ["Daily Delivery", "Free Delivery", "Priority Support", "Weekend Delivery"],
+    price: "2,199",
+    popular: false,
+    tone: "blue",
+  },
+];
+
+const features = [
+  { icon: Droplet, title: "100% Pure & Safe", sub: "Lab Tested Water" },
+  { icon: Zap, title: "Maintains pH Balance", sub: "8+ Alkaline Water" },
+  { icon: ShieldCheck, title: "RO + UV + UF", sub: "Advanced Purification" },
+  { icon: Truck, title: "Timely Delivery", sub: "At Your Doorstep" },
+  { icon: Lock, title: "Secure Payments", sub: "100% Safe & Secure" },
+  { icon: Headphones, title: "Dedicated Support", sub: "We Care For You" },
+];
+
+/* =========================================================================
+   Component
+   ========================================================================= */
 
 const WaterConsumption = () => {
-  // State for Dropdown Selection
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedRange, setSelectedRange] = useState('Last 6 Months');
-
-  // State for Live Chart Tooltip Hover
-  const [activeTooltip, setActiveTooltip] = useState(null);
-
-  // Dataset mapping for the chart points
-  const chartData = [
-    { month: 'May', value: 3, cx: 65, cy: 165, label: '3 Jars' },
-    { month: 'Jun', value: 6, cx: 145, cy: 130, label: '6 Jars' },
-    { month: 'Jul', value: 5.3, cx: 225, cy: 138, label: '5.3 Jars' },
-    { month: 'Aug', value: 9.1, cx: 305, cy: 72, label: '9.1 Jars' },
-    { month: 'Sep', value: 6.2, cx: 385, cy: 120, label: '6.2 Jars' },
-    { month: 'Oct', value: 3.5, cx: 465, cy: 145, label: '3.5 Jars' }
-  ];
-
-  const handleSelectRange = (range) => {
-    setSelectedRange(range);
-    setDropdownOpen(false);
-  };
-
   return (
-    <div className="water-dashboard-container">
-      
-      {/* 1. Monthly Water Consumption Chart Card */}
-      <div className="water-card">
-        <div className="water-card-header">
-          <h2 className="water-card-title">Monthly Water Consumption</h2>
-          
-          {/* Functional Dropdown */}
-          <div className="dropdown-container">
-            <button 
-              className="dropdown-badge" 
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              {selectedRange} <ChevronDown size={14} />
-            </button>
-            {dropdownOpen && (
-              <ul className="dropdown-menu">
-                <li className="dropdown-item" onClick={() => handleSelectRange('Last 3 Months')}>Last 3 Months</li>
-                <li className="dropdown-item" onClick={() => handleSelectRange('Last 6 Months')}>Last 6 Months</li>
-                <li className="dropdown-item" onClick={() => handleSelectRange('This Year')}>This Year</li>
-              </ul>
-            )}
-          </div>
-        </div>
+    <div className="wc-root">
+      <div className="wc-grid">
+        {/* ---------------- Subscription plans ---------------- */}
+        <section className="wc-card wc-plans-card">
+          <header className="wc-header">
+            <span className="wc-eyebrow">
+              <Sparkles size={13} strokeWidth={2.5} />
+              Subscription
+            </span>
+            <h2>Our Subscription Plans</h2>
+            <p>Choose the best plan for your family</p>
+          </header>
 
-        <div className="chart-container">
-          {/* Active Live Hover Tooltip */}
-          {activeTooltip && (
-            <div 
-              className="chart-tooltip" 
-              style={{ left: `${(activeTooltip.cx / 500) * 100}%`, top: `${activeTooltip.cy - 15}px` }}
-            >
-              {activeTooltip.month}: {activeTooltip.label}
-            </div>
-          )}
+          <div className="wc-plans">
+            {plans.map((plan) => (
+              <div
+                key={plan.name}
+                className={`wc-plan${plan.popular ? " wc-plan--popular" : ""}`}
+              >
+                {plan.popular && (
+                  <span className="wc-badge">
+                    <Sparkles size={11} strokeWidth={2.5} />
+                    Most Popular
+                  </span>
+                )}
 
-          <svg viewBox="0 0 500 200" className="custom-line-chart">
-            <defs>
-              <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2563eb" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
-              </linearGradient>
-            </defs>
+                <div className="wc-plan-head">
+                  <h3>{plan.name}</h3>
+                  <p>{plan.bottles}</p>
+                </div>
 
-            {/* Background Horizontal Guide Lines */}
-            <line x1="40" y1="20" x2="480" y2="20" className="chart-grid-line" />
-            <line x1="40" y1="55" x2="480" y2="55" className="chart-grid-line" />
-            <line x1="40" y1="90" x2="480" y2="90" className="chart-grid-line" />
-            <line x1="40" y1="125" x2="480" y2="125" className="chart-grid-line" />
-            <line x1="40" y1="160" x2="480" y2="160" className="chart-grid-line" />
+                <div className="wc-plan-art">
+                  <BottleIcon tone={plan.tone} />
+                </div>
 
-            {/* Y-Axis Labels */}
-            <text x="5" y="24" className="chart-axis-label">10 Jar</text>
-            <text x="5" y="59" className="chart-axis-label">8 Jar</text>
-            <text x="5" y="94" className="chart-axis-label">6 Jar</text>
-            <text x="5" y="129" className="chart-axis-label">4 Jar</text>
-            <text x="5" y="164" className="chart-axis-label">2 Jar</text>
-            <text x="5" y="195" className="chart-axis-label">0 Jar</text>
+                <ul className="wc-plan-features">
+                  {plan.features.map((f) => (
+                    <li key={f}>
+                      <span className="wc-check">
+                        <Check size={11} strokeWidth={3} />
+                      </span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
 
-            {/* Area Fill Gradient Path */}
-            <path 
-              d="M 65,165 C 140,130 215,100 290,80 C 365,60 415,120 465,145 L 465,175 L 65,175 Z" 
-              className="chart-area-gradient" 
-            />
+                <div className="wc-plan-price">
+                  <span className="wc-currency">₹</span>
+                  <span className="wc-price">{plan.price}</span>
+                  <span className="wc-duration">/ month</span>
+                </div>
 
-            {/* Main Smooth Line Path */}
-            <path 
-              d="M 65,165 C 140,130 215,100 290,80 C 365,60 415,120 465,145" 
-              className="chart-line" 
-            />
-
-            {/* Interactive Data Points & Labels */}
-            {chartData.map((item, index) => (
-              <g key={index}>
-                <circle 
-                  cx={item.cx} 
-                  cy={item.cy} 
-                  r="6" 
-                  className={`chart-data-point ${activeTooltip?.month === item.month ? 'active' : ''}`}
-                  onMouseEnter={() => setActiveTooltip(item)}
-                  onMouseLeave={() => setActiveTooltip(null)}
-                />
-                <text x={item.cx - 10} y="195" className="chart-axis-label">{item.month}</text>
-              </g>
+                <button className={`wc-btn${plan.popular ? " wc-btn--gold" : ""}`}>
+                  Subscribe Now
+                  <ArrowRight size={15} strokeWidth={2.5} />
+                </button>
+              </div>
             ))}
-          </svg>
-        </div>
+          </div>
+        </section>
+
+        {/* ---------------- Sidebar ---------------- */}
+        <aside className="wc-sidebar">
+          <div className="wc-card wc-refer">
+            <div className="wc-sidebar-row">
+              <div>
+                <div className="wc-sidebar-icon-tag">
+                  <Gift size={13} strokeWidth={2.5} />
+                  Rewards
+                </div>
+                <h3>Refer &amp; Earn</h3>
+                <p className="wc-sidebar-sub">Invite your friends and earn</p>
+                <div className="wc-big-amount">₹100</div>
+                <p className="wc-sidebar-sub">for every successful subscription</p>
+              </div>
+              <div className="wc-icon-plate wc-icon-plate--green">
+                <GiftIcon />
+              </div>
+            </div>
+            <button className="wc-btn wc-btn--block">
+              Invite Now
+              <ArrowRight size={15} strokeWidth={2.5} />
+            </button>
+          </div>
+
+          <div className="wc-card wc-wallet">
+            <div className="wc-sidebar-row">
+              <div>
+                <div className="wc-sidebar-icon-tag wc-sidebar-icon-tag--blue">
+                  <Wallet size={13} strokeWidth={2.5} />
+                  Balance
+                </div>
+                <h3>Wallet Balance</h3>
+                <div className="wc-big-amount">₹320.00</div>
+                <p className="wc-sidebar-sub">Available Balance</p>
+              </div>
+              <div className="wc-icon-plate wc-icon-plate--blue">
+                <WalletIcon />
+              </div>
+            </div>
+            <button className="wc-btn wc-btn--block">
+              Add Money
+              <ArrowRight size={15} strokeWidth={2.5} />
+            </button>
+          </div>
+        </aside>
       </div>
 
-      {/* 2. Quick Actions Card */}
-      <div className="water-card">
-        <div className="water-card-header">
-          <h2 className="water-card-title">Quick Actions</h2>
+      {/* ---------------- Feature strip ---------------- */}
+      <section className="wc-card wc-features">
+        <div className="wc-features-head">
+          <h3 className="wc-features-title">Why Choose Alka Drops?</h3>
+          <p className="wc-features-subtitle">Trusted by thousands of families every day</p>
         </div>
-
-        <div className="quick-actions-grid">
-          <div className="action-tile blue">
-            <div className="action-icon-wrapper">
-              <CalendarDays size={22} />
+        <div className="wc-features-grid">
+          {features.map(({ icon: Icon, title, sub }, i) => (
+            <div className="wc-feature" key={title}>
+              {i !== 0 && <span className="wc-feature-divider" aria-hidden="true" />}
+              <div className="wc-feature-icon">
+                <Icon size={18} strokeWidth={2.2} />
+              </div>
+              <div>
+                <h4>{title}</h4>
+                <p>{sub}</p>
+              </div>
             </div>
-            <p className="action-label">Place New Order</p>
-          </div>
-
-          <div className="action-tile green">
-            <div className="action-icon-wrapper">
-              <CalendarClock size={22} />
-            </div>
-            <p className="action-label">Schedule Delivery</p>
-          </div>
-
-          <div className="action-tile orange">
-            <div className="action-icon-wrapper">
-              <MapPin size={22} />
-            </div>
-            <p className="action-label">Update Address</p>
-          </div>
-
-          <div className="action-tile purple">
-            <div className="action-icon-wrapper">
-              <MessageSquareWarning size={22} />
-            </div>
-            <p className="action-label">Help & Support</p>
-          </div>
+          ))}
         </div>
-      </div>
-
-      {/* 3. Refer & Earn Card */}
-      <div className="water-card refer-earn-card">
-        <div className="refer-content">
-          <h2 className="refer-title">Refer & Earn</h2>
-          <p className="refer-description">Invite your friends and earn exciting rewards!</p>
-          <button className="refer-btn">Refer Now</button>
-        </div>
-
-        <div className="refer-graphic">
-          <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M45 45L75 75M75 45L45 75" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <rect x="35" y="55" width="50" height="45" rx="6" fill="#FACC15" />
-            <path d="M30 45H90V55H30V45Z" fill="#EAB308" rx="2" />
-            <path d="M55 30C50 20 35 25 45 40C48 44 55 45 55 45V30Z" fill="#FDE047" />
-            <path d="M65 30C70 20 85 25 75 40C72 44 65 45 65 45V30Z" fill="#FDE047" />
-            <circle cx="60" cy="37" r="5" fill="#CA8A04" />
-            {/* Sparkles */}
-            <path d="M20 35L22 40L27 42L22 44L20 49L18 44L13 42L18 40L20 35Z" fill="#FEF08A" />
-            <path d="M95 75L96 78L99 79L96 80L95 83L94 80L91 79L94 78L95 75Z" fill="#FEF08A" />
-            <circle cx="100" cy="50" r="3" fill="#FEF08A" />
-            <circle cx="25" cy="70" r="2.5" fill="#FEF08A" />
-          </svg>
-        </div>
-      </div>
-
+      </section>
     </div>
   );
 };

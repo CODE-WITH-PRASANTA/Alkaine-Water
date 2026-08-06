@@ -38,19 +38,19 @@ const Informationpricing = () => {
         <div className="info-left-panel">
           <h2 className="info-main-heading">Every day help for our customers</h2>
           <p className="info-description">
-            Our artisans carefully follow traditions passed down through generations to ensure every wheel of cheese is flawless. We use only natural ingredients and age our cheeses in special conditions.
+            We use advanced multi-stage purification and strict quality controls to ensure every drop of water is safe, mineral-rich, and refreshed. From daily household needs to large commercial orders, we bring pure hydration straight to your doorstep.
           </p>
           
           <ul className="info-features-list">
-            <li><span className="checkmark">✓</span> Managment</li>
-            <li><span className="checkmark">✓</span> Analytics</li>
-            <li><span className="checkmark">✓</span> Consultation</li>
-            <li><span className="checkmark">✓</span> Engineering</li>
+            <li><span className="checkmark">✓</span>Doorstep Delivery </li>
+            <li><span className="checkmark">✓</span>Quality Testing </li>
+            <li><span className="checkmark">✓</span> Custom Subscriptions</li>
+            <li><span className="checkmark">✓</span> Bulk Water Solutions</li>
           </ul>
 
           <h3 className="info-sub-heading">If you need more help</h3>
           <p className="info-sub-description">
-            We are proud to follow centuries-old cheese-making traditions. Every batch of cheese is the result of a long aging process and meticulous effort.
+           We take pride in setting high standards for drinking water purity across Odisha. Every jar and bottle undergoes automated cleaning, UV treatment, and precise mineral balancing so you can drink with complete peace of mind.
           </p>
         </div>
 

@@ -8,7 +8,8 @@ import {
   LogOut, 
   ChevronDown,
   CheckCircle2,
-  Info
+  Info,
+  Sparkles
 } from 'lucide-react';
 import './Topbar.css';
 
@@ -22,10 +23,17 @@ const Topbar = ({ toggleSidebar, toggleMobileSidebar }) => {
 
   const getPageTitle = (path) => {
     switch (path) {
-      case '/dashboard': return 'Dashboard Overview';
-      case '/orders': return 'My Orders';
-      case '/subscription': return 'Subscription Plans';
-      case '/support': return 'Support Tickets';
+      case '/wdms/dashboard': return 'Dashboard Overview';
+      case '/wdms/subscription': return 'My Subscription';
+      case '/wdms/order-water': return 'Order Water';
+      case '/wdms/orders': return 'My Orders';
+      case '/wdms/delivery-address': return 'Delivery Address';
+      case '/wdms/payments': return 'Payments';
+      case '/wdms/refer-earn': return 'Refer & Earn';
+      case '/wdms/notifications': return 'Notifications';
+      case '/wdms/profile': return 'Profile Settings';
+      case '/wdms/settings': return 'System Settings';
+      case '/wdms/help-support': return 'Help & Support';
       default: return 'User Panel';
     }
   };
@@ -64,7 +72,12 @@ const Topbar = ({ toggleSidebar, toggleMobileSidebar }) => {
           <Menu size={20} />
         </button>
 
-        <h1 className="page-title">{getPageTitle(location.pathname)}</h1>
+        <div className="title-wrapper">
+          <h1 className="page-title">{getPageTitle(location.pathname)}</h1>
+          <span className="live-badge">
+            <Sparkles size={12} /> Live System
+          </span>
+        </div>
       </div>
 
       {/* Right User Actions */}
@@ -91,8 +104,10 @@ const Topbar = ({ toggleSidebar, toggleMobileSidebar }) => {
 
             <div className="notification-list">
               <div className="notification-item">
-                <CheckCircle2 size={18} className="status-icon text-green" />
-                <div>
+                <div className="status-icon-wrap green">
+                  <CheckCircle2 size={16} />
+                </div>
+                <div className="notification-content">
                   <p className="item-title">Order Dispatched</p>
                   <p className="item-desc">Your subscription order #4092 is on its way.</p>
                   <span className="item-time">5 mins ago</span>
@@ -100,8 +115,10 @@ const Topbar = ({ toggleSidebar, toggleMobileSidebar }) => {
               </div>
 
               <div className="notification-item">
-                <Info size={18} className="status-icon text-blue" />
-                <div>
+                <div className="status-icon-wrap blue">
+                  <Info size={16} />
+                </div>
+                <div className="notification-content">
                   <p className="item-title">Support Ticket Resolved</p>
                   <p className="item-desc">Ticket #8821 has been marked as completed.</p>
                   <span className="item-time">1 hour ago</span>
@@ -124,26 +141,29 @@ const Topbar = ({ toggleSidebar, toggleMobileSidebar }) => {
             }}
             className="profile-btn"
           >
-            <div className="avatar">SK</div>
+            <div className="avatar-wrapper">
+              <div className="avatar">SS</div>
+              <span className="online-indicator" />
+            </div>
             <div className="profile-info">
               <p className="profile-name">Saroj Sahoo</p>
-              <p className="profile-role">User Account</p>
+              <p className="profile-role">Active Member</p>
             </div>
-            <ChevronDown size={16} className="chevron-icon" />
+            <ChevronDown size={16} className={`chevron-icon ${isProfileOpen ? 'rotate' : ''}`} />
           </button>
 
           <div className={`dropdown-card profile-card ${isProfileOpen ? 'open' : ''}`}>
             <div className="profile-card-header">
               <p className="profile-name">Saroj Sahoo</p>
-              <p className="profile-role">saroj@example.com</p>
+              <p className="profile-email">saroj@example.com</p>
             </div>
 
             <div className="menu-group">
               <button onClick={() => setIsProfileOpen(false)} className="menu-item">
-                <User size={16} /> Profile
+                <User size={16} /> Profile Settings
               </button>
               <button onClick={() => setIsProfileOpen(false)} className="menu-item">
-                <Settings size={16} /> Settings
+                <Settings size={16} /> Preferences
               </button>
             </div>
 

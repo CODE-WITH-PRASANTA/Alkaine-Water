@@ -14,13 +14,14 @@ import {
   LogOut,
   CalendarPlus, // Leave Apply
   FileText,     // Leave Request
-  X,            // Mobile close icon
-  User          // Profile icon (replaced duplicate Settings)
+  X             // Mobile close icon
 } from "lucide-react";
 import { FaWineBottle } from 'react-icons/fa';
 import './Sidebar.css';
 
 const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
+  const location = useLocation();
+
   // Navigation items configuration
   const menuItems = [
     { type: 'link', icon: <Home size={20} />, text: 'Dashboard', path: '/' },
@@ -30,8 +31,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
     { type: 'link', icon: <Truck size={20} />, text: 'Vehicle Stock', path: '/wdms/vehicle-stock' },
     { type: 'link', icon: <RotateCcw size={20} />, text: 'Empty Return', path: '/wdms/empty-return' },
     { type: 'link', icon: <FaWineBottle size={20} />, text: 'Extra Stock', path: '/wdms/extra-stock' },
-
-    // Leave Management items
     { type: 'link', icon: <CalendarPlus size={20} />, text: 'Leave Apply', path: '/wdms/leave-apply' },
     { type: 'link', icon: <FileText size={20} />, text: 'Leave Request', path: '/wdms/leave-request' },
     { type: 'link', icon: <CreditCard size={20} />, text: 'Payments', path: '/wdms/payments' },

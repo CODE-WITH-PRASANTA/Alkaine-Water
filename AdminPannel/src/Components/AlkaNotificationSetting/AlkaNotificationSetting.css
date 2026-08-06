@@ -1,0 +1,272 @@
+:root {
+  --Alka-primary-blue: #0b3c7b;
+  --Alka-active-blue: #0b5ed7;
+  --Alka-hover-blue: #094db3;
+  --Alka-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --Alka-card-bg: #ffffff;
+  --Alka-border-color: #e2e8f0;
+  --Alka-text-dark: #0f172a;
+  --Alka-text-muted: #64748b;
+  --Alka-toggle-off: #cbd5e1;
+  --Alka-white: #ffffff;
+  --Alka-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --Alka-shadow-md: 0 10px 25px -5px rgba(11, 60, 123, 0.06), 0 8px 10px -6px rgba(11, 60, 123, 0.04);
+}
+
+/* Page Outer Layout (Full Screen) */
+.AlkaNotificationSetting-page {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--Alka-bg-gradient);
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  box-sizing: border-box;
+}
+
+/* Main Container Limit */
+.AlkaNotificationSetting-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Header Section */
+.AlkaNotificationSetting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: var(--Alka-card-bg);
+  padding: 1.75rem 2rem;
+  border-radius: 16px;
+  box-shadow: var(--Alka-shadow-md);
+  border: 1px solid var(--Alka-border-color);
+}
+
+.AlkaNotificationSetting-header-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.AlkaNotificationSetting-header-icon-wrapper {
+  background-color: rgba(11, 60, 123, 0.1);
+  color: var(--Alka-primary-blue);
+  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.AlkaNotificationSetting-header-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.AlkaNotificationSetting-title {
+  color: var(--Alka-text-dark);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.AlkaNotificationSetting-subtitle {
+  color: var(--Alka-text-muted);
+  font-size: 0.925rem;
+  margin: 0;
+}
+
+/* Action Buttons */
+.AlkaNotificationSetting-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.AlkaNotificationSetting-btn-primary,
+.AlkaNotificationSetting-btn-secondary {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.AlkaNotificationSetting-btn-primary {
+  background-color: var(--Alka-primary-blue);
+  color: var(--Alka-white);
+  border: 1px solid var(--Alka-primary-blue);
+}
+
+.AlkaNotificationSetting-btn-primary:hover {
+  background-color: var(--Alka-hover-blue);
+  border-color: var(--Alka-hover-blue);
+}
+
+.AlkaNotificationSetting-btn-secondary {
+  background-color: transparent;
+  color: var(--Alka-text-muted);
+  border: 1px solid var(--Alka-border-color);
+}
+
+.AlkaNotificationSetting-btn-secondary:hover {
+  background-color: #f1f5f9;
+  color: var(--Alka-text-dark);
+}
+
+/* Content & Cards */
+.AlkaNotificationSetting-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.AlkaNotificationSetting-category {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--Alka-primary-blue);
+  margin: 0 0 0.75rem 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.AlkaNotificationSetting-card {
+  background-color: var(--Alka-card-bg);
+  border-radius: 16px;
+  box-shadow: var(--Alka-shadow-md);
+  border: 1px solid var(--Alka-border-color);
+  overflow: hidden;
+}
+
+.AlkaNotificationSetting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--Alka-border-color);
+  transition: background-color 0.15s ease;
+}
+
+.AlkaNotificationSetting-item:last-child {
+  border-bottom: none;
+}
+
+.AlkaNotificationSetting-item:hover {
+  background-color: #f8fafc;
+}
+
+.AlkaNotificationSetting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.AlkaNotificationSetting-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.AlkaNotificationSetting-item-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--Alka-text-dark);
+  margin: 0;
+}
+
+.AlkaNotificationSetting-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.AlkaNotificationSetting-item-desc {
+  font-size: 0.9rem;
+  color: var(--Alka-text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Toggle Switch Styles */
+.AlkaNotificationSetting-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.AlkaNotificationSetting-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.AlkaNotificationSetting-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--Alka-toggle-off);
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+}
+
+.AlkaNotificationSetting-slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--Alka-white);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.AlkaNotificationSetting-checkbox:checked + .AlkaNotificationSetting-slider {
+  background-color: var(--Alka-active-blue);
+}
+
+.AlkaNotificationSetting-checkbox:checked + .AlkaNotificationSetting-slider::before {
+  transform: translateX(24px);
+}
+
+.AlkaNotificationSetting-checkbox:focus-visible + .AlkaNotificationSetting-slider {
+  outline: 2px solid var(--Alka-primary-blue);
+  outline-offset: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .AlkaNotificationSetting-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .AlkaNotificationSetting-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .AlkaNotificationSetting-item {
+    padding: 1.25rem;
+  }
+}

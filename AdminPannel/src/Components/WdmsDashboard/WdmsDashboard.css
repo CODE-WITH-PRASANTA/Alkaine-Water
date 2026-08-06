@@ -1,14 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
+* {
+  box-sizing: border-box;
+}
+
 .wdms-dashboard-wrapper {
   background-color: #f7f9fc;
   min-height: 100vh;
-  padding: 30px 20px;
+  padding: 20px 16px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: #1e293b;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .wdms-dashboard-container {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -17,14 +25,15 @@
 .wdms-metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 24px;
+  width: 100%;
 }
 
 .wdms-metric-card {
   background-color: #ffffff;
   border-radius: 16px;
-  padding: 24px;
+  padding: 18px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -47,10 +56,10 @@
 }
 
 .metric-value {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   letter-spacing: -0.5px;
 }
 
@@ -58,17 +67,12 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-.metric-change.positive {
-  color: #10b981;
-}
-
-.metric-change.negative {
-  color: #ef4444;
-}
+.metric-change.positive { color: #10b981; }
+.metric-change.negative { color: #ef4444; }
 
 .change-text {
   color: #94a3b8;
@@ -78,9 +82,9 @@
 
 /* Icon Box Background Colors */
 .metric-icon-box {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,36 +96,45 @@
 .purple-bg { background-color: #f5f3ff; }
 .yellow-bg { background-color: #fffbeb; }
 
-.metric-icon { font-size: 22px; }
+.metric-icon { font-size: 18px; }
 .blue-icon { color: #3b82f6; }
 .green-icon { color: #22c55e; }
 .purple-icon { color: #a855f7; }
 .yellow-icon { color: #f59e0b; }
 
-/* 2. Charts Section Grid */
+/* 2. Charts Section Grid Fix */
 .wdms-charts-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr;
-  gap: 20px;
+  grid-template-columns: 1.6fr 1.1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+  align-items: stretch; /* दोनों कार्ड्स की हाइट बराबर रखने के लिए */
 }
 
 .wdms-chart-card {
   background-color: #ffffff;
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   border: 1px solid #f1f5f9;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .chart-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .chart-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
@@ -130,70 +143,65 @@
 .chart-dropdown {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 5px 10px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #475569;
   background-color: #ffffff;
   cursor: pointer;
 }
 
-/* Area Chart Custom Tooltip */
-.custom-chart-tooltip {
-  background-color: #2563eb;
-  color: #ffffff;
-  padding: 8px 14px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+.chart-body {
+  width: 100%;
+  height: 240px;
+  min-width: 0;
 }
 
-.tooltip-amount {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.tooltip-date {
-  font-size: 10px;
-  opacity: 0.8;
-  margin: 2px 0 0 0;
-}
-
-/* Order Status Donut Chart & Legend */
+/* Order Status Donut Chart & Legend Layout Fix */
 .order-status-body {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  padding-top: 10px;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  gap: 12px;
 }
 
 .donut-chart-wrapper {
   position: relative;
+  width: 160px;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .donut-center-text {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
+  pointer-events: none;
 }
 
 .center-value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
+  line-height: 1;
 }
 
 .center-label {
   font-size: 11px;
   color: #94a3b8;
-  margin: 0;
+  margin: 2px 0 0 0;
   font-weight: 500;
 }
 
@@ -201,27 +209,29 @@
 .status-legend-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 170px;
+  gap: 12px;
+  flex: 1;
+  min-width: 120px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .legend-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .legend-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .legend-name {
@@ -243,8 +253,19 @@
   color: #94a3b8;
 }
 
-/* Responsive Media Queries */
-@media (max-width: 1100px) {
+.wdms-second-section {
+  margin-top: 24px;
+  width: 100%;
+}
+
+/* Responsive Media Queries Rules */
+@media (max-width: 1280px) {
+  .wdms-charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
   .wdms-metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -261,7 +282,9 @@
 
   .order-status-body {
     flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
   }
 
   .status-legend-list {

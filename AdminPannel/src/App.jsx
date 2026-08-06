@@ -42,6 +42,8 @@ import DeliveryId from "./Pages/DeliveryId/DeliveryId";
 import ManageStock from "./Components/ManageStock/ManageStock";
 import StockManagement from "./Components/StockManagement/StockManagement";
 import LeaveRequest from "./Components/LeaveRequest/LeaveRequest";
+import AlkaMyProfile from "./Components/AlkaMyProfile/AlkaMyProfile";
+import AlkaNotificationSetting from "./Components/AlkaNotificationSetting/AlkaNotificationSetting";
 
 const App = () => {
   return (
@@ -73,6 +75,10 @@ const App = () => {
             <Route path="/testimonial" element={<Testimonial />} />
             <Route path="/shop" element={<ShopPosting />} />
             <Route path="/contact" element={<Contact />} />
+
+
+            <Route path="/profile" element={<AlkaMyProfile/>} />
+            <Route path="/security" element={<AlkaNotificationSetting/>} />
 
             {/* Blog */}
             <Route path="/blog" element={<Blog />} />

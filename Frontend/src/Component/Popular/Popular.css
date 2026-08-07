@@ -8,7 +8,9 @@
   background-color: #ffffff;
 }
 
-.popular-content { flex: 1; }
+.popular-content { 
+  flex: 1; 
+}
 
 .popular-title {
   font-size: 3.5rem;
@@ -17,22 +19,63 @@
   margin-bottom: 40px;
 }
 
-.popular-list { margin-bottom: 40px; }
+.popular-list { 
+  margin-bottom: 40px; 
+}
 
+/* Question Item Box */
 .popular-question-item {
+  border-bottom: 1px solid #eee;
+  padding: 18px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.popular-question-header {
   display: flex;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
 }
 
 .popular-plus-icon {
   margin-right: 15px;
   font-weight: bold;
+  font-size: 1.2rem;
   color: #555;
+  min-width: 20px;
+  transition: transform 0.2s ease;
 }
 
+.popular-question-text {
+  font-weight: 600;
+  color: #002233;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Smooth Accordion Animation */
+.popular-answer-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-out, padding 0.35s ease;
+}
+
+.popular-answer-text {
+  margin: 10px 0 0 35px;
+  color: #666666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Active State Styles */
+.popular-question-item.active .popular-plus-icon {
+  color: #d93025;
+}
+
+.popular-question-item.active .popular-answer-box {
+  max-height: 200px; /* पर्याप्त ऊँचाई ताकि उत्तर कट न जाए */
+}
+
+/* Button Styling */
 .popular-read-more {
   background-color: #d93025;
   color: white;
@@ -41,10 +84,18 @@
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-/* Image styling */
-.popular-image-wrapper { flex: 1; }
+.popular-read-more:hover {
+  background-color: #b8251b;
+}
+
+/* Image Styling */
+.popular-image-wrapper { 
+  flex: 1; 
+}
+
 .popular-img {
   width: 100%;
   height: auto;
@@ -52,10 +103,18 @@
   object-fit: cover;
 }
 
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 992px) {
-  .popular-container { flex-direction: column; text-align: center; }
-  .popular-title { font-size: 2.5rem; }
-  .popular-question-item { justify-content: center; }
-  .popular-plus-icon { margin-right: 10px; }
+  .popular-container { 
+    flex-direction: column; 
+    text-align: left; /* अलाइनमेंट साफ रखने के लिए left रखा गया है */
+  }
+  
+  .popular-title { 
+    font-size: 2.5rem; 
+  }
+  
+  .popular-answer-text {
+    margin-left: 25px;
+  }
 }

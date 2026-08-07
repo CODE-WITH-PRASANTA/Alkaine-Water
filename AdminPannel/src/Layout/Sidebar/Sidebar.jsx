@@ -1,5 +1,4 @@
-// Sidebar.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Home,
@@ -25,14 +24,133 @@ import {
   BarChart3,
   CreditCard,     // For Subscription
   Badge,          // For Delivery Boy ID
-  Droplet,        // Brand mark
-         // For Delivery Boy ID
-  CalendarCheck, // Added for Leave Request
+  CalendarCheck,  // Added for Leave Request
 } from "lucide-react";
+
+import bottleImg from "../../assets/Screenshot (1).webp"; // Adjust path if needed
 import './Sidebar.css';
+
+const WHITE_CUTOFF = 246;
+const FEATHER_START = 208;
+
+const useBackgroundRemovedImage = (src) => {
+  const canvasRef = useRef(null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = src;
+
+    img.onload = () => {
+      if (cancelled) return;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const minChannel = Math.min(r, g, b);
+
+          if (minChannel >= WHITE_CUTOFF) {
+            data[i + 3] = 0;
+          } else if (minChannel > FEATHER_START) {
+            const fade = (minChannel - FEATHER_START) / (WHITE_CUTOFF - FEATHER_START);
+            data[i + 3] = Math.round(data[i + 3] * (1 - fade));
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+      } catch (err) {
+        console.warn('Bottle background removal skipped:', err);
+      }
+
+      setIsReady(true);
+    };
+
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  return { canvasRef, isReady };
+};
+
+/* Updated Premium Dark Alka Drops Logo Mark */
+const AlkaDropsMark = ({ className = '' }) => (
+  <svg className={className} viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+    <defs>
+      {/* Dark metallic navy background with subtle glossy border fill */}
+      <linearGradient id="alkaMarkBgDark" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#0b1e3d" />
+        <stop offset="50%" stopColor="#061226" />
+        <stop offset="100%" stopColor="#020814" />
+      </linearGradient>
+
+      <linearGradient id="alkaMarkBorder" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+        <stop offset="100%" stopColor="rgba(79, 169, 245, 0.2)" />
+      </linearGradient>
+
+      {/* Vibrant 3D cyan/blue droplet */}
+      <linearGradient id="alkaMarkDropVibrant" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#38bdf8" />
+        <stop offset="50%" stopColor="#0284c7" />
+        <stop offset="100%" stopColor="#0369a1" />
+      </linearGradient>
+
+      <filter id="dropGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#0284c7" floodOpacity="0.6" />
+      </filter>
+    </defs>
+
+    {/* Outer border ring */}
+    <rect x="0.5" y="0.5" width="39" height="39" rx="11.5" fill="none" stroke="url(#alkaMarkBorder)" strokeWidth="1" />
+
+    {/* Dark metallic background badge */}
+    <rect x="1.5" y="1.5" width="37" height="37" rx="10.5" fill="url(#alkaMarkBgDark)" />
+
+    {/* 3D Droplet with glow */}
+    <path
+      d="M20 7.5
+         C15.2 15 10.8 20.6 10.8 25.8
+         C10.8 31.5 14.8 35.5 20 35.5
+         C25.2 35.5 29.2 31.5 29.2 25.8
+         C29.2 20.6 24.8 15 20 7.5
+         Z"
+      fill="url(#alkaMarkDropVibrant)"
+      filter="url(#dropGlow)"
+    />
+
+    {/* Crisp glass highlights */}
+    <path
+      d="M14.5 23.5
+         C14.5 27.2 17 30 20.2 30.4"
+      fill="none"
+      stroke="#ffffff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      opacity="0.85"
+    />
+    <circle cx="24.5" cy="16.5" r="1.4" fill="#ffffff" opacity="0.9" />
+  </svg>
+);
 
 const Sidebar = ({ isCollapsed, isMobileOpen }) => {
   const [openDropdowns, setOpenDropdowns] = useState({});
+  const { canvasRef: bottleCanvasRef, isReady: isBottleReady } = useBackgroundRemovedImage(bottleImg);
 
   const toggleDropdown = (title) => {
     setOpenDropdowns((prev) => ({
@@ -78,14 +196,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
       path: "/products/id-generate",
     },
 
-
-    {
-      type: "link",
-      icon: <Badge size={20} />,
-      text: "Delivery Boy ID",
-      path: "/products/id-generate",
-    },
-    
     {
       type: 'dropdown',
       icon: <BookOpen size={20} />,
@@ -163,8 +273,8 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
       <div className="Sidebar-sheen" aria-hidden="true" />
 
       <div className="Sidebar-logo">
-        <div className="Sidebar-logo-icon">
-          <Droplet size={20} strokeWidth={2.4} fill="currentColor" />
+        <div className="Sidebar-logo-iconWrap">
+          <AlkaDropsMark className="Sidebar-logo-icon" />
         </div>
         {!isCollapsed && (
           <div className="Sidebar-logo-text-group">
@@ -176,7 +286,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
 
       <nav className="Sidebar-nav">
         {menuItems.map((item, index) => {
-          // Handle Section Heading with Animated Divider
           if (item.type === 'section-heading') {
             return (
               <div key={index} className="Sidebar-section-wrapper">
@@ -186,7 +295,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
             );
           }
 
-          // Handle Standard Links
           if (item.type === 'link') {
             return (
               <NavLink
@@ -202,7 +310,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
             );
           }
 
-          // Handle Dropdown Menus
           const isDropdownOpen = !!openDropdowns[item.text];
           return (
             <div key={index} className={`Sidebar-dropdown-wrapper ${isDropdownOpen ? 'is-open' : ''}`}>
@@ -240,7 +347,6 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
 
       {!isCollapsed && (
         <div className="Sidebar-brandFooter">
-          {/* Ambient background waves */}
           <svg
             className="Sidebar-brandFooter-waves"
             viewBox="0 0 270 170"
@@ -257,123 +363,17 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
             <circle className="droplet droplet-5" cx="220" cy="56" r="1.6" />
           </svg>
 
-          {/* Realistic 3D water bottle: liquid fill, glass highlights, condensation, splash */}
-          <svg
-            className="Sidebar-brandFooter-bottle"
-            viewBox="0 0 100 175"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0.2">
-                <stop offset="0%" stopColor="rgba(255,255,255,0.42)" />
-                <stop offset="45%" stopColor="rgba(214,237,255,0.3)" />
-                <stop offset="100%" stopColor="rgba(147,205,246,0.4)" />
-              </linearGradient>
-              <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7fcdfb" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#0e63c4" stopOpacity="0.95" />
-              </linearGradient>
-              <linearGradient id="capGrad2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="100%" stopColor="#cfe6fb" />
-              </linearGradient>
-              <linearGradient id="dropGrad2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4fa9f5" />
-                <stop offset="100%" stopColor="#0e63c4" />
-              </linearGradient>
-              <clipPath id="bottleClip">
-                <path d="M30 40 Q30 34 38 34 L62 34 Q70 34 70 40 L74 52 Q78 60 78 70 L78 148 Q78 160 66 160 L34 160 Q22 160 22 148 L22 70 Q22 60 26 52 Z" />
-              </clipPath>
-            </defs>
-
-            {/* ground shadow */}
-            <ellipse cx="50" cy="166" rx="30" ry="5" fill="rgba(4,26,63,0.28)" />
-            <ellipse cx="50" cy="166" rx="20" ry="3" fill="rgba(4,26,63,0.22)" />
-
-            {/* cap */}
-            <rect x="38" y="6" width="24" height="14" rx="4" fill="url(#capGrad2)" />
-            <line x1="40" y1="10" x2="60" y2="10" stroke="rgba(28,102,196,0.25)" strokeWidth="1" />
-            <line x1="40" y1="14" x2="60" y2="14" stroke="rgba(28,102,196,0.25)" strokeWidth="1" />
-            <line x1="40" y1="18" x2="60" y2="18" stroke="rgba(28,102,196,0.25)" strokeWidth="1" />
-
-            {/* neck */}
-            <rect x="40" y="20" width="20" height="14" fill="url(#glassGrad)" />
-
-            {/* body (glass) */}
-            <path
-              d="M30 40 Q30 34 38 34 L62 34 Q70 34 70 40 L74 52 Q78 60 78 70 L78 148 Q78 160 66 160 L34 160 Q22 160 22 148 L22 70 Q22 60 26 52 Z"
-              fill="url(#glassGrad)"
-              stroke="rgba(255,255,255,0.5)"
-              strokeWidth="1"
+          <div className="Sidebar-bottle-wrapper">
+            <div className="Sidebar-bottle-glow" />
+            <div className="Sidebar-bottle-ring" />
+            <canvas
+              ref={bottleCanvasRef}
+              className={`Sidebar-bottle-img ${isBottleReady ? 'is-ready' : ''}`}
+              role="img"
+              aria-label="Alka Drops water bottle"
             />
-
-            {/* liquid fill, clipped to the bottle silhouette, with a wavy surface line */}
-            <g clipPath="url(#bottleClip)">
-              <path
-                className="bottle-liquid"
-                d="M20 100 Q30 94 40 100 T60 100 T80 100 V165 H20 Z"
-                fill="url(#liquidGrad)"
-              />
-            </g>
-
-            {/* glass highlight streaks */}
-            <path
-              className="bottle-shine"
-              d="M33 44 Q30 100 33 154"
-              stroke="rgba(255,255,255,0.8)"
-              strokeWidth="4"
-              strokeLinecap="round"
-              fill="none"
-            />
-            <path
-              d="M67 54 Q69 100 67 144"
-              stroke="rgba(255,255,255,0.25)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* condensation droplets on the glass */}
-            <circle className="condensation" cx="30" cy="52" r="1.3" />
-            <circle className="condensation" cx="62" cy="48" r="1" />
-            <circle className="condensation" cx="45" cy="60" r="1.4" />
-            <circle className="condensation" cx="26" cy="72" r="1" />
-            <circle className="condensation" cx="70" cy="66" r="1.2" />
-            <circle className="condensation" cx="55" cy="80" r="0.9" />
-
-            {/* label */}
-            <rect x="27" y="104" width="46" height="50" rx="10" fill="#ffffff" opacity="0.96" />
-            <path
-              d="M50 110
-                 C46 117 42 124 42 130
-                 C42 136.5 45.5 141 50 141
-                 C54.5 141 58 136.5 58 130
-                 C58 124 54 117 50 110
-                 Z"
-              fill="url(#dropGrad2)"
-            />
-            <text x="50" y="146" textAnchor="middle" fontSize="7" fontWeight="800" fill="#1c66c4" letterSpacing="0.5">
-              ALKA
-            </text>
-            <text x="50" y="152" textAnchor="middle" fontSize="5" fontWeight="700" fill="#4fa9f5" letterSpacing="1.2">
-              DROPS
-            </text>
-
-            {/* splash + ripple at the base */}
-            <ellipse className="ripple ripple-1" cx="50" cy="163" rx="48" ry="10" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.4" />
-            <ellipse className="ripple ripple-2" cx="50" cy="163" rx="60" ry="13" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="1.2" />
-
-            <g className="splash">
-              <ellipse cx="14" cy="156" rx="6" ry="3" fill="rgba(255,255,255,0.55)" />
-              <ellipse cx="88" cy="150" rx="5" ry="2.5" fill="rgba(255,255,255,0.45)" />
-              <circle cx="4" cy="142" r="2.6" fill="rgba(255,255,255,0.6)" />
-              <circle cx="-4" cy="152" r="1.8" fill="rgba(255,255,255,0.5)" />
-              <circle cx="96" cy="138" r="2.2" fill="rgba(255,255,255,0.55)" />
-              <circle cx="100" cy="152" r="1.6" fill="rgba(255,255,255,0.45)" />
-              <circle cx="20" cy="134" r="1.4" fill="rgba(255,255,255,0.5)" />
-              <circle cx="80" cy="130" r="1.3" fill="rgba(255,255,255,0.45)" />
-            </g>
-          </svg>
+            <div className="Sidebar-bottle-shadow" />
+          </div>
         </div>
       )}
     </aside>

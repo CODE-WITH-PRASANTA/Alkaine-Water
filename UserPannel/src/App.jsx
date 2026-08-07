@@ -8,6 +8,8 @@ import SupportTickets from "./Components/SupportTickets/SupportTickets";
 import MySubscription from "./Components/MySubscription/MySubscription";
 import Login from "./Components/Login/Login";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import Notifications from "./Components/Notifications/Notifications";
+import Profile from "./Components/Profile/Profile";
 
 const App = () => {
   return (
@@ -47,7 +49,13 @@ const App = () => {
               path="subscription" 
               element={<MySubscription />} 
             />
-
+           <Route
+           path="/wdms/notifications"
+           element={<Notifications/>}
+           />
+           <Route
+           path="/wdms/profile"
+           element={<Profile/>}/>
           </Route>
         </Route>
 

@@ -5,9 +5,12 @@ import "./App.css";
 // Layout
 import MainLayout from "./Layout/MainLayout/MainLayout";
 
+// Authentication
 // Components / Pages
 import Login from "./Components/Login/Login";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+
+// Components / Pages
 import OurTeam from "./Components/OurTeam/OurTeam";
 import Gallery from "./Components/Gallery/Gallery";
 import Testimonial from "./pages/Testimonial/Testimonial";
@@ -17,6 +20,9 @@ import Dashboards from "./Pages/Dashboards/Dashboards";
 import Blog from "./Components/Blog/Blog";
 import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
+
+
+// WDMS
 import DashboardMain from "./Pages/DashboardMain/DashboardMain";
 import Paymentmanagement from "./Components/Paymentmanagement/Paymentmanagement";
 import ProductandPrice from "./Components/ProductandPrice/ProductandPrice";
@@ -47,6 +53,13 @@ const App = () => {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
+
+            {/* Redirect */}
+            <Route
+              path="/"
+              element={<Navigate to="/wdms/dashboard" replace />}
+            />
+
             {/* Redirect */}
             <Route
               path="/"
@@ -60,7 +73,10 @@ const App = () => {
             <Route path="/testimonial" element={<Testimonial />} />
             <Route path="/shop" element={<ShopPosting />} />
             <Route path="/contact" element={<Contact />} />
+
+            {/* Blog */}
             <Route path="/blog" element={<Blog />} />
+            {/* <Route path="/blog-details" element={<BlogDetails />} /> */}
             <Route path="/blog-posting" element={<BlogPosting />} />
             <Route
               path="/blog-management"
@@ -68,6 +84,15 @@ const App = () => {
             />
 
             {/* WDMS */}
+            <Route path="/wdms/dashboard" element={<DashboardMain />} />
+            <Route path="/wdms/orders" element={<Orders />} />
+            <Route path="/wdms/customer" element={<CustomerManage />} />
+            <Route path="/wdms/route-management" element={<RouteManagement />} />
+            <Route path="/wdms/inventory" element={<Inventory />} />
+            <Route path="/wdms/expenses" element={<Expense />} />
+            <Route path="/wdms/add-expenses" element={<AddExpense />} />
+            <Route path="/wdms/reports" element={<ReportsAnalytics />} />
+            <Route path="/wdms/stock/manage" element={<ManageStock />} />
             <Route
               path="/wdms/dashboard"
               element={<DashboardMain />}
@@ -105,6 +130,7 @@ const App = () => {
               path="/wdms/stock/purchase-history"
               element={<StockManagement />}
             />
+            <Route path="/wdms/payments" element={<Paymentmanagement />} />
             <Route
               path="/wdms/payments"
               element={<Paymentmanagement />}
@@ -117,6 +143,9 @@ const App = () => {
               path="/wdms/assign-delivery"
               element={<DeliveryBoyassign />}
             />
+            <Route path="/wdms/damage-stock" element={<DamagedStock />} />
+            <Route path="/wdms/vehicles" element={<Vehicles />} />
+            <Route path="/wdms/invoice" element={<InvoiceManagement />} />
             <Route
               path="/wdms/damage-stock"
               element={<DamagedStock />}
@@ -134,6 +163,7 @@ const App = () => {
               element={<LeaveRequest />}
             />
 
+            {/* Products */}
             {/* Product Pages */}
             <Route
               path="/products/subscription"
@@ -148,6 +178,10 @@ const App = () => {
               element={<Testimonial />}
             />
 
+            {/* Resources */}
+            <Route path="/resources/team" element={<OurTeam />} />
+            <Route path="/resources/gallery" element={<Gallery />} />
+
             {/* Resource Pages */}
             <Route
               path="/resources/team"
@@ -161,6 +195,7 @@ const App = () => {
         </Route>
 
         {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
         <Route
           path="*"
           element={<Navigate to="/login" replace />}

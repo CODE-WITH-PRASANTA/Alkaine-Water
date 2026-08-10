@@ -19,8 +19,6 @@ import MainTeam from "./Pages/MainTeam/MainTeam";
 import GalaryMain from "./Pages/GalaryMain/GalaryMain";
 import OurServices from "./Pages/OurServices/OurServices";
 import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
-
-// Other Pages
 import Testimonial from "./Pages/Testimonial/Testimonial";
 import Cart from "./Pages/Cart/Cart";
 import Cheakout from "./Pages/Cheakout/Cheakout";

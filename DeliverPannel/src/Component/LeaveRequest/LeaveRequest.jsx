@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Users, Clock, CheckCircle2, XCircle, Search, RotateCcw, 
   Calendar, Download, Eye, ChevronLeft, ChevronRight, ArrowRight, 
-  X, Phone, MapPin, AlertCircle, Edit3, MessageSquare, Check
+  X, Phone, MapPin, AlertCircle, Edit3, MessageSquare, Check, ChevronDown
 } from 'lucide-react';
 import './LeaveRequest.css';
 
@@ -99,12 +99,59 @@ const initialRequests = [
   }
 ];
 
+// Custom Dropdown Component to Prevent Mobile/FB OS Drawer Overflow
+const CustomDropdown = ({ label, value, options, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="lr-field" ref={dropdownRef}>
+      <label>{label}</label>
+      <div className="lr-custom-select-wrap">
+        <div 
+          className="lr-custom-select-trigger" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span>{value}</span>
+          <ChevronDown size={14} className={`lr-select-chevron ${isOpen ? 'open' : ''}`} />
+        </div>
+        {isOpen && (
+          <div className="lr-custom-options-list">
+            {options.map((opt, idx) => (
+              <div 
+                key={idx} 
+                className={`lr-custom-option ${value === opt ? 'selected' : ''}`}
+                onClick={() => {
+                  onChange(opt);
+                  setIsOpen(false);
+                }}
+              >
+                {opt}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const LeaveRequest = () => {
   const [requests, setRequests] = useState(initialRequests);
   const [searchTerm, setSearchTerm] = useState('');
-  const [leaveType, setLeaveType] = useState('All');
-  const [status, setStatus] = useState('All');
-  const [branch, setBranch] = useState('All');
+  const [leaveType, setLeaveType] = useState('All Types');
+  const [status, setStatus] = useState('All Status');
+  const [branch, setBranch] = useState('All Branches');
   const [dateRange, setDateRange] = useState('01/07/2026 - 31/07/2026');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -120,18 +167,18 @@ const LeaveRequest = () => {
   const filteredRequests = requests.filter(req => {
     const matchesSearch = req.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           req.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLeaveType = leaveType === 'All' || req.leaveType === leaveType;
-    const matchesStatus = status === 'All' || req.status === status;
-    const matchesBranch = branch === 'All' || req.branch === branch;
+    const matchesLeaveType = leaveType === 'All Types' || req.leaveType === leaveType;
+    const matchesStatus = status === 'All Status' || req.status === status;
+    const matchesBranch = branch === 'All Branches' || req.branch === branch;
 
     return matchesSearch && matchesLeaveType && matchesStatus && matchesBranch;
   });
 
   const handleReset = () => {
     setSearchTerm('');
-    setLeaveType('All');
-    setStatus('All');
-    setBranch('All');
+    setLeaveType('All Types');
+    setStatus('All Status');
+    setBranch('All Branches');
     setDateRange('01/07/2026 - 31/07/2026');
   };
 
@@ -244,10 +291,10 @@ const LeaveRequest = () => {
           </div>
         </div>
 
-        {/* Main Grid: Left Section & Right Sidebars */}
+        {/* Main Grid: Filters + Table + Sidebar Sections stacked vertically */}
         <div className="lr-main-grid">
           
-          {/* Left Side: Filter + Table */}
+          {/* Filters & Table Section */}
           <div className="lr-left-section">
             
             {/* Filter Box */}
@@ -266,25 +313,19 @@ const LeaveRequest = () => {
                   </div>
                 </div>
 
-                <div className="lr-field">
-                  <label>Leave Type</label>
-                  <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)}>
-                    <option value="All">All Types</option>
-                    <option value="Sick Leave">Sick Leave</option>
-                    <option value="Casual Leave">Casual Leave</option>
-                    <option value="Emergency Leave">Emergency Leave</option>
-                  </select>
-                </div>
+                <CustomDropdown 
+                  label="Leave Type"
+                  value={leaveType}
+                  options={['All Types', 'Sick Leave', 'Casual Leave', 'Emergency Leave']}
+                  onChange={setLeaveType}
+                />
 
-                <div className="lr-field">
-                  <label>Status</label>
-                  <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <option value="All">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
-                </div>
+                <CustomDropdown 
+                  label="Status"
+                  value={status}
+                  options={['All Status', 'Pending', 'Approved', 'Rejected']}
+                  onChange={setStatus}
+                />
 
                 <div className="lr-field">
                   <label>Date Range</label>
@@ -302,13 +343,12 @@ const LeaveRequest = () => {
 
               <div className="lr-filter-row lr-filter-actions">
                 <div className="lr-field lr-field-branch">
-                  <label>Branch / Hub</label>
-                  <select value={branch} onChange={(e) => setBranch(e.target.value)}>
-                    <option value="All">All Branches</option>
-                    <option value="Bhubaneswar">Bhubaneswar</option>
-                    <option value="Cuttack">Cuttack</option>
-                    <option value="Puri">Puri</option>
-                  </select>
+                  <CustomDropdown 
+                    label="Branch / Hub"
+                    value={branch}
+                    options={['All Branches', 'Bhubaneswar', 'Cuttack', 'Puri']}
+                    onChange={setBranch}
+                  />
                 </div>
 
                 <div className="lr-btn-group">
@@ -322,7 +362,7 @@ const LeaveRequest = () => {
               </div>
             </div>
 
-            {/* Table Box */}
+            {/* Table Box with Table-only Horizontal Scroll */}
             <div className="lr-card lr-table-card">
               <div className="lr-table-header">
                 <h3>Leave Requests List</h3>
@@ -419,7 +459,7 @@ const LeaveRequest = () => {
 
           </div>
 
-          {/* Right Sidebar Section */}
+          {/* Bottom/Right Sidebar Section */}
           <div className="lr-right-sidebar">
             
             {/* Today's Summary Card */}
@@ -541,6 +581,7 @@ const LeaveRequest = () => {
             </div>
 
           </div>
+
         </div>
 
         {/* Footer */}
@@ -630,7 +671,6 @@ const LeaveRequest = () => {
                 </div>
 
                 {!isEditingReason ? (
-                  // Display View
                   <div className="lr-reason-display">
                     <p className="lr-reason-text">{selectedRequest.reason}</p>
                     {selectedRequest.adminNotes && (
@@ -643,7 +683,6 @@ const LeaveRequest = () => {
                     )}
                   </div>
                 ) : (
-                  // Popup Form Inside Reason Section
                   <form onSubmit={handleSaveReasonForm} className="lr-reason-form-popup">
                     <div className="lr-form-group">
                       <label>Employee's Reason</label>

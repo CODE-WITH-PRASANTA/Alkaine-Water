@@ -9,18 +9,23 @@ import MainLayout from "./Layout/MainLayout/MainLayout";
 import Login from "./Components/Login/Login";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
-// Components / Pages
+// General Pages
+import Dashboards from "./Pages/Dashboards/Dashboards";
 import OurTeam from "./Components/OurTeam/OurTeam";
 import Gallery from "./Components/Gallery/Gallery";
-import Testimonial from "./pages/Testimonial/Testimonial";
+
 import ShopPosting from "./Components/ShopPosting/ShopPosting";
 import Contact from "./Components/Contact/Contact";
-import Dashboards from "./Pages/Dashboards/Dashboards";
+import AlkaMyProfile from "./Components/AlkaMyProfile/AlkaMyProfile";
+import AlkaNotificationSetting from "./Components/AlkaNotificationSetting/AlkaNotificationSetting";
+import Settings from "./Components/Settings/Settings";
+
+// Blog Components
 import Blog from "./Components/Blog/Blog";
 import BlogPosting from "./Components/BlogPosting/BlogPosting";
 import BlogManagement from "./Components/BlogManagement/BlogManagement";
 
-// WDMS Components & Pages
+// WDMS Pages & Components
 import DashboardMain from "./Pages/DashboardMain/DashboardMain";
 import Orders from "./Pages/Orders/Orders";
 import CustomerManage from "./Pages/CustomerManage/CustomerManage";
@@ -42,6 +47,7 @@ import LeaveRequest from "./Components/LeaveRequest/LeaveRequest";
 // Products & Resources
 import SubscriptionManagement from "./Pages/SubscriptionManagement/SubscriptionManagement";
 import DeliveryId from "./Pages/DeliveryId/DeliveryId";
+import Testiminial from "./Components/Testiminial/Testiminial";
 
 const App = () => {
   return (
@@ -54,26 +60,30 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
 
-            {/* Root Redirect */}
+            {/* Root Landing Redirect */}
             <Route
               path="/"
               element={<Navigate to="/wdms/dashboard" replace />}
             />
 
-            {/* Main Pages */}
+            {/* Main Admin Pages */}
             <Route path="/dashboard" element={<Dashboards />} />
             <Route path="/team" element={<OurTeam />} />
             <Route path="/gallery" element={<Gallery />} />
-            <Route path="/testimonial" element={<Testimonial />} />
             <Route path="/shop" element={<ShopPosting />} />
             <Route path="/contact" element={<Contact />} />
+
+            {/* Account & Settings */}
+            <Route path="/profile" element={<AlkaMyProfile />} />
+            <Route path="/security" element={<AlkaNotificationSetting />} />
+            <Route path="/settings" element={<Settings />} />
 
             {/* Blog Pages */}
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog-posting" element={<BlogPosting />} />
             <Route path="/blog-management" element={<BlogManagement />} />
 
-            {/* WDMS Pages */}
+            {/* WDMS Module Routes */}
             <Route path="/wdms/dashboard" element={<DashboardMain />} />
             <Route path="/wdms/orders" element={<Orders />} />
             <Route path="/wdms/customer" element={<CustomerManage />} />
@@ -95,7 +105,7 @@ const App = () => {
             {/* Product Routes */}
             <Route path="/products/subscription" element={<SubscriptionManagement />} />
             <Route path="/products/id-generate" element={<DeliveryId />} />
-            <Route path="/products/testimonials" element={<Testimonial />} />
+            <Route path="/products/testimonials" element={<Testiminial />} />
 
             {/* Resource Routes */}
             <Route path="/resources/team" element={<OurTeam />} />
@@ -104,7 +114,7 @@ const App = () => {
           </Route>
         </Route>
 
-        {/* Fallback Route */}
+        {/* Catch-all Fallback Route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

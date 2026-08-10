@@ -13,7 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import './NextDelivery.css';
-
+ 
 const NextDelivery = () => {
   const [activeTab, setActiveTab] = useState('all');
 

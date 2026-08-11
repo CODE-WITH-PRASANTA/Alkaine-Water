@@ -44,7 +44,7 @@ import Vehicles from "./Components/Vehicles/Vehicles";
 import InvoiceManagement from "./Components/InvoiceManagement/InvoiceManagement";
 import LeaveRequest from "./Components/LeaveRequest/LeaveRequest";
 
-// Product Pages
+// Products & Resources
 import SubscriptionManagement from "./Pages/SubscriptionManagement/SubscriptionManagement";
 import DeliveryId from "./Pages/DeliveryId/DeliveryId";
 import Testiminial from "./Components/Testiminial/Testiminial";
@@ -56,11 +56,11 @@ const App = () => {
         {/* Public Route */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
+        {/* Protected Routes Wrapper */}
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
 
-            {/* Default Landing Redirect */}
+            {/* Root Landing Redirect */}
             <Route
               path="/"
               element={<Navigate to="/wdms/dashboard" replace />}
@@ -78,7 +78,7 @@ const App = () => {
             <Route path="/security" element={<AlkaNotificationSetting />} />
             <Route path="/wdms/settings" element={<Settings />} />
 
-            {/* Blog Routes */}
+            {/* Blog Pages */}
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog-posting" element={<BlogPosting />} />
             <Route path="/blog-management" element={<BlogManagement />} />
@@ -102,12 +102,12 @@ const App = () => {
             <Route path="/wdms/invoice" element={<InvoiceManagement />} />
             <Route path="/wdms/leave-request" element={<LeaveRequest />} />
 
-            {/* Products Routes */}
+            {/* Product Routes */}
             <Route path="/products/subscription" element={<SubscriptionManagement />} />
             <Route path="/products/id-generate" element={<DeliveryId />} />
             <Route path="/products/testimonials" element={<Testiminial />} />
 
-            {/* Resources Routes */}
+            {/* Resource Routes */}
             <Route path="/resources/team" element={<OurTeam />} />
             <Route path="/resources/gallery" element={<Gallery />} />
 

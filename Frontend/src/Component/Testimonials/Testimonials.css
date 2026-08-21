@@ -1,120 +1,237 @@
-/* Container for the whole section */
 .testimonials {
-  padding: 60px 20px;
+  padding: clamp(50px, 8vw, 90px) 20px;
   text-align: center;
-  background-color: #f9fbfd;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Header styling */
 .testimonials-header {
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .testimonials-subheading {
   color: #004a99;
-  font-weight: bold;
-  letter-spacing: 1px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
 }
 
 .testimonials-main-title {
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   margin: 10px 0;
+  color: #111827;
+  font-weight: 800;
 }
 
-/* Grid layout for 3 cards */
-.testimonials-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
+/* Slider layout */
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 60px; /* reserves room for the side buttons so cards never get clipped */
+  box-sizing: border-box;
 }
 
-/* Individual card styling */
+.testimonials-container {
+  overflow: hidden;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.testimonials-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
 .testimonial-card {
-  background: white;
-  padding: 40px 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Premium card */
+.card-inner {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 74, 153, 0.05);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.quote-icon {
-  background: #004a99;
-  color: white;
-  padding: 15px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
+.card-inner:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 45px rgba(0, 74, 153, 0.12);
+}
+
+.bg-quote {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  font-size: 120px;
+  color: #f1f5f9;
+  z-index: 0;
+  transform: rotate(10deg);
 }
 
 .stars {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+}
+
+.testimonial-heading {
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  color: #1f2937;
+  font-weight: 700;
+  z-index: 1;
+  letter-spacing: 0.3px;
 }
 
 .testimonial-text {
   font-size: 1rem;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 25px;
-  height: 80px; /* Keeps card heights consistent */
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 30px;
+  flex-grow: 1;
+  z-index: 1;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 1;
+  width: 100%;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 20px;
 }
 
 .user-img {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 15px;
-}
-
-.testimonial-heading {
-  margin: 5px 0;
-  font-size: 1.1rem;
-  color: #333;
+  border: 2px solid #004a99;
+  padding: 2px;
+  flex-shrink: 0;
 }
 
 .user-location {
-  color: #004a99;
-  font-weight: 600;
+  display: block;
+  color: #111827;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
-/* Pagination Styling */
-.pagination {
+.verified-badge {
+  display: block;
+  color: #10b981;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* Side nav buttons — now inline within the reserved padding, so they
+   sit cleanly beside the section instead of overflowing the page */
+.slider-btn {
+  background: #ffffff;
+  color: #004a99;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.slider-btn:hover {
+  background: #004a99;
+  color: #ffffff;
+  box-shadow: 0 10px 28px rgba(0, 74, 153, 0.3);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.slider-btn:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.prev-btn { left: 0; }
+.next-btn { right: 0; }
+
+/* Dots */
+.dots-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 50px;
+  gap: 8px;
+  margin-top: 40px;
+  flex-wrap: wrap;
 }
 
-.pagination button {
-  padding: 8px 16px;
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  border: none;
   cursor: pointer;
-  border: 1px solid #004a99;
-  background-color: white;
-  color: #004a99;
-  border-radius: 4px;
   transition: all 0.3s ease;
+  padding: 0;
 }
 
-.pagination button:hover:not(:disabled) {
+.dot.active {
   background-color: #004a99;
-  color: white;
+  width: 26px;
+  border-radius: 10px;
 }
 
-.pagination button.active {
-  background-color: #004a99;
-  color: white;
-  font-weight: bold;
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .slider-wrapper { padding: 0 50px; }
+  .card-inner { padding: 34px 26px; }
 }
 
-.pagination button:disabled {
-  border-color: #ccc;
-  color: #ccc;
-  cursor: not-allowed;
-  background-color: #f4f4f4;
+@media (max-width: 768px) {
+  .testimonials { padding: 50px 15px; }
+  .testimonials-main-title { font-size: 1.9rem; }
+  .slider-wrapper { padding: 0 44px; }
+  .slider-btn { width: 42px; height: 42px; font-size: 1rem; }
+}
+
+@media (max-width: 640px) {
+  .slider-wrapper { padding: 0 8px; }
+  .slider-btn {
+    position: absolute;
+    top: auto;
+    bottom: -56px;
+    transform: none;
+  }
+  .prev-btn { left: calc(50% - 60px); }
+  .next-btn { right: calc(50% - 60px); }
+  .testimonials-container { padding: 20px 0 60px; }
+  .card-inner { padding: 28px 22px; }
+  .bg-quote { font-size: 90px; }
 }

@@ -76,7 +76,7 @@ const App = () => {
             {/* Account & Settings */}
             <Route path="/profile" element={<AlkaMyProfile />} />
             <Route path="/security" element={<AlkaNotificationSetting />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/wdms/settings" element={<Settings />} />
 
             {/* Blog Pages */}
             <Route path="/blog" element={<Blog />} />

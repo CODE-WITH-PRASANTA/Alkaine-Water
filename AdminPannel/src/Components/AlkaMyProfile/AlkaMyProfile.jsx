@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import './AlkaMyProfile.css';
 
 const AlkaMyProfile = () => {
-  // State for form fields
-  const [adminName, setAdminName] = useState('Admin');
-  const [email, setEmail] = useState('admin@pureflow.com');
+  // State initialized as empty strings so placeholders are shown initially
+  const [adminName, setAdminName] = useState('');
+  const [email, setEmail] = useState('');
   const [profilePhoto, setProfilePhoto] = useState(
     'https://via.placeholder.com/150/003366/FFFFFF?text=PureFlow'
   );

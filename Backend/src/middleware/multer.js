@@ -4,7 +4,7 @@ const fs = require("fs");
 const sharp = require("sharp");
 
 // Upload folder path
-const uploadPath = path.join(__dirname, "../../uploads");
+const uploadPath = path.join(__dirname, "../../uploads/testimonial");
 
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
     "image/bmp",
     "image/tiff",
   ];
-  
+
   const allowedDocTypes = [
     "application/pdf",
     "application/msword",
@@ -51,7 +51,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 15 * 1024 * 1024 }, // Kept at 15MB to match server limits
 });
 
 // Helper function to process single or multiple uploaded files to WebP
@@ -84,34 +84,34 @@ const processUploadedFiles = async (req, res, next) => {
       }
     }
 
-    // Handle multiple file upload (req.files)
+    // Handle multiple file upload (req.files) safely
     if (req.files) {
-      const fieldKeys = Array.isArray(req.files) ? [req.files] : Object.keys(req.files);
-      
-      for (const key of Object.keys(req.files)) {
-        const fileList = Array.isArray(req.files[key]) ? req.files[key] : [req.files[key]];
-        for (const file of fileList) {
-          const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 999999)}`;
+      // Flattens object arrays (upload.fields) or direct arrays (upload.array)
+      const filesArray = Array.isArray(req.files) 
+        ? req.files 
+        : Object.values(req.files).flat();
 
-          if (file.mimetype.startsWith("image/")) {
-            const filename = `${uniqueSuffix}.webp`;
-            const filePath = path.join(uploadPath, filename);
+      for (const file of filesArray) {
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 999999)}`;
 
-            await sharp(file.buffer).webp({ quality: 80 }).toFile(filePath);
+        if (file.mimetype.startsWith("image/")) {
+          const filename = `${uniqueSuffix}.webp`;
+          const filePath = path.join(uploadPath, filename);
 
-            file.filename = filename;
-            file.path = filePath;
-            file.mimetype = "image/webp";
-          } else {
-            const ext = path.extname(file.originalname);
-            const filename = `${uniqueSuffix}${ext}`;
-            const filePath = path.join(uploadPath, filename);
+          await sharp(file.buffer).webp({ quality: 80 }).toFile(filePath);
 
-            await fs.promises.writeFile(filePath, file.buffer);
+          file.filename = filename;
+          file.path = filePath;
+          file.mimetype = "image/webp";
+        } else {
+          const ext = path.extname(file.originalname);
+          const filename = `${uniqueSuffix}${ext}`;
+          const filePath = path.join(uploadPath, filename);
 
-            file.filename = filename;
-            file.path = filePath;
-          }
+          await fs.promises.writeFile(filePath, file.buffer);
+
+          file.filename = filename;
+          file.path = filePath;
         }
       }
     }
@@ -141,7 +141,7 @@ const handleDeliveryUploads = (req, res, next) => {
   });
 };
 
-// Middleware wrapper for single image uploads (e.g., team members)
+// Middleware wrapper for single image uploads (e.g., testimonials, team members)
 const handleSingleImageUpload = (fieldName) => {
   return (req, res, next) => {
     upload.single(fieldName)(req, res, (err) => {

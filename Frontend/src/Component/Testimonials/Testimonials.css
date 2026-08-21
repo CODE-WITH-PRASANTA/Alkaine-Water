@@ -1,12 +1,12 @@
 .testimonials {
-  padding: clamp(50px, 8vw, 90px) 20px;
+  padding: clamp(60px, 8vw, 100px) 20px;
   text-align: center;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f6 100%);
+  background: linear-gradient(180deg, #eef1f5 0%, #e9edf2 100%);
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .testimonials-header {
-  margin-bottom: 50px;
+  margin-bottom: 55px;
 }
 
 .testimonials-subheading {
@@ -24,42 +24,46 @@
   font-weight: 800;
 }
 
-/* Slider layout */
+/* Slider layout — extra side padding gives the buttons real breathing
+   room outside the cards, matching the floating look in the reference */
 .slider-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 60px; /* reserves room for the side buttons so cards never get clipped */
+  padding: 0 70px;
   box-sizing: border-box;
 }
 
 .testimonials-container {
   overflow: hidden;
   width: 100%;
-  padding: 20px 0;
+  padding: 25px 0;
 }
 
 .testimonials-track {
   display: flex;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
+/* Padding creates the visible gutter of background between cards,
+   just like the reference screenshot */
 .testimonial-card {
-  padding: 0 15px;
+  padding: 0 14px;
   box-sizing: border-box;
 }
 
-/* Premium card */
+/* Premium floating card */
 .card-inner {
   background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 74, 153, 0.05);
+  padding: 38px 32px;
+  border-radius: 22px;
+  box-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.04),
+    0 18px 40px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -72,40 +76,43 @@
 
 .card-inner:hover {
   transform: translateY(-6px);
-  box-shadow: 0 24px 45px rgba(0, 74, 153, 0.12);
+  box-shadow:
+    0 4px 10px rgba(0, 74, 153, 0.06),
+    0 26px 50px rgba(0, 74, 153, 0.14);
 }
 
 .bg-quote {
   position: absolute;
-  top: -15px;
-  right: -10px;
-  font-size: 120px;
+  top: -12px;
+  right: -8px;
+  font-size: 130px;
   color: #f1f5f9;
   z-index: 0;
-  transform: rotate(10deg);
+  transform: rotate(8deg);
 }
 
 .stars {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   z-index: 1;
   display: flex;
   gap: 4px;
+  font-size: 1.05rem;
 }
 
 .testimonial-heading {
   margin: 0 0 15px 0;
-  font-size: 1.2rem;
-  color: #1f2937;
-  font-weight: 700;
+  font-size: 1.3rem;
+  color: #111827;
+  font-weight: 800;
   z-index: 1;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .testimonial-text {
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.75;
   color: #4b5563;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
   flex-grow: 1;
   z-index: 1;
 }
@@ -116,16 +123,16 @@
   gap: 15px;
   z-index: 1;
   width: 100%;
-  border-top: 1px solid #f3f4f6;
-  padding-top: 20px;
+  border-top: 1px solid #eef0f3;
+  padding-top: 22px;
 }
 
 .user-img {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #004a99;
+  border: 2px solid #0a3d7a;
   padding: 2px;
   flex-shrink: 0;
 }
@@ -140,26 +147,28 @@
 .verified-badge {
   display: block;
   color: #10b981;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   margin-top: 3px;
 }
 
-/* Side nav buttons — now inline within the reserved padding, so they
-   sit cleanly beside the section instead of overflowing the page */
+/* Side nav buttons — floating further out from the cards with a
+   clear gap, soft shadow, thin chevron icon, exactly like the reference */
 .slider-btn {
   background: #ffffff;
-  color: #004a99;
+  color: #1f2937;
   border: none;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 10px rgba(15, 23, 42, 0.06),
+    0 12px 24px rgba(15, 23, 42, 0.1);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -171,67 +180,75 @@
 .slider-btn:hover {
   background: #004a99;
   color: #ffffff;
-  box-shadow: 0 10px 28px rgba(0, 74, 153, 0.3);
+  box-shadow:
+    0 6px 16px rgba(0, 74, 153, 0.15),
+    0 16px 32px rgba(0, 74, 153, 0.25);
   transform: translateY(-50%) scale(1.06);
 }
 
 .slider-btn:active {
-  transform: translateY(-50%) scale(0.96);
+  transform: translateY(-50%) scale(0.95);
 }
 
 .prev-btn { left: 0; }
 .next-btn { right: 0; }
 
-/* Dots */
+/* Dots — pill-shaped active dot, matching the reference */
 .dots-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
-  margin-top: 40px;
+  margin-top: 45px;
   flex-wrap: wrap;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background-color: #d1d5db;
+  background-color: #cbd5e1;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 0;
 }
 
+.dot:hover {
+  background-color: #94a3b8;
+}
+
 .dot.active {
   background-color: #004a99;
-  width: 26px;
+  width: 28px;
   border-radius: 10px;
 }
 
 /* Responsive breakpoints */
 @media (max-width: 1024px) {
-  .slider-wrapper { padding: 0 50px; }
+  .slider-wrapper { padding: 0 56px; max-width: 900px; }
   .card-inner { padding: 34px 26px; }
 }
 
 @media (max-width: 768px) {
-  .testimonials { padding: 50px 15px; }
+  .testimonials { padding: 55px 15px; }
   .testimonials-main-title { font-size: 1.9rem; }
-  .slider-wrapper { padding: 0 44px; }
-  .slider-btn { width: 42px; height: 42px; font-size: 1rem; }
+  .slider-wrapper { padding: 0 48px; }
+  .slider-btn { width: 44px; height: 44px; font-size: 1rem; }
 }
 
 @media (max-width: 640px) {
-  .slider-wrapper { padding: 0 8px; }
+  .slider-wrapper { padding: 0 6px; }
   .slider-btn {
-    position: absolute;
     top: auto;
-    bottom: -56px;
+    bottom: -58px;
     transform: none;
   }
-  .prev-btn { left: calc(50% - 60px); }
-  .next-btn { right: calc(50% - 60px); }
+  .prev-btn { left: calc(50% - 62px); }
+  .next-btn { right: calc(50% - 62px); }
+  .slider-btn:hover { transform: scale(1.06); }
+  .slider-btn:active { transform: scale(0.95); }
   .testimonials-container { padding: 20px 0 60px; }
-  .card-inner { padding: 28px 22px; }
-  .bg-quote { font-size: 90px; }
+  .card-inner { padding: 30px 24px; }
+  .bg-quote { font-size: 100px; }
 }

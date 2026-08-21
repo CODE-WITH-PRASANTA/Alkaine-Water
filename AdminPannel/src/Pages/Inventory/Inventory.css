@@ -1,210 +1,283 @@
-/* Scoped Component Design Token Ecosystem variables */
+/* ==========================================================================
+   Inventory Dashboard Scoping Variables & Themes
+   ========================================================================== */
 :root {
-  --inv-blue-primary: #1d4ed8;
-  --inv-blue-hover: #1e40af;
-  --inv-surface-base: #ffffff;
-  --inv-surface-alt: #f8fafc;
+  /* Surface & Base Colors */
+  --inv-bg-main: #f8fafc;
+  --inv-surface-card: #ffffff;
   --inv-border-color: #e2e8f0;
   
-  --inv-txt-main: #0f172a;
-  --inv-txt-muted: #64748b;
-  
-  /* Layout Metrics Hex Colors matching exact dashboard images */
-  --color-calibrated: #1d4ed8;
-  --color-washed: #15803d;
-  --color-ready: #16a34a;
-  --color-broken: #dc2626;
-  --color-missing: #e11d48;
+  /* Text Colors */
+  --inv-txt-primary: #0f172a;
+  --inv-txt-secondary: #475569;
+  --inv-txt-muted: #94a3b8;
+
+  /* Metric Card Themes (Colorful Accents) */
+  --inv-calibrated-color: #2563eb;
+  --inv-calibrated-bg: #eff6ff;
+  --inv-calibrated-border: #bfdbfe;
+
+  --inv-washed-color: #0d9488;
+  --inv-washed-bg: #f0fdf4;
+  --inv-washed-border: #99f6e4;
+
+  --inv-ready-color: #16a34a;
+  --inv-ready-bg: #f0fdf4;
+  --inv-ready-border: #bbf7d0;
+
+  --inv-broken-color: #dc2626;
+  --inv-broken-bg: #fef2f2;
+  --inv-broken-border: #fecaca;
+
+  --inv-missing-color: #d97706;
+  --inv-missing-bg: #fffbeb;
+  --inv-missing-border: #fde68a;
+
+  /* Shadows & Radius */
+  --inv-radius-sm: 8px;
+  --inv-radius-md: 12px;
+  --inv-radius-lg: 16px;
+  --inv-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --inv-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+  --inv-shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.1);
+  --inv-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Master Layout Frame Container Wrapper */
+/* Dashboard Container Frame */
 .inv-dashboard {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  max-width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 1200px;
   margin: 24px auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  padding: 0 16px;
+  color: var(--inv-txt-primary);
 }
 
-/* Metrics Top Summary Bar layout configuration */
-.inv-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  width: 100%;
-}
-
-.inv-metric-card {
-  background-color: var(--inv-surface-base);
-  border: 1px solid var(--inv-border-color);
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
-  text-align: center;
-}
-
-.inv-metric-card__label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--inv-txt-muted);
-}
-
-.inv-metric-card__value {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-/* Custom Modifiers for Metrics Value classes */
-.inv-metric-card__value--calibrated { color: var(--color-calibrated); }
-.inv-metric-card__value--washed { color: var(--color-washed); }
-.inv-metric-card__value--ready { color: var(--color-ready); }
-.inv-metric-card__value--broken { color: var(--color-broken); }
-.inv-metric-card__value--missing { color: var(--color-missing); }
-
-/* Main Lower Display Container Element Card */
-.inv-content-card {
-  background-color: var(--inv-surface-base);
-  border: 1px solid var(--inv-border-color);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
-}
-
-/* Data Distribution Grid Table presentation structures */
-.inv-table-responsive {
-  width: 100%;
-  overflow-x: auto;
-  margin-bottom: 24px;
-  border-radius: 8px;
-}
-
-.inv-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  min-width: 600px;
-}
-
-.inv-table th {
-  padding: 14px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--inv-txt-muted);
-  border-bottom: 1px solid var(--inv-border-color);
-  background-color: transparent;
-}
-
-.inv-table td {
-  padding: 16px;
-  font-size: 14px;
-  color: var(--inv-txt-main);
-  border-bottom: 1px solid #f1f5f9;
-  font-weight: 500;
-}
-
-.inv-table__row:hover {
-  background-color: var(--inv-surface-alt);
-}
-
-/* Column Specific Structural weights overrides */
-.inv-cell-title {
-  font-weight: 600;
-  color: var(--inv-txt-main);
-}
-
-.inv-cell-highlight {
-  font-weight: 600;
-}
-
-/* Action Trigger Element Button Footer blocks alignment */
-.inv-footer-action {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.inv-footer-action__btn {
-  background-color: var(--inv-blue-primary);
-  color: #ffffff;
-  border: none;
-  padding: 12px 40px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  box-shadow: 0 2px 10px rgba(29, 78, 216, 0.15);
-}
-
-.inv-footer-action__btn:hover {
-  background-color: var(--inv-blue-hover);
-}
-
-.inv-footer-action__btn:active {
-  transform: scale(0.99);
-}
-
-/* Mobile Responsive Breakpoints Layout updates */
-@media (max-width: 768px) {
-  .inv-metrics-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .inv-metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .inv-content-card {
-    padding: 14px;
-  }
-}
-
-/* ==========================================================================
-   ADDITIONS: New CSS for Download Button (Upper Right Alignment)
-   ========================================================================== */
+/* Download Action Header Section */
 .inv-header-actions {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  margin-bottom: 20px;
 }
 
 .inv-download-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--inv-surface-base);
-  color: var(--inv-txt-main);
-  border: 1px solid var(--inv-border-color);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--inv-radius-md);
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: var(--inv-transition);
 }
 
 .inv-download-btn:hover {
-  background-color: var(--inv-surface-alt);
-  border-color: #cbd5e1;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
 }
 
 .inv-download-btn:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .inv-download-btn__icon {
-  width: 16px;
-  height: 16px;
-  color: var(--inv-txt-muted);
+  width: 18px;
+  height: 18px;
+}
+
+/* Upper Metrics Cards Grid */
+.inv-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.inv-metric-card {
+  background-color: var(--inv-surface-card);
+  padding: 20px;
+  border-radius: var(--inv-radius-md);
+  border: 1px solid var(--inv-border-color);
+  box-shadow: var(--inv-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: var(--inv-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.inv-metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--inv-shadow-md);
+}
+
+.inv-metric-card__label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--inv-txt-secondary);
+}
+
+.inv-metric-card__value {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Specific Card Color Modifiers */
+.inv-metric-card__value--calibrated {
+  color: var(--inv-calibrated-color);
+}
+.inv-metric-card:has(.inv-metric-card__value--calibrated) {
+  background-color: var(--inv-calibrated-bg);
+  border-color: var(--inv-calibrated-border);
+}
+
+.inv-metric-card__value--washed {
+  color: var(--inv-washed-color);
+}
+.inv-metric-card:has(.inv-metric-card__value--washed) {
+  background-color: var(--inv-washed-bg);
+  border-color: var(--inv-washed-border);
+}
+
+.inv-metric-card__value--ready {
+  color: var(--inv-ready-color);
+}
+.inv-metric-card:has(.inv-metric-card__value--ready) {
+  background-color: var(--inv-ready-bg);
+  border-color: var(--inv-ready-border);
+}
+
+.inv-metric-card__value--broken {
+  color: var(--inv-broken-color);
+}
+.inv-metric-card:has(.inv-metric-card__value--broken) {
+  background-color: var(--inv-broken-bg);
+  border-color: var(--inv-broken-border);
+}
+
+.inv-metric-card__value--missing {
+  color: var(--inv-missing-color);
+}
+.inv-metric-card:has(.inv-metric-card__value--missing) {
+  background-color: var(--inv-missing-bg);
+  border-color: var(--inv-missing-border);
+}
+
+/* Table Card Section */
+.inv-content-card {
+  background-color: var(--inv-surface-card);
+  border-radius: var(--inv-radius-lg);
+  border: 1px solid var(--inv-border-color);
+  box-shadow: var(--inv-shadow-md);
+  overflow: hidden;
+}
+
+.inv-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 650px;
+}
+
+.inv-table th {
+  padding: 16px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--inv-txt-secondary);
+  background-color: var(--inv-bg-main);
+  border-bottom: 1px solid var(--inv-border-color);
+}
+
+.inv-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--inv-txt-primary);
+  border-bottom: 1px solid var(--inv-border-color);
+  transition: background-color 0.15s ease;
+}
+
+.inv-table__row:hover td {
+  background-color: #f1f5f9;
+}
+
+.inv-table tr:last-child td {
+  border-bottom: none;
+}
+
+.inv-cell-title {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Highlighted Column (Current Stock) */
+.inv-cell-highlight {
+  font-weight: 700;
+  color: #2563eb;
+  background-color: #eff6ff;
+  border-radius: 6px;
+}
+
+/* Bottom Action Footer Button Bar */
+.inv-footer-action {
+  padding: 16px 20px;
+  background-color: var(--inv-bg-main);
+  border-top: 1px solid var(--inv-border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.inv-footer-action__btn {
+  background-color: #ffffff;
+  color: var(--inv-txt-primary);
+  border: 1px solid var(--inv-border-color);
+  padding: 10px 20px;
+  border-radius: var(--inv-radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--inv-transition);
+  box-shadow: var(--inv-shadow-sm);
+}
+
+.inv-footer-action__btn:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Custom Scrollbar for Table */
+.inv-table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+.inv-table-responsive::-webkit-scrollbar-track {
+  background: var(--inv-bg-main);
+}
+.inv-table-responsive::-webkit-scrollbar-thumb {
+  background: var(--inv-txt-muted);
+  border-radius: 10px;
+}
+
+/* Mobile Responsive Tweaks */
+@media (max-width: 600px) {
+  .inv-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

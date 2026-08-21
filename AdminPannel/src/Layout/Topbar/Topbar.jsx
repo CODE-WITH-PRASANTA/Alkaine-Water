@@ -42,18 +42,18 @@ const Topbar = ({ toggleSidebar }) => {
           <ChevronDown size={16} className={`Topbar-chevron ${dropdownOpen ? 'open' : ''}`} />
 
           {dropdownOpen && (
-            <div className="Topbar-dropdown">
-              <a href="#profile" className="Topbar-dropdown-item">
-                <User size={16} /> My Profile
-              </a>
-              <a href="#security" className="Topbar-dropdown-item">
-                <Shield size={16} /> Security
-              </a>
-              <div className="Topbar-dropdown-divider"></div>
-              <a href="#logout" className="Topbar-dropdown-item logout">
-                <LogOut size={16} /> Logout
-              </a>
-            </div>
+          <div className="Topbar-dropdown">
+          <a href="/profile" className="Topbar-dropdown-item">
+            <User size={16} /> My Profile
+          </a>
+          <a href="/security" className="Topbar-dropdown-item">
+            <Shield size={16} /> Security
+          </a>
+          <div className="Topbar-dropdown-divider"></div>
+          <a href="/logout" className="Topbar-dropdown-item logout">
+            <LogOut size={16} /> Logout
+          </a>
+        </div>
           )}
         </div>
       </div>

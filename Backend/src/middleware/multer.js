@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 
-// Upload folder path
+// Upload folder path relative to project root
 const uploadPath = path.join(__dirname, "../../uploads");
 
 if (!fs.existsSync(uploadPath)) {
@@ -86,8 +86,6 @@ const processUploadedFiles = async (req, res, next) => {
 
     // Handle multiple file upload (req.files)
     if (req.files) {
-      const fieldKeys = Array.isArray(req.files) ? [req.files] : Object.keys(req.files);
-      
       for (const key of Object.keys(req.files)) {
         const fileList = Array.isArray(req.files[key]) ? req.files[key] : [req.files[key]];
         for (const file of fileList) {

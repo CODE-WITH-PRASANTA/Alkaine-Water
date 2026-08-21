@@ -23,7 +23,7 @@
   background-color: #f0f4f6; /* लाइट ग्रे बैकग्राउंड */
   padding: 24px 30px;
   border-radius: 25px; /* गोल कोने */
-  border-top: 4px solid #c4261d; /* थिक रेड टॉप बॉर्डर जैसा इमेज में है */
+  border-top: 4px solid #1d4ac4; /* थिक रेड टॉप बॉर्डर जैसा इमेज में है */
   margin-bottom: 30px;
   display: flex;
   align-items: center;
@@ -38,7 +38,7 @@
 
 /* लाल रंग का 'Return to shop' बटन */
 .return-to-shop-btn {
-  background-color: #c4261d; /* परफेक्ट रेड कलर */
+  background-color: #1d63c4; /* परफेक्ट रेड कलर */
   color: #ffffff;
   border: none;
   padding: 16px 42px;
@@ -51,7 +51,7 @@
 
 /* बटन होवर इफेक्ट */
 .return-to-shop-btn:hover {
-  background-color: #a11d16;
+  background-color: #165ba1;
   box-shadow: 0 4px 12px rgba(196, 38, 29, 0.3);
   transform: translateY(-1px);
 }
@@ -99,7 +99,7 @@
 .active-cart-item-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-  border-color: #c4261d; /* होवर करने पर लाल रंग की हल्की बॉर्डर झलक */
+  border-color: #1d3cc4; /* होवर करने पर लाल रंग की हल्की बॉर्डर झलक */
 }
 
 .active-cart-item-details {
@@ -157,7 +157,7 @@
 .cart-remove-item-btn:hover {
   background-color: #fff1f0;
   border-color: #ffccc7;
-  color: #ff4d4f;
+  color: #504dff;
 }
 
 /* सिम्युलेटर टेस्टिंग बटन */

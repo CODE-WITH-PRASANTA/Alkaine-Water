@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
 // Layout Components
@@ -29,6 +29,18 @@ import Contact from "./Pages/Contact/Contact";
 import OurTeam from "./Component/OurTeam/OurTeam";
 import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
 
+// Conditional Floating Wrapper Component
+const ConditionalFloating = () => {
+  const location = useLocation();
+
+  // Only render Floating when path is exactly "/"
+  if (location.pathname !== "/") {
+    return null;
+  }
+
+  return <Floating />;
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -36,8 +48,8 @@ function App() {
       <Topbar />
       <Navbar />
 
-      {/* Global Floating Popup Form */}
-      <Floating />
+      {/* Floating Modal - Rendered conditionally on Home route only */}
+      <ConditionalFloating />
 
       {/* Direct Clean Routes */}
       <Routes>

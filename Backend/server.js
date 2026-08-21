@@ -29,23 +29,31 @@ connectDB();
 const app = express();
 
 // ================= Middleware =================
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-// FIX: raised limit from default 100kb -> 15mb so base64 images in
-// JSON bodies (e.g. Route Assignment "image" field) don't get rejected
-// by body-parser before they even reach your controllers.
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 // ================= Static Folder =================
+// Serves uploaded images statically at http://localhost:5000/uploads/<filename>
+// Fallback targets both root /uploads and /src/uploads to avoid path misconfigurations
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "src", "uploads")));
 
 // ================= API Routes =================
 app.use("/api/team", teamRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/testimonial", testimonialRoutes);
 app.use("/api/contact", contactRoutes);
+
+// Register both plural and singular routes to prevent path errors
 app.use("/api/blog", blogRoutes);
+app.use("/api/blogs", blogRoutes);
+
 app.use("/api/vehicle", vehicleRoutes);
 app.use("/api/manage", manageRoutes);
 
@@ -76,7 +84,6 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error("GLOBAL SERVER ERROR:", err);
 
-  // If Multer error occurs (e.g. invalid file, file limit exceeded)
   if (err instanceof require("multer").MulterError) {
     return res.status(400).json({
       success: false,
@@ -84,7 +91,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // If we passed an error inside multer filter validation manually
   if (err.message && err.message.includes("Only JPG, JPEG, PNG")) {
     return res.status(400).json({
       success: false,
@@ -92,9 +98,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // FIX: body-parser throws this when express.json() body exceeds
-  // its size limit — was previously falling through to the generic
-  // 500 fallback below with no useful message.
   if (err.type === "entity.too.large") {
     return res.status(413).json({
       success: false,
@@ -102,8 +105,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // FIX: malformed JSON body (e.g. broken base64 string) also needs
-  // its own case instead of falling into the generic 500.
   if (err.type === "entity.parse.failed" || err instanceof SyntaxError) {
     return res.status(400).json({
       success: false,
@@ -111,7 +112,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // Fallback for any other unexpected system crashes
   res.status(500).json({
     success: false,
     message: err.message || "An unexpected system error occurred",

@@ -173,6 +173,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
         { text: 'Contact Us', path: '/contact' },
       ],
     },
+    
 
     {
       type: 'dropdown',

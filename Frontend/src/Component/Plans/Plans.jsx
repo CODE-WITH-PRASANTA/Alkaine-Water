@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaCheckCircle, FaWater, FaTruck, FaRecycle } from 'react-icons/fa';
 import './Plans.css';
 
 const Plans = () => {
+  const [flippedCards, setFlippedCards] = useState({});
+
+  const toggleCardFlip = (id, isFeatured) => {
+    if (isFeatured) return;
+    setFlippedCards((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const planData = [
     {
       id: "basic",
@@ -10,7 +20,7 @@ const Plans = () => {
       subtitle: "*Home & Small Families",
       price: "1,499",
       period: "MO",
-      desc: "Ideal for small families prioritizing pure, additive-free daily health..",
+      desc: "Ideal for small families prioritizing pure, additive-free daily health.",
       features: [
         { text: "Free Delivery", icon: <FaTruck /> },
         { text: "Max 10 Bottles / Month", icon: <FaWater /> },
@@ -42,7 +52,7 @@ const Plans = () => {
       subtitle: "*Workplaces, Gyms & Studios",
       price: "2,199",
       period: "MO",
-      desc: "Built for offices and gyms dedicated to peak team performance and wellness..",
+      desc: "Built for offices and gyms dedicated to peak team performance and wellness.",
       features: [
         { text: "Free Delivery", icon: <FaTruck /> },
         { text: "Max 10 Bottles / Month", icon: <FaWater /> },
@@ -56,7 +66,6 @@ const Plans = () => {
 
   return (
     <section className="Plans-section">
-      {/* Structural Semantic SEO Block */}
       <div className="Plans-seo-hidden" aria-hidden="true">
         <h2>Alka Drops - Best Bhubaneswar Water Supplier</h2>
         <h3>Best Water Supplier in Odisha | Pure Wellness Water</h3>
@@ -70,15 +79,12 @@ const Plans = () => {
         {planData.map((plan) => (
           <div 
             key={plan.id} 
-            className={`Plans-card ${plan.isFeatured ? 'Plans-featured-card' : 'Plans-standard-card'}`}
+            className={`Plans-card ${plan.isFeatured ? 'Plans-featured-card' : 'Plans-standard-card'} ${flippedCards[plan.id] ? 'is-flipped' : ''}`}
+            onClick={() => toggleCardFlip(plan.id, plan.isFeatured)}
           >
-            {/* 180-Degree Flip Inner Axis structure for standard side cards */}
             <div className="Plans-card-inner">
-              
-              {/* CARD FRONT SIDE */}
+              {/* CARD FRONT */}
               <div className="Plans-card-front">
-                
-                {/* Custom Ring and Badge Pricing Indicator */}
                 <div className="Plans-price-ring-container">
                   <div className="Plans-price-outer-ring">
                     <div className="Plans-price-bubble">
@@ -91,17 +97,15 @@ const Plans = () => {
                   </div>
                 </div>
 
-                {/* Plan Metadata Headers */}
                 <h3 className="Plans-card-title">{plan.title}</h3>
                 <span className="Plans-card-subtitle">{plan.subtitle}</span>
 
-                {/* Body Content / Feature List */}
                 {plan.isFeatured ? (
                   <ul className="Plans-feature-list">
                     {plan.features.map((feat, index) => (
                       <li key={index} className="Plans-feature-item">
                         <span className="Plans-feat-icon">{feat.icon}</span>
-                        {feat.text}
+                        <span>{feat.text}</span>
                       </li>
                     ))}
                   </ul>
@@ -109,15 +113,19 @@ const Plans = () => {
                   <p className="Plans-card-description">{plan.desc}</p>
                 )}
 
-                {/* CTA Action Button */}
-                <button className="Plans-order-btn">
+                <button 
+                  className="Plans-order-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle Order action
+                  }}
+                >
                   <span>Order Now</span>
                   <div className="Plans-order-btn-accent"></div>
                 </button>
-
               </div>
 
-              {/* CARD BACK SIDE (Triggers 180-degree matching view on hover for 1st & 3rd cards) */}
+              {/* CARD BACK */}
               {!plan.isFeatured && (
                 <div className="Plans-card-back">
                   <div className="Plans-price-ring-container">
@@ -139,18 +147,23 @@ const Plans = () => {
                     {plan.features.map((feat, index) => (
                       <li key={index} className="Plans-feature-item">
                         <span className="Plans-feat-icon text-white">{feat.icon}</span>
-                        {feat.text}
+                        <span>{feat.text}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <button className="Plans-order-btn variant-light">
+                  <button 
+                    className="Plans-order-btn variant-light"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle Order action
+                    }}
+                  >
                     <span>Order Now</span>
                     <div className="Plans-order-btn-accent font-accent"></div>
                   </button>
                 </div>
               )}
-
             </div>
           </div>
         ))}

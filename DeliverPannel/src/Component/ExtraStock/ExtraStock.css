@@ -1,433 +1,715 @@
-/* Container reset and base setup */
-.extra-stock-container.full-page-view {
+/* Container reset and modern subtle background */
+.ExtraStock-container.ExtraStock-full-page-view {
   width: 100%;
   min-height: 100vh;
-  padding: 24px;
-  background-color: #f4f7fc;
+  background: #f4f9f8;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
 }
 
-/* 100% block stack structural architecture layout */
-.extra-stock-wrapper.full-width-stack {
+/* 100% block stack structural architecture */
+.ExtraStock-wrapper.ExtraStock-full-width-stack {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
   width: 100%;
+  max-width: 1200px; /* Constrained for modern ultra-wide monitors, remove if true edge-to-edge needed */
+  margin: 0 auto;
 }
 
-/* Form Card Setup stretching 100% width profile layout */
-.extra-stock-card.full-size-card {
+/* Advanced Card Design - Soft shadows, rounded corners, glass-like borders */
+.ExtraStock-card.ExtraStock-full-size-card,
+.ExtraStock-table-section-card {
   background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e1e8f5;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid rgba(209, 235, 231, 0.6);
+  box-shadow: 0 12px 40px rgba(15, 110, 97, 0.05), 0 1px 3px rgba(15, 110, 97, 0.02);
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
   width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.extra-stock-card-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
+.ExtraStock-card.ExtraStock-full-size-card:hover,
+.ExtraStock-table-section-card:hover {
+  box-shadow: 0 16px 50px rgba(15, 110, 97, 0.08), 0 2px 6px rgba(15, 110, 97, 0.03);
 }
 
-.extra-stock-title {
-  color: #0b2265;
-  font-size: 20px;
-  font-weight: 700;
+/* Header with modern accent line */
+.ExtraStock-card-header,
+.ExtraStock-table-section-title {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.ExtraStock-table-section-title {
+  color: #0f6e61;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 0 0 32px 0;
+}
+
+.ExtraStock-title {
+  color: #0f6e61;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
   margin: 0;
 }
 
-/* Split grid container logic layout */
-.extra-stock-form-content {
+.ExtraStock-header-accent {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #0f6e61, #189d8b);
+  border-radius: 4px;
+  margin-top: 12px;
+}
+
+/* Split grid container */
+.ExtraStock-form-content {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
   position: relative;
 }
 
-.extra-stock-form-left {
+.ExtraStock-form-left {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  z-index: 2;
+  gap: 28px;
 }
 
-.extra-stock-form-right {
+/* Right side Image Showcase - Modern floating effect */
+.ExtraStock-form-right {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
 }
 
-.extra-stock-jar-img {
-  max-width: 180px;
+.ExtraStock-image-showcase {
+  position: relative;
+  background: #f9fdfc;
+  border: 2px dashed #b5dbd5;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.4s ease;
+}
+
+.ExtraStock-image-showcase:hover {
+  border-color: #189d8b;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(24, 157, 139, 0.1);
+  transform: translateY(-4px);
+}
+
+.ExtraStock-jar-img {
+  max-width: 100%;
+  width: 220px;
   height: auto;
   object-fit: contain;
-  opacity: 0.95;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Input Fields styling components */
-.extra-stock-form-group {
+.ExtraStock-image-showcase:hover .ExtraStock-jar-img {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.ExtraStock-image-glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(24,157,139,0.15) 0%, rgba(255,255,255,0) 70%);
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Inputs styling */
+.ExtraStock-form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-.extra-stock-label {
-  color: #5c6b88;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.extra-stock-input,
-.extra-stock-select {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #d3dcfa;
+.ExtraStock-label {
+  color: #1a3330;
   font-size: 14px;
-  color: #1e293b;
-  background-color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ExtraStock-input-wrapper {
+  position: relative;
+}
+
+.ExtraStock-select {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 2px solid #e4f5f3;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a3330;
+  background-color: #f9fdfc;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%230f6e61%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 18px auto;
 }
 
-.extra-stock-input:focus,
-.extra-stock-select:focus {
-  border-color: #1253d6;
+.ExtraStock-select:hover {
+  border-color: #b5dbd5;
 }
 
-/* Counter setup selectors */
-.extra-stock-counter {
+.ExtraStock-select:focus {
+  border-color: #0f6e61;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(15, 110, 97, 0.1);
+}
+
+/* Modern Counter */
+.ExtraStock-counter {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #d3dcfa;
-  border-radius: 8px;
-  overflow: hidden;
+  background: #f9fdfc;
+  border: 2px solid #e4f5f3;
+  border-radius: 12px;
+  padding: 4px;
   width: fit-content;
-  background-color: #ffffff;
+  transition: border-color 0.3s ease;
 }
 
-.extra-stock-counter-btn {
-  background: none;
-  border: none;
-  width: 42px;
-  height: 42px;
+.ExtraStock-counter:hover {
+  border-color: #b5dbd5;
+}
+
+.ExtraStock-counter-btn {
+  background: #ffffff;
+  border: 1px solid #e4f5f3;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0b2265;
+  color: #0f6e61;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-.extra-stock-counter-btn:hover {
-  background-color: #f1f5f9;
-}
-
-.extra-stock-counter-value {
-  min-width: 46px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: #0b2265;
-  border-left: 1px solid #e1e8f5;
-  border-right: 1px solid #e1e8f5;
-  padding: 0 8px;
-}
-
-/* Dynamic Pricing parameters */
-.extra-stock-amount {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1253d6; /* The visual price highlights */
-  padding-bottom: 8px;
-  border-bottom: 1px dashed #e1e8f5;
-  width: fit-content;
-}
-
-/* Call to Action Button styling configurations */
-.extra-stock-submit-btn {
-  grid-column: 1 / -1;
-  width: 100%;
-  height: 48px;
-  margin-top: 24px;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
+.ExtraStock-counter-btn:hover {
+  background-color: #0f6e61;
   color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  box-sizing: border-box;
+  border-color: #0f6e61;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(15, 110, 97, 0.2);
 }
 
-.blue-btn {
-  background-color: #1253d6;
+.ExtraStock-counter-btn:active {
+  transform: translateY(1px);
 }
 
-.blue-btn:hover {
-  background-color: #0e42ab;
-}
-
-.edit-mode-btn {
-  background-color: #eab308;
-}
-
-.edit-mode-btn:hover {
-  background-color: #ca8a04;
-}
-
-.extra-stock-submit-btn:active {
-  transform: scale(0.99);
-}
-
-/* ================= CRUD DATA TABLE STYLING ================= */
-.table-section-card {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e1e8f5;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  padding: 24px;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.table-section-title {
-  color: #0b2265;
+.ExtraStock-counter-value {
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
   font-weight: 700;
-  margin: 0 0 20px 0;
+  color: #1a3330;
 }
 
-.table-responsive-wrapper {
+/* Dynamic Pricing Amount */
+.ExtraStock-amount {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f6e61;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  background: linear-gradient(135deg, #0f6e61 0%, #189d8b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ExtraStock-currency {
+  font-size: 20px;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+/* Premium Gradient CTA Button */
+.ExtraStock-submit-btn {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 320px;
+  margin: 16px auto 0 auto;
+  height: 56px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ExtraStock-primary-btn {
+  background: linear-gradient(135deg, #0f6e61 0%, #189d8b 100%);
+  box-shadow: 0 8px 20px rgba(15, 110, 97, 0.25);
+}
+
+.ExtraStock-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(15, 110, 97, 0.35);
+  background: linear-gradient(135deg, #0c594e 0%, #158a79 100%);
+}
+
+.ExtraStock-primary-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 4px 12px rgba(15, 110, 97, 0.2);
+}
+
+.ExtraStock-edit-mode-btn {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+}
+
+.ExtraStock-edit-mode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(217, 119, 6, 0.35);
+}
+
+/* ================= MODERN DATA TABLE ================= */
+.ExtraStock-table-responsive-wrapper {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+  border: 1px solid #e4f5f3;
+  box-shadow: 0 4px 12px rgba(15, 110, 97, 0.03);
 }
 
-.custom-data-table {
+.ExtraStock-custom-data-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 14px;
-  min-width: 700px; /* Protects data row metrics from breaking on dynamic scaling */
+  font-size: 15px;
+  min-width: 800px;
+  background: #ffffff;
 }
 
-.custom-data-table th {
-  background-color: #f8fafc;
-  color: #5c6b88;
-  font-weight: 600;
-  padding: 14px 16px;
-  border-bottom: 2px solid #edf2f7;
-  white-space: nowrap;
-}
-
-.custom-data-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #edf2f7;
-  color: #334155;
-  white-space: nowrap;
-}
-
-.custom-data-table tr:hover {
-  background-color: #f8fafc;
-}
-
-/* Context Reason Badge Chips Styling */
-.reason-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+.ExtraStock-custom-data-table th {
+  background-color: #f9fdfc;
+  color: #5b7a76;
+  font-weight: 700;
+  padding: 20px 24px;
+  text-transform: uppercase;
   font-size: 12px;
-  font-weight: 600;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #e4f5f3;
 }
 
-.reason-badge.reason-customer-requested {
-  background-color: #eff6ff;
-  color: #2563eb;
-}
-
-.reason-badge.reason-event---party {
-  background-color: #faf5ff;
-  color: #7c3aed;
-}
-
-.reason-badge.reason-damaged-replacement {
-  background-color: #fff7ed;
-  color: #ea580c;
-}
-
-/* Table Item Operations Buttons */
-.table-actions-cell {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.action-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.edit-action {
-  color: #475569;
-}
-
-.edit-action:hover {
-  background-color: #f1f5f9;
-  color: #1253d6;
-}
-
-.delete-action {
-  color: #475569;
-}
-
-.delete-action:hover {
-  background-color: #fef2f2;
-  color: #dc2626;
-}
-
-.empty-table-placeholder {
-  text-align: center;
-  color: #94a3b8;
-  padding: 40px 0 !important;
-  font-style: italic;
-}
-
-/* Pagination Row Architecture Styling specs */
-.table-pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.pagination-info-text {
-  font-size: 13px;
-  color: #64748b;
-}
-
-.pagination-button-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pagination-nav-btn {
-  background-color: #ffffff;
-  border: 1px solid #d3dcfa;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
+.ExtraStock-custom-data-table td {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f4f9f8;
+  color: #1a3330;
   font-weight: 500;
-  color: #0b2265;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   transition: background-color 0.2s ease;
 }
 
-.pagination-nav-btn:hover:not(:disabled) {
-  background-color: #f1f5f9;
+.ExtraStock-table-row:hover td {
+  background-color: #fcfdfe;
 }
 
-.pagination-nav-btn:disabled {
+.ExtraStock-col-id {
+  color: #5b7a76 !important;
+  font-weight: 600 !important;
+}
+
+.ExtraStock-product-name {
+  color: #0f6e61;
+}
+
+.ExtraStock-qty-pill {
+  background: #f4f9f8;
+  color: #0f6e61;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ExtraStock-price-cell {
+  font-weight: 700 !important;
+  color: #1a3330 !important;
+}
+
+/* Badges */
+.ExtraStock-reason-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.ExtraStock-reason-customer-requested {
+  background-color: #e4f5f3;
+  color: #0f6e61;
+  border: 1px solid rgba(15, 110, 97, 0.1);
+}
+
+.ExtraStock-reason-event---party {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid rgba(146, 64, 14, 0.1);
+}
+
+.ExtraStock-reason-damaged-replacement {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid rgba(153, 27, 27, 0.1);
+}
+
+/* Action Buttons */
+.ExtraStock-table-actions-cell {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.ExtraStock-action-btn {
+  background: #f9fdfc;
+  border: 1px solid #e4f5f3;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ExtraStock-edit-action {
+  color: #189d8b;
+}
+
+.ExtraStock-edit-action:hover {
+  background-color: #189d8b;
+  border-color: #189d8b;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(24, 157, 139, 0.2);
+}
+
+.ExtraStock-delete-action {
+  color: #dc2626;
+}
+
+.ExtraStock-delete-action:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+}
+
+/* Empty State */
+.ExtraStock-empty-table-placeholder {
+  text-align: center;
+  padding: 80px 0 !important;
+  background-color: #ffffff;
+}
+
+.ExtraStock-empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ExtraStock-empty-icon {
+  font-size: 48px;
   opacity: 0.5;
+}
+
+.ExtraStock-empty-state-content p {
+  color: #5b7a76;
+  font-weight: 500;
+  margin: 0;
+  font-size: 15px;
+}
+
+/* Modern Pagination */
+.ExtraStock-table-pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.ExtraStock-pagination-info-text {
+  font-size: 14px;
+  color: #5b7a76;
+}
+
+.ExtraStock-pagination-info-text strong {
+  color: #1a3330;
+}
+
+.ExtraStock-pagination-button-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f9fdfc;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #e4f5f3;
+}
+
+.ExtraStock-pagination-nav-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f6e61;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.ExtraStock-pagination-nav-btn:hover:not(:disabled) {
+  background-color: #e4f5f3;
+}
+
+.ExtraStock-pagination-nav-btn:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.pagination-number-btn {
-  background-color: #ffffff;
-  border: 1px solid #d3dcfa;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #0b2265;
+.ExtraStock-pagination-number-btn {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5b7a76;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.pagination-number-btn:hover {
-  background-color: #f1f5f9;
+.ExtraStock-pagination-number-btn:hover {
+  background-color: #e4f5f3;
+  color: #0f6e61;
 }
 
-.pagination-number-btn.active-page {
-  background-color: #1253d6;
-  border-color: #1253d6;
+.ExtraStock-pagination-number-btn.ExtraStock-active-page {
+  background-color: #0f6e61;
   color: #ffffff;
+  box-shadow: 0 4px 10px rgba(15, 110, 97, 0.2);
 }
 
-/* ==========================================================
-   RESPONSIVE DESIGN MEDIA QUERIES (ALWAYS AT THE BOTTOM)
-   ========================================================== */
+/* ================= RESPONSIVE QUERIES ================= */
+/* ================= RESPONSIVE QUERIES ================= */
 
-/* 1. Mobile Viewports (Phones/Handsets: 0px to 649px) */
-@media (max-width: 649px) {
-  .extra-stock-container.full-page-view {
+/* iPad Pro Landscape (up to 1366px) */
+@media (max-width: 1366px) {
+  .ExtraStock-wrapper.ExtraStock-full-width-stack {
+    max-width: 100%;
+    padding: 0 24px;
+  }
+
+  .ExtraStock-card.ExtraStock-full-size-card,
+  .ExtraStock-table-section-card {
+    padding: 36px 40px;
+  }
+}
+
+/* iPad Pro Portrait & Standard Tablets (up to 1024px) */
+@media (max-width: 1024px) {
+  .ExtraStock-form-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .ExtraStock-form-right {
+    order: -1;
+  }
+  
+  .ExtraStock-image-showcase {
+    padding: 32px;
+  }
+
+  .ExtraStock-jar-img {
+    max-width: 180px;
+  }
+}
+
+/* Facebook App on Android / General Compact Mobile Viewports (up to 767px) */
+@media (max-width: 767px) {
+  .ExtraStock-container.ExtraStock-full-page-view {
     padding: 12px;
   }
 
-  .extra-stock-card.full-size-card {
-    padding: 20px;
+  .ExtraStock-wrapper.ExtraStock-full-width-stack {
+    gap: 16px;
+    padding: 0;
   }
 
-  .extra-stock-form-right {
-    position: absolute;
-    right: 10px;
-    top: 30px;
-    opacity: 0.10; /* Clean background watermark configuration */
-    pointer-events: none;
+  .ExtraStock-card.ExtraStock-full-size-card,
+  .ExtraStock-table-section-card {
+    padding: 20px 16px;
+    border-radius: 16px;
   }
 
-  .table-section-card {
-    padding: 16px;
+  .ExtraStock-title {
+    font-size: 22px;
   }
 
-  .table-pagination-container {
-    flex-direction: column;
-    text-align: center;
+  .ExtraStock-table-section-title {
+    font-size: 20px;
   }
-}
 
-/* 2. Tablet Viewports (Medium Screens: 650px to 991px) */
-@media (min-width: 650px) {
-  .extra-stock-form-content {
-    grid-template-columns: 1.4fr 0.6fr;
-    gap: 32px;
+  .ExtraStock-card-header,
+  .ExtraStock-table-section-title {
+    margin-bottom: 20px;
   }
-}
 
-/* 3. Laptop & Workstation High-Res Screens (992px and up) */
-@media (min-width: 992px) {
-  .extra-stock-card.full-size-card {
-    padding: 40px;
+  .ExtraStock-header-accent {
+    width: 40px;
+    height: 3px;
+    margin-top: 8px;
+  }
+
+  .ExtraStock-form-content {
+    gap: 24px;
   }
   
-  .extra-stock-title {
-    font-size: 22px;
+  .ExtraStock-form-left {
+    gap: 20px;
+  }
+
+  .ExtraStock-image-showcase {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .ExtraStock-jar-img {
+    max-width: 130px;
+  }
+
+  /* Full-width thumb-friendly buttons for mobile apps like Facebook Android */
+  .ExtraStock-submit-btn {
+    max-width: 100%;
+    height: 52px;
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  .ExtraStock-select {
+    padding: 14px 16px;
+    font-size: 16px; /* Prevents auto-zoom behavior on mobile inputs */
+  }
+
+  .ExtraStock-counter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ExtraStock-counter-value {
+    flex-grow: 1;
+    font-size: 16px;
+  }
+
+  .ExtraStock-amount {
+    font-size: 30px;
+  }
+
+  .ExtraStock-custom-data-table th,
+  .ExtraStock-custom-data-table td {
+    padding: 14px 16px;
+  }
+
+  .ExtraStock-table-pagination-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .ExtraStock-pagination-info-text {
+    font-size: 13px;
+  }
+  
+  .ExtraStock-pagination-button-group {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 4px;
+  }
+
+  .ExtraStock-pagination-nav-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .ExtraStock-pagination-number-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+}
+
+/* Extra small devices / Foldables (up to 380px) */
+@media (max-width: 380px) {
+  .ExtraStock-card.ExtraStock-full-size-card,
+  .ExtraStock-table-section-card {
+    padding: 16px 12px;
+  }
+
+  .ExtraStock-title {
+    font-size: 20px;
   }
 }

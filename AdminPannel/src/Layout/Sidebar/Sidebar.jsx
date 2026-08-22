@@ -22,12 +22,15 @@ import {
   BookmarkCheck,
   Box,
   BarChart3,
-  CreditCard,     // For Subscription
-  Badge,          // For Delivery Boy ID
-  CalendarCheck,  // Added for Leave Request
+  CreditCard,
+  Badge,
+  CalendarCheck,
+  ShoppingBag,
+  Receipt,
+  UserCheck
 } from "lucide-react";
 
-import bottleImg from "../../assets/Screenshot (1).webp"; // Adjust path if needed
+import bottleImg from "../../assets/Screenshot (1).webp";
 import './Sidebar.css';
 
 const WHITE_CUTOFF = 246;
@@ -92,7 +95,6 @@ const useBackgroundRemovedImage = (src) => {
 const AlkaDropsMark = ({ className = '' }) => (
   <svg className={className} viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
     <defs>
-      {/* Dark metallic navy background with subtle glossy border fill */}
       <linearGradient id="alkaMarkBgDark" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#0b1e3d" />
         <stop offset="50%" stopColor="#061226" />
@@ -104,7 +106,6 @@ const AlkaDropsMark = ({ className = '' }) => (
         <stop offset="100%" stopColor="rgba(79, 169, 245, 0.2)" />
       </linearGradient>
 
-      {/* Vibrant 3D cyan/blue droplet */}
       <linearGradient id="alkaMarkDropVibrant" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#38bdf8" />
         <stop offset="50%" stopColor="#0284c7" />
@@ -116,13 +117,9 @@ const AlkaDropsMark = ({ className = '' }) => (
       </filter>
     </defs>
 
-    {/* Outer border ring */}
     <rect x="0.5" y="0.5" width="39" height="39" rx="11.5" fill="none" stroke="url(#alkaMarkBorder)" strokeWidth="1" />
-
-    {/* Dark metallic background badge */}
     <rect x="1.5" y="1.5" width="37" height="37" rx="10.5" fill="url(#alkaMarkBgDark)" />
 
-    {/* 3D Droplet with glow */}
     <path
       d="M20 7.5
          C15.2 15 10.8 20.6 10.8 25.8
@@ -134,7 +131,6 @@ const AlkaDropsMark = ({ className = '' }) => (
       filter="url(#dropGlow)"
     />
 
-    {/* Crisp glass highlights */}
     <path
       d="M14.5 23.5
          C14.5 27.2 17 30 20.2 30.4"
@@ -162,38 +158,20 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
   const menuItems = [
     { type: 'link', icon: <Home size={20} />, text: 'Dashboard', path: '/' },
 
-    // --- SECTION: MAIN ---
-    { type: 'section-heading', text: 'Main' },
+    // --- SECTION: STORE & WEBSITE ---
+    { type: 'section-heading', text: 'Storefront & Web' },
 
     {
       type: 'dropdown',
-      icon: <FileText size={20} />,
-      text: 'Blog Posting',
+      icon: <ShoppingBag size={20} />,
+      text: 'Shop & Content',
       subItems: [
-        { text: 'Blog', path: '/blog' },
+        { text: 'Shop Main', path: '/shop' },
+        { text: 'Testimonials', path: '/products/testimonials' },
+        { text: 'Blog Portal', path: '/blog' },
         { text: 'Blog Management', path: '/blog-management' },
+        { text: 'Contact Us', path: '/contact' },
       ],
-    },
-
-    {
-      type: "link",
-      icon: <Users size={20} />,
-      text: "Testimonials",
-      path: "/products/testimonials",
-    },
-
-    {
-      type: "link",
-      icon: <CreditCard size={20} />,
-      text: "Subscription Management",
-      path: "/products/subscription",
-    },
-
-    {
-      type: "link",
-      icon: <Badge size={20} />,
-      text: "Delivery Boy ID",
-      path: "/products/id-generate",
     },
 
     {
@@ -206,65 +184,65 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
       ],
     },
 
-    { type: 'link', icon: <Store size={20} />, text: 'Shop Main', path: '/shop' },
-
-    { type: 'link', icon: <Phone size={20} />, text: 'Contact', path: '/contact' },
-
-    // --- DIVIDER WITH SECTION HEADING: WDMS ---
-    { type: 'section-heading', text: 'WDMS' },
+    // --- SECTION: WDMS OPERATIONS ---
+    { type: 'section-heading', text: 'WDMS Operations' },
 
     { type: 'link', icon: <Home size={20} />, text: 'WDMS Dashboard', path: '/wdms/dashboard' },
 
-    // Single Links for WDMS Features
-    { type: 'link', icon: <UserPlus size={20} />, text: 'Customer Management', path: '/wdms/customer' },
-
-    { type: 'link', icon: <Boxes size={20} />, text: 'Inventory', path: '/wdms/inventory' },
-
-    { type: 'link', icon: <Tag size={20} />, text: 'Product & Price', path: '/wdms/products-pricing' },
-
-    // Dropdowns
     {
       type: 'dropdown',
-      icon: <Package size={20} />,
-      text: 'Stock Management',
+      icon: <Users size={20} />,
+      text: 'Customers & Orders',
       subItems: [
-        { text: 'Manage Stock', path: '/wdms/stock/manage' },
-        { text: 'Purchase History', path: '/wdms/stock/purchase-history' },
+        { text: 'Customer Management', path: '/wdms/customer' },
+        { text: 'Order Management', path: '/wdms/orders' },
+        { text: 'Subscription Mgmt', path: '/products/subscription' },
       ],
     },
 
     {
       type: 'dropdown',
-      icon: <Wallet size={20} />,
-      text: 'Wallet',
+      icon: <Truck size={20} />,
+      text: 'Field & Delivery',
       subItems: [
-        { text: 'Expenses', path: '/wdms/expenses' },
+        { text: 'Delivery Boy Assign', path: '/wdms/assign-delivery' },
+        { text: 'Delivery Boy ID', path: '/products/id-generate' },
+        { text: 'Route Management', path: '/wdms/route-management' },
+        { text: 'Vehicle Management', path: '/wdms/vehicles' },
+        { text: 'Leave Requests', path: '/wdms/leave-request' },
+      ],
+    },
+
+    {
+      type: 'dropdown',
+      icon: <Boxes size={20} />,
+      text: 'Inventory & Stock',
+      subItems: [
+        { text: 'Product & Pricing', path: '/wdms/products-pricing' },
+        { text: 'Inventory Overview', path: '/wdms/inventory' },
+        { text: 'Manage Stock', path: '/wdms/stock/manage' },
+        { text: 'Purchase History', path: '/wdms/stock/purchase-history' },
+        { text: 'Damage Stock Mgmt', path: '/wdms/damage-stock' },
+        { text: 'Supplier Management', path: '/wdms/supplier' },
+      ],
+    },
+
+    {
+      type: 'dropdown',
+      icon: <DollarSign size={20} />,
+      text: 'Finance & Payments',
+      subItems: [
+        { text: 'Payment Management', path: '/wdms/payments' },
+        { text: 'Invoice Management', path: '/wdms/invoice' },
+        { text: 'Expenses Overview', path: '/wdms/expenses' },
         { text: 'Add Expenses', path: '/wdms/add-expenses' },
       ],
     },
 
-    { type: 'link', icon: <ClipboardList size={20} />, text: 'Order Management', path: '/wdms/orders' },
-    { type: 'link', icon: <CalendarCheck size={20} />, text: 'Leave Request', path: '/wdms/leave-request' },
-    { type: 'link', icon: <DollarSign size={20} />, text: 'Payment Management', path: '/wdms/payments' },
-    { type: 'link', icon: <Truck size={20} />, text: 'Delivery Boy Assign', path: '/wdms/assign-delivery' },
-    { type: 'link', icon: <Map size={20} />, text: 'Route Management', path: '/wdms/route-management' },
-
-    // --- SECTION: OPERATIONS ---
-    { type: 'section-heading', text: 'Operations' },
-
-    { type: 'link', icon: <Car size={20} />, text: 'Vehicle Management', path: '/wdms/vehicles' },
-    { type: 'link', icon: <BookOpen size={20} />, text: 'Invoice Management', path: '/wdms/invoice' },
-    { type: 'link', icon: <BookmarkCheck size={20} />, text: 'Damage Stock Management', path: '/wdms/damage-stock' },
-    { type: 'link', icon: <Box size={20} />, text: 'Supplier Management', path: '/wdms/supplier' },
-
-    // --- SECTION: ANALYTICS ---
-    { type: 'section-heading', text: 'Analytics' },
+    // --- SECTION: SYSTEM & ANALYTICS ---
+    { type: 'section-heading', text: 'System & Intelligence' },
 
     { type: 'link', icon: <BarChart3 size={20} />, text: 'Report Analysis', path: '/wdms/reports' },
-
-    // --- SECTION: SYSTEM ---
-    { type: 'section-heading', text: 'System' },
-
     { type: 'link', icon: <Settings size={20} />, text: 'Settings', path: '/wdms/settings' },
   ];
 

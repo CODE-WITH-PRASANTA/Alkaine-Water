@@ -1,14 +1,31 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+
 import "./App.css";
 
-// Layout Components
+// =====================================================
+// LAYOUT
+// =====================================================
+
 import Topbar from "./Component/Topbar/Topbar";
 import Navbar from "./Component/Navbar/Navbar";
 import Footer from "./Component/Footer/Footer";
-import Floating from "./Component/Floating/Floating";
 
-// Main Pages
+// =====================================================
+// FLOATING
+// =====================================================
+
+import Floating from "./Component/Floating/Floating";
+import FloatingIcon from "./Component/FloatingIcon/FloatingIcon";
+
+// =====================================================
+// PAGES
+// =====================================================
+
 import Home from "./Pages/Home/Home";
 import About from "./Pages/About/About";
 import Shop from "./Pages/Shop/Shop";
@@ -19,68 +36,230 @@ import MainTeam from "./Pages/MainTeam/MainTeam";
 import GalaryMain from "./Pages/GalaryMain/GalaryMain";
 import OurServices from "./Pages/OurServices/OurServices";
 import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
-
-// Other Pages
 import Testimonial from "./Pages/Testimonial/Testimonial";
 import Cart from "./Pages/Cart/Cart";
 import Cheakout from "./Pages/Cheakout/Cheakout";
 import Faq from "./Pages/Faq/Faq";
 import BlogDetails from "./Pages/BlogDetails/BlogDetails";
 
-// Secondary Components
+// =====================================================
+// SECONDARY COMPONENTS
+// =====================================================
+
 import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
 import OurTeam from "./Component/OurTeam/OurTeam";
 
 function App() {
+
+  const [isFloatingOpen, setIsFloatingOpen] = useState(false);
+
+  useEffect(() => {
+
+    /*
+      Browser Navigation Types:
+
+      "navigate"
+        = normal website entry
+
+      "reload"
+        = browser refresh
+
+      "back_forward"
+        = browser back/forward
+    */
+
+    const navigationEntry =
+      performance.getEntriesByType("navigation")[0];
+
+    const navigationType =
+      navigationEntry?.type || "navigate";
+
+    /*
+      SHOW POPUP:
+
+      1. First time website opens
+      2. Browser refreshes
+
+      DON'T SHOW:
+
+      - Back button
+      - Forward button
+      - React route navigation
+    */
+
+    if (
+      navigationType === "navigate" ||
+      navigationType === "reload"
+    ) {
+      setIsFloatingOpen(true);
+    }
+
+  }, []);
+
   return (
     <BrowserRouter>
-      {/* Fixed Layout Components */}
+
+      {/* =========================================
+          TOPBAR
+      ========================================= */}
+
       <Topbar />
+
+      {/* =========================================
+          NAVBAR
+      ========================================= */}
+
       <Navbar />
 
-      {/* Global Floating Popup Form */}
-      <Floating />
+      {/* =========================================
+          ROUTES
+      ========================================= */}
 
-      {/* Dynamic Route Content */}
       <Routes>
-        {/* Home Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
 
-        {/* Core Pages */}
-        <Route path="/about" element={<About />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/products/pricing" element={<PricingAndPlans />} />
+        {/* HOME */}
 
-        {/* Blog & Details */}
-        <Route path="/resources/blog" element={<Blog />} />
-        <Route path="/blogdetails/:id" element={<BlogDetails />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        {/* Resources */}
-        <Route path="/resources/team" element={<MainTeam />} />
-        <Route path="/resources/gallary" element={<GalaryMain />} />
-        <Route path="/resources/faqs" element={<Faq />} />
+        <Route
+          path="/home"
+          element={<Home />}
+        />
 
-        {/* Testimonials */}
-        <Route path="/products/testimonials" element={<Testimonial />} />
+        {/* CORE */}
 
-        {/* E-Commerce */}
-        <Route path="/shop/cart" element={<Cart />} />
-        <Route path="/shop/checkout" element={<Cheakout />} />
+        <Route
+          path="/about"
+          element={<About />}
+        />
 
-        {/* Services & Products */}
-        <Route path="/services/all" element={<OurServices />} />
-        <Route path="/whitequartz" element={<WhiteQuartz />} />
+        <Route
+          path="/shop"
+          element={<Shop />}
+        />
 
-        {/* Auxiliary Components */}
-        <Route path="/team-component" element={<OurTeam />} />
-        <Route path="/gallery-component" element={<AkaineGalary />} />
+        <Route
+          path="/contact"
+          element={<Contact />}
+        />
+
+        <Route
+          path="/blog"
+          element={<Blog />}
+        />
+
+        <Route
+          path="/products/pricing"
+          element={<PricingAndPlans />}
+        />
+
+        {/* BLOG */}
+
+        <Route
+          path="/resources/blog"
+          element={<Blog />}
+        />
+
+        <Route
+          path="/blogdetails/:id"
+          element={<BlogDetails />}
+        />
+
+        {/* RESOURCES */}
+
+        <Route
+          path="/resources/team"
+          element={<MainTeam />}
+        />
+
+        <Route
+          path="/resources/gallary"
+          element={<GalaryMain />}
+        />
+
+        <Route
+          path="/resources/faqs"
+          element={<Faq />}
+        />
+
+        {/* TESTIMONIAL */}
+
+        <Route
+          path="/products/testimonials"
+          element={<Testimonial />}
+        />
+
+        {/* CART */}
+
+        <Route
+          path="/shop/cart"
+          element={<Cart />}
+        />
+
+        {/* CHECKOUT */}
+
+        <Route
+          path="/shop/checkout"
+          element={<Cheakout />}
+        />
+
+        {/* SERVICES */}
+
+        <Route
+          path="/services/all"
+          element={<OurServices />}
+        />
+
+        {/* WHITE QUARTZ */}
+
+        <Route
+          path="/whitequartz"
+          element={<WhiteQuartz />}
+        />
+
+        {/* TEAM */}
+
+        <Route
+          path="/team-component"
+          element={<OurTeam />}
+        />
+
+        {/* GALLERY */}
+
+        <Route
+          path="/gallery-component"
+          element={<AkaineGalary />}
+        />
+
       </Routes>
 
-      {/* Footer */}
+      {/* =========================================
+          FOOTER
+      ========================================= */}
+
       <Footer />
+
+      {/* =========================================
+          ALKA DROPS POPUP
+
+          IMPORTANT:
+          This is outside Routes.
+      ========================================= */}
+
+      <Floating
+        isOpen={isFloatingOpen}
+        onClose={() => setIsFloatingOpen(false)}
+      />
+
+      {/* =========================================
+          FLOATING ICONS
+      ========================================= */}
+
+      <FloatingIcon />
+
     </BrowserRouter>
   );
 }

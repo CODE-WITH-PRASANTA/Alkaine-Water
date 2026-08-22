@@ -1,342 +1,327 @@
-/* Navbar.css */
+:root {
+  --nav-height: 72px;
+  --nav-bg-hero: rgba(255, 255, 255, 0.95);
+  --nav-bg-scrolled: #ffffff;
+  --primary-color: #0284c7;
+  --primary-hover: #0369a1;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+}
 
-/* Core Sticky Wrapper */
+/* Base Wrapper */
 .navbar-wrapper {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: var(--nav-height);
   z-index: 1000;
-  padding: 20px 40px;
-  box-sizing: border-box;
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
 }
 
-/* 1st Image Style: Floating in Hero Section */
 .navbar-wrapper.hero-state {
-  padding: 25px 60px;
+  background: var(--nav-bg-hero);
+  backdrop-filter: blur(10px);
 }
 
-.navbar-wrapper.hero-state .navbar {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-}
-
-/* 2nd Image Style: Scrolled State */
 .navbar-wrapper.scrolled-state {
-  padding: 0;
+  background: var(--nav-bg-scrolled);
+  box-shadow: var(--shadow-subtle);
 }
 
-.navbar-wrapper.scrolled-state .navbar {
-  background-color: #ffffff;
-  border-radius: 0;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #f0f0f0;
-}
-
-/* Navbar Flex Container */
 .navbar {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 40px;
-  width: 100%;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
 }
 
-/* Logo Setup */
+/* Brand Logo */
 .navbar-brand {
   display: flex;
   align-items: center;
   text-decoration: none;
+  z-index: 1010;
 }
 
 .navbar-logo {
-  height: 50px;
-  width: 80px;
+  height: 40px;
+  width: auto;
   object-fit: contain;
 }
 
-/* Desktop Navigation Menu */
+/* Desktop Links */
+.navbar-menu-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 25px;
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-/* Nav Items & Dropdown Containers */
-.navbar-item {
-  position: relative;
+  gap: 1.5rem;
 }
 
 .navbar-link {
-  color: #1a1a1a;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  font-weight: 500;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 10px 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: color 0.3s ease;
+  padding: 0.5rem 0.25rem;
+  transition: color 0.2s ease;
+  position: relative;
+  background: none;
+  border: none;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.navbar-link:hover, 
-.navbar-item.active .navbar-link {
-  color: #0052B4; /* Classic Active Blue */
+.navbar-link:hover,
+.navbar-link.active-link {
+  color: var(--primary-color);
+}
+
+.navbar-link.active-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* Dropdown styling */
+.navbar-has-dropdown {
+  position: relative;
 }
 
 .navbar-arrow {
-  font-size: 10px;
-  transition: transform 0.3s ease;
-  color: #a0a0a0;
+  transition: transform 0.2s ease;
 }
 
-.navbar-item:hover .navbar-arrow {
-  transform: translateY(2px);
-  color: #0052B4;
+.dropdown-active .navbar-arrow {
+  transform: rotate(180deg);
 }
 
-/* Dropdown Menu Overlay Styles */
 .navbar-dropdown {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(15px);
-  background-color: #ffffff;
-  min-width: 200px;
-  border-radius: 6px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 12px 0;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 180px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 0;
   list-style: none;
-  margin: 0;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  border-top: 3px solid #0052B4;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
 }
 
-.navbar-item:hover .navbar-dropdown {
+.navbar-dropdown.show,
+.navbar-has-dropdown:hover .navbar-dropdown {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 .navbar-dropdown-item a {
   display: block;
-  padding: 10px 20px;
-  color: #4a4a4a;
+  padding: 0.6rem 1.2rem;
+  color: var(--text-dark);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
 .navbar-dropdown-item a:hover {
-  background-color: #e6f0fa; /* Light Blue tint */
-  color: #0052B4;
-  padding-left: 25px;
+  background-color: #f1f5f9;
+  color: var(--primary-color);
+  padding-left: 1.4rem;
 }
 
-/* Right Controls (Search and Order Button) */
+/* Actions & Buttons */
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1rem;
 }
 
-/* Hidden elements in Scrolled State based on Image 2 */
-.navbar-wrapper.scrolled-state .navbar-actions {
-  display: none;
-}
-
-.navbar-search-btn {
-  background-color: #0052B4;
+.navbar-icon-btn {
+  background: transparent;
   border: none;
-  width: 40px;
-  height: 40px;
+  cursor: pointer;
+  color: var(--text-dark);
+  padding: 0.4rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.navbar-search-btn:hover {
-  background-color: #003d87;
-  transform: scale(1.05);
+.navbar-icon-btn:hover {
+  background-color: #f1f5f9;
+  color: var(--primary-color);
 }
 
-/* Styled Pill Button matching Image 1 */
-.navbar-order-btn {
-  background: linear-gradient(90deg, #0052B4 82%, #6cc4ee 82%);
+.navbar-btn-primary {
+  background: var(--primary-color);
   color: #ffffff;
   border: none;
-  padding: 12px 35px;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 30px;
+  padding: 0.6rem 1.4rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 82, 180, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.navbar-order-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 82, 180, 0.3);
+.navbar-btn-primary:hover {
+  background: var(--primary-hover);
 }
 
-/* Mobile Toggle Hamburger Button */
+.navbar-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.navbar-mobile-actions {
+  display: none;
+}
+
+/* Mobile Toggle Hamburger */
 .navbar-toggle {
   display: none;
   flex-direction: column;
-  gap: 5px;
-  background: none;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
   border: none;
   cursor: pointer;
-  padding: 5px;
-  z-index: 1001;
+  padding: 0;
+  z-index: 1010;
 }
 
-.navbar-toggle span {
-  width: 25px;
-  height: 3px;
-  background-color: #1a1a1a;
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-dark);
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* ==========================================================================
-   ENHANCED MOBILE RESPONSIVENESS (Breakpoints for Tablets and Smartphones)
-   ========================================================================== */
+.navbar-toggle.is-open .hamburger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
 
-@media (max-width: 1024px) {
-  /* Override padding wrappers to force standard layout limits on small devices */
-  .navbar-wrapper.hero-state,
-  .navbar-wrapper.scrolled-state {
-    padding: 0 !important;
-  }
-  
-  .navbar {
-    border-radius: 0 !important;
-    padding: 12px 20px;
-  }
+.navbar-toggle.is-open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
 
-  /* Make Hamburger menu visible */
+.navbar-toggle.is-open .hamburger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.navbar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+}
+
+/* Responsive Breakpoint: Mobile & Tablet */
+@media (max-width: 992px) {
   .navbar-toggle {
     display: flex;
   }
 
-  /* Hamburger transformations when mobile menu state is open */
-  .navbar-toggle.is-open span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  .navbar-toggle.is-open span:nth-child(2) {
-    opacity: 0;
-  }
-  .navbar-toggle.is-open span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+  .hide-on-mobile {
+    display: none;
   }
 
-  /* Slide down vertical drawer configuration */
-  .navbar-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff;
+  .navbar-menu-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(80vw, 320px);
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
-    max-height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-  }
-/* REMOVE THIS OLD RULE: */
-/* .navbar-item:hover .navbar-dropdown { ... } */
-
-/* ADD THIS INSTEAD: */
-.navbar-item.is-open .navbar-dropdown {
-  transform: none;
-  max-height: 500px;
-  padding: 5px 0;
-}
-  /* Activated mobile menu drawer container state */
-  .navbar-menu.is-open {
-    max-height: 85vh;
+    padding: calc(var(--nav-height) + 1.5rem) 1.5rem 2rem;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
     overflow-y: auto;
-    visibility: visible;
+  }
+
+  .navbar-menu-container.is-open {
+    transform: translateX(0);
+  }
+
+  .navbar-menu {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.5rem;
   }
 
   .navbar-item {
     width: 100%;
-    border-bottom: 1px solid #f4f6f9;
   }
 
   .navbar-link {
-    padding: 16px 24px;
-    justify-content: space-between;
-    font-size: 15px; /* Slightly easier to tap */
     width: 100%;
-    box-sizing: border-box;
+    justify-content: space-between;
+    padding: 0.75rem 0.5rem;
+    font-size: 1.05rem;
   }
 
-  /* Restructure Absolute Dropdowns to inline Accordions for touch screens */
   .navbar-dropdown {
     position: static;
-    transform: none;
     box-shadow: none;
-    max-height: 0;
-    padding: 0;
-    border-top: none;
-    background-color: #f8fbfd; /* Subtle visual offset color */
-    overflow: hidden;
-    width: 100%;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    padding: 0 0 0 1rem;
+    display: none;
+    transform: none;
     opacity: 1;
     visibility: visible;
   }
 
-  /* Smooth accordion reveal when tap/hovered */
-  .navbar-item:hover .navbar-dropdown {
-    transform: none;
-    max-height: 500px;
-    padding: 5px 0;
+  .navbar-dropdown.show {
+    display: block;
   }
 
-  .navbar-dropdown-item a {
-    padding: 12px 40px; /* Indent sub items for clean visual hierarchy */
-    font-size: 14px;
+  .navbar-mobile-actions {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
   }
 
-  /* Hide desktop action area elements to optimize top viewport space */
-  .navbar-actions {
-    display: none !important;
-  }
-}
-
-/* Extra optimization for ultra small device screens */
-@media (max-width: 480px) {
-  .navbar-logo {
-    height: 34px; /* Scaled down logo text height to eliminate clipping */
-  }
-  
-  .navbar {
-    padding: 10px 15px;
+  .navbar-btn-primary.full-width {
+    width: 100%;
+    padding: 0.8rem;
+    text-align: center;
   }
 }

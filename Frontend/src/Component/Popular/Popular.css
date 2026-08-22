@@ -68,7 +68,7 @@
 
 /* Active State Styles */
 .popular-question-item.active .popular-plus-icon {
-  color: #d93025;
+  color: #257cd9;
 }
 
 .popular-question-item.active .popular-answer-box {
@@ -77,7 +77,7 @@
 
 /* Button Styling */
 .popular-read-more {
-  background-color: #d93025;
+  background-color: #2555d9;
   color: white;
   padding: 15px 40px;
   border: none;
@@ -88,7 +88,7 @@
 }
 
 .popular-read-more:hover {
-  background-color: #b8251b;
+  background-color: #1b57b8;
 }
 
 /* Image Styling */

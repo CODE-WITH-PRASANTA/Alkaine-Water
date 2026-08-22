@@ -3,6 +3,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  useLocation,
 } from "react-router-dom";
 
 import "./App.css";
@@ -29,18 +30,18 @@ import FloatingIcon from "./Component/FloatingIcon/FloatingIcon";
 import Home from "./Pages/Home/Home";
 import About from "./Pages/About/About";
 import Shop from "./Pages/Shop/Shop";
-import Contact from "./Pages/Contact/Contact";
-import Blog from "./Pages/Blog/Blog";
-import PricingAndPlans from "./Pages/PricingAndPlans/PricingAndPlans";
-import MainTeam from "./Pages/MainTeam/MainTeam";
-import GalaryMain from "./Pages/GalaryMain/GalaryMain";
-import OurServices from "./Pages/OurServices/OurServices";
-import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
-import Testimonial from "./Pages/Testimonial/Testimonial";
 import Cart from "./Pages/Cart/Cart";
 import Cheakout from "./Pages/Cheakout/Cheakout";
+import OurServices from "./Pages/OurServices/OurServices";
+import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
+import PricingAndPlans from "./Pages/PricingAndPlans/PricingAndPlans";
+import GalaryMain from "./Pages/GalaryMain/GalaryMain";
+import MainTeam from "./Pages/MainTeam/MainTeam";
+import Testimonial from "./Pages/Testimonial/Testimonial";
 import Faq from "./Pages/Faq/Faq";
+import Blog from "./Pages/Blog/Blog";
 import BlogDetails from "./Pages/BlogDetails/BlogDetails";
+import Contact from "./Pages/Contact/Contact";
 
 // =====================================================
 // SECONDARY COMPONENTS
@@ -49,23 +50,49 @@ import BlogDetails from "./Pages/BlogDetails/BlogDetails";
 import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
 import OurTeam from "./Component/OurTeam/OurTeam";
 
-function App() {
+// =====================================================
+// CONDITIONAL FLOATING
+// =====================================================
 
+const ConditionalFloating = ({ isOpen, onClose }) => {
+  const location = useLocation();
+
+  // Show popup only on homepage
+  if (location.pathname !== "/" && location.pathname !== "/home") {
+    return null;
+  }
+
+  return (
+    <Floating
+      isOpen={isOpen}
+      onClose={onClose}
+    />
+  );
+};
+
+// =====================================================
+// APP
+// =====================================================
+
+function App() {
   const [isFloatingOpen, setIsFloatingOpen] = useState(false);
 
-  useEffect(() => {
+  // ===================================================
+  // FLOATING POPUP INITIALIZATION
+  // ===================================================
 
+  useEffect(() => {
     /*
       Browser Navigation Types:
 
       "navigate"
-        = normal website entry
+        = first website entry / normal navigation
 
       "reload"
         = browser refresh
 
       "back_forward"
-        = browser back/forward
+        = browser back / forward
     */
 
     const navigationEntry =
@@ -77,8 +104,8 @@ function App() {
     /*
       SHOW POPUP:
 
-      1. First time website opens
-      2. Browser refreshes
+      - First website entry
+      - Browser refresh
 
       DON'T SHOW:
 
@@ -93,12 +120,10 @@ function App() {
     ) {
       setIsFloatingOpen(true);
     }
-
   }, []);
 
   return (
     <BrowserRouter>
-
       {/* =========================================
           TOPBAR
       ========================================= */}
@@ -116,8 +141,9 @@ function App() {
       ========================================= */}
 
       <Routes>
-
-        {/* HOME */}
+        {/* =========================================
+            HOME
+        ========================================= */}
 
         <Route
           path="/"
@@ -129,26 +155,46 @@ function App() {
           element={<Home />}
         />
 
-        {/* CORE */}
+        {/* =========================================
+            ABOUT
+        ========================================= */}
 
         <Route
           path="/about"
           element={<About />}
         />
 
+        {/* =========================================
+            SERVICES
+        ========================================= */}
+
         <Route
-          path="/shop"
-          element={<Shop />}
+          path="/services"
+          element={<OurServices />}
         />
 
         <Route
-          path="/contact"
-          element={<Contact />}
+          path="/services/all"
+          element={<OurServices />}
+        />
+
+        {/* =========================================
+            PRODUCTS
+        ========================================= */}
+
+        <Route
+          path="/product/details"
+          element={<WhiteQuartz />}
         />
 
         <Route
-          path="/blog"
-          element={<Blog />}
+          path="/whitequartz"
+          element={<WhiteQuartz />}
+        />
+
+        <Route
+          path="/pricing"
+          element={<PricingAndPlans />}
         />
 
         <Route
@@ -156,23 +202,52 @@ function App() {
           element={<PricingAndPlans />}
         />
 
-        {/* BLOG */}
-
         <Route
-          path="/resources/blog"
-          element={<Blog />}
+          path="/products/testimonials"
+          element={<Testimonial />}
         />
 
         <Route
-          path="/blogdetails/:id"
-          element={<BlogDetails />}
+          path="/testimonials"
+          element={<Testimonial />}
         />
 
-        {/* RESOURCES */}
+        {/* =========================================
+            SHOP
+        ========================================= */}
 
         <Route
-          path="/resources/team"
-          element={<MainTeam />}
+          path="/shop"
+          element={<Shop />}
+        />
+
+        <Route
+          path="/cart"
+          element={<Cart />}
+        />
+
+        <Route
+          path="/shop/cart"
+          element={<Cart />}
+        />
+
+        <Route
+          path="/checkout"
+          element={<Cheakout />}
+        />
+
+        <Route
+          path="/shop/checkout"
+          element={<Cheakout />}
+        />
+
+        {/* =========================================
+            GALLERY
+        ========================================= */}
+
+        <Route
+          path="/gallery"
+          element={<GalaryMain />}
         />
 
         <Route
@@ -180,60 +255,90 @@ function App() {
           element={<GalaryMain />}
         />
 
+        {/* =========================================
+            TEAM
+        ========================================= */}
+
+        <Route
+          path="/team"
+          element={<MainTeam />}
+        />
+
+        <Route
+          path="/resources/team"
+          element={<MainTeam />}
+        />
+
+        {/* =========================================
+            FAQ
+        ========================================= */}
+
+        <Route
+          path="/faq"
+          element={<Faq />}
+        />
+
         <Route
           path="/resources/faqs"
           element={<Faq />}
         />
 
-        {/* TESTIMONIAL */}
+        {/* =========================================
+            CONTACT
+        ========================================= */}
 
         <Route
-          path="/products/testimonials"
-          element={<Testimonial />}
+          path="/contact"
+          element={<Contact />}
         />
 
-        {/* CART */}
+        {/* =========================================
+            BLOG
+        ========================================= */}
 
         <Route
-          path="/shop/cart"
-          element={<Cart />}
+          path="/blog"
+          element={<Blog />}
         />
-
-        {/* CHECKOUT */}
 
         <Route
-          path="/shop/checkout"
-          element={<Cheakout />}
+          path="/resources/blog"
+          element={<Blog />}
         />
-
-        {/* SERVICES */}
 
         <Route
-          path="/services/all"
-          element={<OurServices />}
+          path="/blog/:id"
+          element={<BlogDetails />}
         />
-
-        {/* WHITE QUARTZ */}
 
         <Route
-          path="/whitequartz"
-          element={<WhiteQuartz />}
+          path="/blogdetails/:id"
+          element={<BlogDetails />}
         />
 
-        {/* TEAM */}
+        {/* =========================================
+            COMPONENT PREVIEWS
+        ========================================= */}
+
+        <Route
+          path="/our-team-preview"
+          element={<OurTeam />}
+        />
 
         <Route
           path="/team-component"
           element={<OurTeam />}
         />
 
-        {/* GALLERY */}
+        <Route
+          path="/gallery-preview"
+          element={<AkaineGalary />}
+        />
 
         <Route
           path="/gallery-component"
           element={<AkaineGalary />}
         />
-
       </Routes>
 
       {/* =========================================
@@ -243,23 +348,23 @@ function App() {
       <Footer />
 
       {/* =========================================
-          ALKA DROPS POPUP
+          ALKA DROPS FLOATING POPUP
 
-          IMPORTANT:
-          This is outside Routes.
+          Only visible on:
+          /
+          /home
       ========================================= */}
 
-      <Floating
+      <ConditionalFloating
         isOpen={isFloatingOpen}
         onClose={() => setIsFloatingOpen(false)}
       />
 
       {/* =========================================
-          FLOATING ICONS
+          FLOATING ICON
       ========================================= */}
 
       <FloatingIcon />
-
     </BrowserRouter>
   );
 }

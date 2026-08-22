@@ -5,9 +5,10 @@ import API, { IMG_URL } from "../../api/axios";
 const Reviewwhite = () => {
   const [reviewDataList, setReviewDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Track failed images to switch path rules seamlessly on fallback triggers
-  const [imageFallbacks, setImageFallbacks] = useState({});
 
+  // ============================================================
+  // 1. FETCH DATA FROM BACKEND API
+  // ============================================================
   useEffect(() => {
     fetchTestimonials();
   }, []);
@@ -16,9 +17,11 @@ const Reviewwhite = () => {
     try {
       const response = await API.get("/testimonial");
 
-      if (response.data.success) {
+      if (response.data?.success) {
+        // Ensure data is an array before slicing
+        const dataArray = Array.isArray(response.data.data) ? response.data.data : [];
         // Fetch latest 10 testimonials
-        const latestTestimonials = response.data.data.slice(0, 10);
+        const latestTestimonials = dataArray.slice(0, 10);
         setReviewDataList(latestTestimonials);
       }
     } catch (error) {
@@ -28,52 +31,46 @@ const Reviewwhite = () => {
     }
   };
 
-  // Rating Stars Builder
+  // ============================================================
+  // 2. RATING STARS BUILDER
+  // ============================================================
   const buildStarsRow = (filledCount) => {
+    const safeCount = Number(filledCount) || 5; // Default to 5 if undefined
     return Array.from({ length: 5 }, (_, i) => (
       <span
         key={i}
-        className={
-          i < filledCount
-            ? "rw-star-blue"
-            : "rw-star-dim"
-        }
+        className={i < safeCount ? "rw-star-blue" : "rw-star-dim"}
       >
         ★
       </span>
     ));
   };
 
-  // Image URL Generator
-  const getImageUrl = (image, id) => {
-    if (!image) {
-      return "https://placehold.co/120x120?text=User";
-    }
+  // ============================================================
+  // 3. IMAGE URL HELPER (Handles correct /uploads paths)
+  // ============================================================
+  const getImageUrl = (image) => {
+    if (!image) return "https://placehold.co/120x120?text=User";
+    
+    if (image.startsWith("http")) return image;
 
-    // Already full URL
-    if (image.startsWith("http")) {
-      return image;
+    const baseUrl = IMG_URL.replace(/\/$/, ""); 
+    
+    // Safely construct the URL based on your server configuration
+    if (baseUrl.endsWith("uploads")) {
+      return `${baseUrl}/testimonial/${image}`;
+    } else {
+      return `${baseUrl}/uploads/testimonial/${image}`;
     }
-
-    // Dynamic alternate routing block triggered during operational fallback cycles
-    if (imageFallbacks[id]) {
-      return `${IMG_URL}/uploads/${image}`;
-    }
-
-    // filename.webp
-    return `${IMG_URL}/testimonial/${image}`;
   };
 
+  // ============================================================
+  // 4. RENDER UI
+  // ============================================================
   if (loading) {
     return (
       <div className="rw-testimonial-section">
-        <div
-          style={{
-            textAlign: "center",
-            padding: "60px 0",
-            fontSize: "18px",
-          }}
-        >
+        <div style={{ textAlign: "center", padding: "60px 0", fontSize: "18px" }}>
           Loading testimonials...
         </div>
       </div>
@@ -83,29 +80,23 @@ const Reviewwhite = () => {
   return (
     <div className="rw-testimonial-section">
       <div className="rw-viewport-slider-container">
-
         <div className="rw-track-animate-slider">
           {reviewDataList.length > 0 ? (
-            // Changed from duplicated array syntax to mapping directly over data array
             reviewDataList.map((review, index) => (
               <div
                 className="rw-review-card"
-                key={`${review._id}-${index}`}
+                key={review._id || index}
               >
                 {/* Avatar */}
                 <div className="rw-avatar-header-holder">
                   <img
-                    src={getImageUrl(review.image, review._id)}
-                    alt={review.name}
+                    src={getImageUrl(review.image)}
+                    alt={review.name || "Reviewer"}
                     onError={(e) => {
-                      if (!imageFallbacks[review._id]) {
-                        setImageFallbacks((prev) => ({ ...prev, [review._id]: true }));
-                      } else {
-                        e.target.src = "https://placehold.co/120x120?text=User";
-                      }
+                      // Safe fallback that won't cause infinite render loops
+                      e.currentTarget.src = "https://placehold.co/120x120?text=User";
                     }}
                   />
-
                   <div className="rw-speech-pointer-tail"></div>
                 </div>
 
@@ -114,7 +105,7 @@ const Reviewwhite = () => {
                   {buildStarsRow(review.rating)}
                 </div>
 
-                {/* Headline */}
+                {/* Headline / Name */}
                 <h3 className="rw-card-title-headline">
                   {review.name}
                 </h3>
@@ -127,13 +118,13 @@ const Reviewwhite = () => {
                 {/* Footer */}
                 <div className="rw-card-footer-author-meta">
                   <span className="rw-author-name-txt">
-                    {review.name},
+                    {review.name}{review.address ? "," : ""}
                   </span>
-
-                  <span className="rw-location-link-txt">
-                    {" "}
-                    {review.address}
-                  </span>
+                  {review.address && (
+                    <span className="rw-location-link-txt">
+                      {" "}{review.address}
+                    </span>
+                  )}
                 </div>
               </div>
             ))

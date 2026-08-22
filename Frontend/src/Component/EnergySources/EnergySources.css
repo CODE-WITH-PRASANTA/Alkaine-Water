@@ -14,16 +14,16 @@
 .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
 
 .benefit-item { display: flex; align-items: center; color: #333; }
-.checkmark { color: #d93025; margin-right: 10px; font-weight: bold; }
+.checkmark { color: #1e1e20; margin-right: 10px; font-weight: bold; }
 
-.read-more-btn { background: #d93025; color: white; padding: 15px 30px; border: none; border-radius: 30px; cursor: pointer; }
+.read-more-btn { background: #2570d9; color: white; padding: 15px 30px; border: none; border-radius: 30px; cursor: pointer; }
 
 /* Cards Grid */
 .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 .card { padding: 30px; border-radius: 20px; position: relative; overflow: hidden; } /* Added position: relative */
 .white-card { background: white; }
-.red-card { background: #d93025; color: white; }
+.red-card { background: #256dd9; color: white; }
 
 .mg-level { font-weight: 600; margin: 10px 0; }
 .description { font-size: 0.9rem; opacity: 0.9; }

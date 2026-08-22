@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
 // Layout Components
@@ -8,28 +8,38 @@ import Navbar from "./Component/Navbar/Navbar";
 import Footer from "./Component/Footer/Footer";
 import Floating from "./Component/Floating/Floating";
 
-// Main Pages
+// Page Components
 import Home from "./Pages/Home/Home";
 import About from "./Pages/About/About";
 import Shop from "./Pages/Shop/Shop";
-import Contact from "./Pages/Contact/Contact";
-import Blog from "./Pages/Blog/Blog";
-import PricingAndPlans from "./Pages/PricingAndPlans/PricingAndPlans";
-import MainTeam from "./Pages/MainTeam/MainTeam";
-import GalaryMain from "./Pages/GalaryMain/GalaryMain";
-import OurServices from "./Pages/OurServices/OurServices";
-import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
-
-// Other Pages
-import Testimonial from "./Pages/Testimonial/Testimonial";
 import Cart from "./Pages/Cart/Cart";
 import Cheakout from "./Pages/Cheakout/Cheakout";
+import OurServices from "./Pages/OurServices/OurServices";
+import WhiteQuartz from "./Pages/WhiteQuartz/WhiteQuartz";
+import PricingAndPlans from "./Pages/PricingAndPlans/PricingAndPlans";
+import GalaryMain from "./Pages/GalaryMain/GalaryMain";
+import MainTeam from "./Pages/MainTeam/MainTeam";
+import Testimonial from "./Pages/Testimonial/Testimonial";
 import Faq from "./Pages/Faq/Faq";
+import Blog from "./Pages/Blog/Blog";
 import BlogDetails from "./Pages/BlogDetails/BlogDetails";
+import Contact from "./Pages/Contact/Contact";
 
-// Secondary Components
-import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
+// Auxiliary / Demo Components
 import OurTeam from "./Component/OurTeam/OurTeam";
+import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
+
+// Conditional Floating Wrapper Component
+const ConditionalFloating = () => {
+  const location = useLocation();
+
+  // Only render Floating when path is exactly "/"
+  if (location.pathname !== "/") {
+    return null;
+  }
+
+  return <Floating />;
+};
 
 function App() {
   return (
@@ -38,45 +48,35 @@ function App() {
       <Topbar />
       <Navbar />
 
-      {/* Global Floating Popup Form */}
-      <Floating />
+      {/* Floating Modal - Rendered conditionally on Home route only */}
+      <ConditionalFloating />
 
-      {/* Dynamic Route Content */}
+      {/* Direct Clean Routes */}
       <Routes>
-        {/* Home Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-
         {/* Core Pages */}
+        <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/shop" element={<Shop />} />
+        <Route path="/services" element={<OurServices />} />
+        <Route path="/product/details" element={<WhiteQuartz />} />
+        <Route path="/pricing" element={<PricingAndPlans />} />
+        <Route path="/gallery" element={<GalaryMain />} />
+        <Route path="/team" element={<MainTeam />} />
+        <Route path="/testimonials" element={<Testimonial />} />
+        <Route path="/faq" element={<Faq />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/products/pricing" element={<PricingAndPlans />} />
-
-        {/* Blog & Details */}
-        <Route path="/resources/blog" element={<Blog />} />
-        <Route path="/blogdetails/:id" element={<BlogDetails />} />
-
-        {/* Resources */}
-        <Route path="/resources/team" element={<MainTeam />} />
-        <Route path="/resources/gallary" element={<GalaryMain />} />
-        <Route path="/resources/faqs" element={<Faq />} />
-
-        {/* Testimonials */}
-        <Route path="/products/testimonials" element={<Testimonial />} />
 
         {/* E-Commerce */}
-        <Route path="/shop/cart" element={<Cart />} />
-        <Route path="/shop/checkout" element={<Cheakout />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Cheakout />} />
 
-        {/* Services & Products */}
-        <Route path="/services/all" element={<OurServices />} />
-        <Route path="/whitequartz" element={<WhiteQuartz />} />
+        {/* Blog */}
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogDetails />} />
 
-        {/* Auxiliary Components */}
-        <Route path="/team-component" element={<OurTeam />} />
-        <Route path="/gallery-component" element={<AkaineGalary />} />
+        {/* Components Preview */}
+        <Route path="/our-team-preview" element={<OurTeam />} />
+        <Route path="/gallery-preview" element={<AkaineGalary />} />
       </Routes>
 
       {/* Footer */}

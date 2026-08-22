@@ -1,26 +1,41 @@
 const express = require("express");
-const router = express.Router();
-const { handleSingleImageUpload } = require("../middleware/multer");
-
-const testimonialController = require("../controllers/testimonialController");
 
 const {
-  getAllTestimonials,
+  getTestimonials,
   createTestimonial,
   updateTestimonial,
   deleteTestimonial,
-} = testimonialController;
+} = require("../controllers/testimonialController");
 
-// Safe fallback handlers to prevent Express from crashing on missing imports
-const getHandler = getAllTestimonials || ((req, res) => res.json({ message: "Get testimonials" }));
-const createHandler = createTestimonial || ((req, res) => res.json({ message: "Create testimonial" }));
-const updateHandler = updateTestimonial || ((req, res) => res.json({ message: "Update testimonial" }));
-const deleteHandler = deleteTestimonial || ((req, res) => res.json({ message: "Delete testimonial" }));
+// CORRECT IMPORT: Destructure your custom middleware wrapper
+const { handleSingleImageUpload } = require("../middleware/multer");
 
-// Route Endpoints
-router.get("/", getHandler);
-router.post("/", handleSingleImageUpload("image"), createHandler);
-router.put("/:id", handleSingleImageUpload("image"), updateHandler);
-router.delete("/:id", deleteHandler);
+const router = express.Router();
+
+// ============================================================
+// GET ALL TESTIMONIALS
+// GET /api/testimonial
+// ============================================================
+router.get("/", getTestimonials);
+
+// ============================================================
+// CREATE TESTIMONIAL
+// POST /api/testimonial
+// ============================================================
+// USE YOUR CUSTOM WRAPPER HERE
+router.post("/", handleSingleImageUpload("image"), createTestimonial);
+
+// ============================================================
+// UPDATE TESTIMONIAL
+// PUT /api/testimonial/:id
+// ============================================================
+// USE YOUR CUSTOM WRAPPER HERE
+router.put("/:id", handleSingleImageUpload("image"), updateTestimonial);
+
+// ============================================================
+// DELETE TESTIMONIAL
+// DELETE /api/testimonial/:id
+// ============================================================
+router.delete("/:id", deleteTestimonial);
 
 module.exports = router;

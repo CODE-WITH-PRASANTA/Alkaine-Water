@@ -36,7 +36,7 @@
 }
 
 .ShopBreadcrumbDivider {
-  color: #ff2a2a;
+  color: #2a58ff;
   font-weight: 700;
   font-size: 14px;
 }
@@ -111,7 +111,7 @@
   height: 100%;
   width: 48px;
   border: none;
-  background-color: #d91c1c;
+  background-color: #1c81d9;
   color: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -123,7 +123,7 @@
 }
 
 .ShopSearchButton:hover {
-  background-color: #b81414;
+  background-color: #1463b8;
 }
 
 /* Sidebar Cart Block styling */
@@ -152,7 +152,7 @@
 .ShopCartItemRemove {
   background: transparent;
   border: none;
-  color: #ff2a2a;
+  color: #2a83ff;
   cursor: pointer;
   font-size: 12px;
   padding: 2px;
@@ -227,12 +227,12 @@
 }
 
 .ShopCartBtn.CheckoutBtn {
-  background-color: #d91c1c;
+  background-color: #1c6bd9;
   color: #ffffff;
 }
 
 .ShopCartBtn.CheckoutBtn:hover {
-  background-color: #b81414;
+  background-color: #1438b8;
 }
 
 /* Filter by Price UI Slider styling */
@@ -252,7 +252,7 @@
 
 .ShopSliderLineProgress {
   height: 100%;
-  background-color: #d91c1c;
+  background-color: #1c32d9;
   position: absolute;
   left: 0;
   top: 0;
@@ -296,7 +296,7 @@
 }
 
 .ShopFilterActionBtn {
-  background-color: #d91c1c;
+  background-color: #1c52d9;
   color: #ffffff;
   border: none;
   padding: 10px 24px;
@@ -308,7 +308,7 @@
 }
 
 .ShopFilterActionBtn:hover {
-  background-color: #b81414;
+  background-color: #1443b8;
 }
 
 /* Category widget rows */
@@ -331,13 +331,13 @@
 }
 
 .ShopCategoryItem:hover, .ShopCategoryItem.active {
-  color: #d91c1c;
+  color: #1c6ed9;
 }
 
 .ShopCategoryArrow {
   font-size: 11px;
   margin-right: 8px;
-  color: #d91c1c;
+  color: #1c4ed9;
 }
 
 .ShopCategoryLabelName {
@@ -368,7 +368,7 @@
 }
 
 .ShopProductTagBadge:hover, .ShopProductTagBadge.active {
-  background-color: #d91c1c;
+  background-color: #1c4bd9;
   color: #ffffff;
 }
 
@@ -492,7 +492,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background-color: #d91c1c;
+  background-color: #1c45d9;
   color: #ffffff;
   width: 32px;
   height: 32px;
@@ -527,7 +527,7 @@
 .ShopCardCircleActionBtn {
   width: 52px;
   height: 52px;
-  background-color: #d91c1c;
+  background-color: #1c5bd9;
   color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -588,7 +588,7 @@
 }
 
 .ShopProductCardItemTitleName:hover {
-  color: #d91c1c;
+  color: #1c52d9;
 }
 
 .ShopProductCardItemShortDesc {
@@ -615,7 +615,7 @@
 }
 
 .ShopProductCardActiveSalePrice {
-  color: #d91c1c;
+  color: #151516;
 }
 
 /* --- PAGINATION STYLING LAYER (Image 6) --- */

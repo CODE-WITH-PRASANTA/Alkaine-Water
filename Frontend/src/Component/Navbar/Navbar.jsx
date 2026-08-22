@@ -1,103 +1,217 @@
-// Navbar.jsx
 import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
-import logo from '../../assets/ALKA DROPS LOGO.png'; // Import your logo image asset here
+import logo from '../../assets/ALKA DROPS LOGO.png';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Monitor windows vertical scroll offset to trigger design variation states
   useEffect(() => {
     const handleScroll = () => {
-      // Switches configuration when moving past the baseline hero threshold (e.g., 80px)
-      if (window.scrollY > 80) {
+      if (window.scrollY > 30) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock background scroll when mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  const closeAllMenus = () => {
+    setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
+  };
+
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen((prev) => !prev);
+  };
+
+  const toggleDropdown = (e) => {
+    e.preventDefault();
+    setIsDropdownOpen((prev) => !prev);
   };
 
   return (
-    <nav className={`navbar-wrapper ${isScrolled ? 'scrolled-state' : 'hero-state'}`}>
-      <div className="navbar">
+    <header className={`navbar-wrapper ${isScrolled ? 'scrolled-state' : 'hero-state'}`}>
+      <nav className="navbar" aria-label="Main Navigation">
         {/* Brand Logo */}
-        <a href="/" className="navbar-brand">
-          <img src={logo} alt="Aguapure Logo" className="navbar-logo" />
-        </a>
+        <Link to="/" className="navbar-brand" onClick={closeAllMenus}>
+          <img src={logo} alt="Alka Drops Logo" className="navbar-logo" />
+        </Link>
 
         {/* Dynamic Navigation Links Block */}
-        <ul className={`navbar-menu ${isMobileMenuOpen ? 'is-open' : ''}`}>
-          {/* Home */}
-          <li className="navbar-item">
-            <a href="/" className="navbar-link">Home</a>
-          </li>
-          
-          {/* About */}
-          <li className="navbar-item">
-            <a href="/about" className="navbar-link">About</a>
-          </li>
+        <div className={`navbar-menu-container ${isMobileMenuOpen ? 'is-open' : ''}`}>
+          <ul className="navbar-menu">
+            <li className="navbar-item">
+              <NavLink
+                to="/"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+                end
+              >
+                Home
+              </NavLink>
+            </li>
 
-          {/* Subscription (Mapping to the pricing pathname) */}
-          <li className="navbar-item">
-            <a href="/products/pricing" className="navbar-link">Subscription</a>
-          </li>
+            <li className="navbar-item">
+              <NavLink
+                to="/about"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                About
+              </NavLink>
+            </li>
 
-          {/* Shop */}
-          <li className="navbar-item">
-            <a href="/shop" className="navbar-link">Shop</a>
-          </li>
+            <li className="navbar-item">
+              <NavLink
+                to="/pricing"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Subscription
+              </NavLink>
+            </li>
 
-          {/* Services */}
-          <li className="navbar-item">
-            <a href="/services/all" className="navbar-link">Services</a>
-          </li>
+            <li className="navbar-item">
+              <NavLink
+                to="/shop"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Shop
+              </NavLink>
+            </li>
 
-          {/* More Dropdown */}
-          <li className="navbar-item">
-            <span className="navbar-link">More <span className="navbar-arrow">▼</span></span>
-            <ul className="navbar-dropdown">
-              <li className="navbar-dropdown-item"><a href="/resources/blog">Blog</a></li>
-              <li className="navbar-dropdown-item"><a href="/resources/faqs">FAQs</a></li>
-              <li className="navbar-dropdown-item"><a href="/resources/team">Our Team</a></li>
-              <li className="navbar-dropdown-item"><a href="/resources/gallary">Gallary</a></li>
-              <li className="navbar-dropdown-item"><a href="/products/testimonials">Testimonials</a></li>
-            </ul>
-          </li>
+            <li className="navbar-item">
+              <NavLink
+                to="/services"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Services
+              </NavLink>
+            </li>
 
-          {/* Contact */}
-          <li className="navbar-item">
-            <a href="/contact" className="navbar-link">Contact</a>
-          </li>
-        </ul>
+            {/* Dropdown Menu */}
+            <li className={`navbar-item navbar-has-dropdown ${isDropdownOpen ? 'dropdown-active' : ''}`}>
+              <button
+                type="button"
+                className="navbar-link navbar-dropdown-toggle"
+                onClick={toggleDropdown}
+                aria-expanded={isDropdownOpen}
+              >
+                <span>More</span>
+                <svg className="navbar-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none">
+                  <path d="M1 1.5L6 5.5L11 1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
 
-        {/* Right Section Actions - Rendered dynamically based on layout requirements */}
-        <div className="navbar-actions">
-          <button className="navbar-search-btn" aria-label="Search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
-          <button className="navbar-order-btn">Order Now</button>
+              <ul className="navbar-dropdown">
+                <li className="navbar-dropdown-item">
+                  <Link to="/blog" onClick={closeAllMenus}>Blog</Link>
+                </li>
+                <li className="navbar-dropdown-item">
+                  <Link to="/faq" onClick={closeAllMenus}>FAQs</Link>
+                </li>
+                <li className="navbar-dropdown-item">
+                  <Link to="/team" onClick={closeAllMenus}>Our Team</Link>
+                </li>
+                <li className="navbar-dropdown-item">
+                  <Link to="/gallery" onClick={closeAllMenus}>Gallery</Link>
+                </li>
+                <li className="navbar-dropdown-item">
+                  <Link to="/testimonials" onClick={closeAllMenus}>Testimonials</Link>
+                </li>
+              </ul>
+            </li>
+
+            <li className="navbar-item">
+              <NavLink
+                to="/contact"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Contact
+              </NavLink>
+            </li>
+          </ul>
+
+          {/* Mobile Primary Call To Action */}
+          <div className="navbar-mobile-actions">
+            <button
+              type="button"
+              className="navbar-btn-primary"
+              onClick={() => {
+                navigate('/shop');
+                closeAllMenus();
+              }}
+            >
+              Order Now
+            </button>
+          </div>
         </div>
 
-        {/* Mobile View Hamburger Toggle */}
-        <button className={`navbar-toggle ${isMobileMenuOpen ? 'is-open' : ''}`} onClick={toggleMobileMenu} aria-label="Toggle navigation Menu">
-          <span></span>
-          <span></span>
-          <span></span>
+        {/* Right Desktop Actions */}
+        <div className="navbar-actions">
+          <button
+            type="button"
+            className="navbar-icon-btn"
+            onClick={() => {
+              navigate('/cart');
+              closeAllMenus();
+            }}
+            aria-label="View Shopping Cart"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            className="navbar-btn-primary"
+            onClick={() => {
+              navigate('/shop');
+              closeAllMenus();
+            }}
+          >
+            Order Now
+          </button>
+        </div>
+
+        {/* Mobile Toggle Button */}
+        <button
+          type="button"
+          className={`navbar-toggle ${isMobileMenuOpen ? 'is-open' : ''}`}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle Navigation Menu"
+          aria-expanded={isMobileMenuOpen}
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
         </button>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Dimmed Backdrop overlay for mobile drawer */}
+      {isMobileMenuOpen && <div className="navbar-backdrop" onClick={closeAllMenus} />}
+    </header>
   );
 };
 

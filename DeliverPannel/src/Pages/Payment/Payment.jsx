@@ -1,7 +1,54 @@
-import React, { useState } from 'react';
-import { FaEdit, FaTrashAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaEdit, FaTrashAlt, FaChevronLeft, FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import './Payment.css';
 import purseImage from '../../assets/p1.png'; // Path matching your project setup
+
+// Custom Dropdown Component to Prevent Mobile/FB OS Drawer Overflow
+const CustomDropdown = ({ label, value, options, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="pay-form-group" ref={dropdownRef}>
+      <label className="section-label">{label}</label>
+      <div className="pay-custom-select-wrap">
+        <div 
+          className="pay-custom-select-trigger" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span>{value}</span>
+          <FaChevronDown size={12} className={`pay-select-chevron ${isOpen ? 'open' : ''}`} />
+        </div>
+        {isOpen && (
+          <div className="pay-custom-options-list">
+            {options.map((opt, idx) => (
+              <div 
+                key={idx} 
+                className={`pay-custom-option ${value === opt ? 'selected' : ''}`}
+                onClick={() => {
+                  onChange(opt);
+                  setIsOpen(false);
+                }}
+              >
+                {opt}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Payment = () => {
   // --- Form Input States ---
@@ -163,21 +210,23 @@ const Payment = () => {
               </div>
 
               <div className="pay-form-group mt-20">
-                <label className="section-label">Payment Status</label>
-                <select className="status-select" value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}>
-                  <option value="Paid">Paid</option>
-                  <option value="Advance">Advance</option>
-                  <option value="Unpaid">Unpaid</option>
-                </select>
+                <CustomDropdown 
+                  label="Payment Status"
+                  value={paymentStatus}
+                  options={['Paid', 'Advance', 'Unpaid']}
+                  onChange={setPaymentStatus}
+                />
               </div>
 
             </div>
 
             <div className="pay-right">
-              <img src={purseImage} alt="Payment Processing" className="wallet-img" />
+              <div className="wallet-img-container">
+                <img src={purseImage} alt="Payment Processing" className="wallet-img" />
+              </div>
             </div>
 
-            <button type="submit" className={`save-btn blue-btn ${isEditing ? 'edit-mode-btn' : ''}`}>
+            <button type="submit" className={`save-btn emerald-btn ${isEditing ? 'edit-mode-btn' : ''}`}>
               {isEditing ? 'Update Payment Record' : 'Save Payment Entry'}
             </button>
           </form>
@@ -212,7 +261,7 @@ const Payment = () => {
                         </span>
                       </td>
                       <td>₹{item.totalAmount}</td>
-                      <td className="text-blue-cell">₹{item.collectedAmount}</td>
+                      <td className="text-emerald-cell">₹{item.collectedAmount}</td>
                       <td className="table-actions-cell">
                         <button 
                           className="action-btn edit-action" 

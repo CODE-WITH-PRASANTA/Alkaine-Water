@@ -1,12 +1,12 @@
-/* Container reset properties to guarantee zero horizontal bleed */
+/* Container reset properties with safe area support for mobile browsers (Facebook In-App Browser on Android, iPad Safari, etc.) */
 .rp-wrapper {
   width: 100%;
- 
   box-sizing: border-box;
-  padding: 16px;
+  padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 12px) env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 12px);
   display: flex;
   justify-content: center;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 .rp-card {
@@ -25,12 +25,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .rp-badge-step {
-  background: #2f60ff;
+  background: #0b6b55;
   color: white;
   width: 24px;
   height: 24px;
@@ -40,19 +40,23 @@
   justify-content: center;
   font-weight: 600;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .rp-title {
   font-size: 18px;
-  font-weight: 600;
-  color: #1a1d1f;
+  font-weight: 700;
+  color: #0b6b55;
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  word-break: break-word;
 }
 
 /* Core Main Layout Split */
 .rp-main-layout {
   display: flex;
-  flex-direction: column; /* Default: stacked for small mobile widths */
+  flex-direction: column; 
   width: 100%;
   overflow: hidden;
 }
@@ -60,9 +64,10 @@
 /* Map CSS */
 .rp-map-container {
   width: 100%;
-  height: 300px; /* Fallback baseline height for mobile */
+  height: 280px; 
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .rp-leaflet-map {
@@ -78,14 +83,15 @@
 }
 
 .rp-stops-scroll-container {
-  max-height: 280px;
+  max-height: 250px;
   overflow-y: auto;
-  overflow-x: hidden; /* Blocks all horizontal scrolls */
+  overflow-x: hidden; 
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling for iOS/iPad and Android in-app browsers */
 }
 
 /* Stop item styling */
@@ -120,10 +126,11 @@
 .rp-stop-distance {
   font-size: 13px;
   font-weight: 500;
-  color: #2f60ff;
-  background: #f0f4ff;
+  color: #0b6b55;
+  background: #e6f4f1;
   padding: 4px 8px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 /* Custom Marker Styling injection for Leaflet */
@@ -135,7 +142,7 @@
 .map-stop-marker {
   width: 24px;
   height: 24px;
-  background: #2f60ff;
+  background: #0b6b55;
   border: 2px solid #ffffff;
   color: white;
   border-radius: 50%;
@@ -144,7 +151,7 @@
   justify-content: center;
   font-size: 11px;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(47, 96, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(11, 107, 85, 0.4);
 }
 
 .custom-hub-icon {
@@ -155,20 +162,21 @@
 .map-hub-marker {
   width: 28px;
   height: 28px;
-  background: #27ae60;
+  background: #0b6b55;
   border: 2px solid #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.4);
+  box-shadow: 0 2px 8px rgba(11, 107, 85, 0.4);
 }
 
 /* Summary Panel */
 .rp-summary-panel {
   display: flex;
-  gap: 24px;
-  padding: 20px;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding: 16px 20px;
   background: #fdfdfd;
   border-top: 1px solid #f0f0f0;
 }
@@ -183,7 +191,8 @@
 .rp-icon {
   width: 16px;
   height: 16px;
-  color: #6f767e;
+  color: #0b6b55;
+  flex-shrink: 0;
 }
 
 .rp-metric-label {
@@ -196,26 +205,33 @@
   font-weight: 600;
 }
 
-/* Action Trigger Button */
+/* Action Trigger Button Container & Button */
+.rp-btn-container {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 20px 20px;
+}
+
 .rp-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin: 0 20px 20px;
-  padding: 14px;
-  background: #2f60ff;
+  margin: 0;
+  padding: 10px 18px;
+  background: #0b6b55;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .rp-nav-btn:hover {
-  background: #1d4ed8;
+  background: #085242;
 }
 
 .rp-nav-btn.active {
@@ -223,8 +239,9 @@
 }
 
 .rp-btn-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 /* Webkit scrollbar customization for stops column */
@@ -238,21 +255,24 @@
 }
 
 /* ==========================================================
-   DESKTOP / FULL SCREEN VIEW
-   Installs side-by-side view & completely forbids horizontal scroll
-   ========================================================== */
+    TABLET / IPAD & LANDSCAPE VIEW (Min-width: 768px)
+    ========================================================== */
 @media (min-width: 768px) {
+  .rp-wrapper {
+    padding: 24px;
+  }
+
   .rp-main-layout {
-    flex-direction: row; /* Horizontal split on desktop screens */
+    flex-direction: row; 
   }
 
   .rp-map-container {
     flex: 1;
-    height: 400px; /* Lock visual map area */
+    height: 400px; 
   }
 
   .rp-stops-list {
-    width: 320px; /* Locked width sidebar on desktop */
+    width: 320px; 
     border-top: none;
     border-left: 1px solid #f0f0f0;
     display: flex;
@@ -260,7 +280,7 @@
   }
 
   .rp-stops-scroll-container {
-    height: 400px; /* Strict height locks layout, forcing vertical scroll */
+    height: 400px; 
     max-height: 400px;
   }
 }

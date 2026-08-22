@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './QuartzAddToCart.css'; // Don't forget to create this CSS file!
+import './Quartzaddtocart.css'; 
 import bottleImage from '../../assets/shop_10.jpg'; // Reference the user's image
 
 const QuartzAddToCart = () => {

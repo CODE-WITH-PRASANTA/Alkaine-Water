@@ -95,87 +95,98 @@ const ExtraStock = () => {
   const totalPages = Math.ceil(stockList.length / itemsPerPage);
 
   return (
-    <div className="extra-stock-container full-page-view">
-      <div className="extra-stock-wrapper full-width-stack">
+    <div className="ExtraStock-container ExtraStock-full-page-view">
+      <div className="ExtraStock-wrapper ExtraStock-full-width-stack">
         
         {/* ================= CARD: ADD EXTRA STOCK ================= */}
-        <div className="extra-stock-card full-size-card">
-          <div className="extra-stock-card-header">
-            <h2 className="extra-stock-title">Add Extra Stock</h2>
+        <div className="ExtraStock-card ExtraStock-full-size-card">
+          <div className="ExtraStock-card-header">
+            <h2 className="ExtraStock-title">Add Extra Stock</h2>
+            <div className="ExtraStock-header-accent"></div>
           </div>
 
-          <form onSubmit={handleExtraStockSubmit} className="extra-stock-form-content">
-            <div className="extra-stock-form-left">
+          <form onSubmit={handleExtraStockSubmit} className="ExtraStock-form-content">
+            <div className="ExtraStock-form-left">
               
-              <div className="extra-stock-form-group">
-                <label className="extra-stock-label">Product Size</label>
-                <select 
-                  className="extra-stock-select" 
-                  value={extraProduct} 
-                  onChange={(e) => setExtraProduct(e.target.value)}
-                >
-                  <option value="20L">20L Water Jar</option>
-                  <option value="15L">15L Water Jar</option>
-                  <option value="10L">10L Water Jar</option>
-                </select>
+              <div className="ExtraStock-form-group">
+                <label className="ExtraStock-label">Product Size</label>
+                <div className="ExtraStock-input-wrapper">
+                  <select 
+                    className="ExtraStock-select" 
+                    value={extraProduct} 
+                    onChange={(e) => setExtraProduct(e.target.value)}
+                  >
+                    <option value="20L">20L Water Jar</option>
+                    <option value="15L">15L Water Jar</option>
+                    <option value="10L">10L Water Jar</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="extra-stock-form-group">
-                <label className="extra-stock-label">Extra Jars</label>
-                <div className="extra-stock-counter">
+              <div className="ExtraStock-form-group">
+                <label className="ExtraStock-label">Extra Jars</label>
+                <div className="ExtraStock-counter">
                   <button 
                     type="button" 
-                    className="extra-stock-counter-btn"
+                    className="ExtraStock-counter-btn"
                     onClick={() => setExtraQty(prev => Math.max(1, prev - 1))}
                   >
-                    <FaMinus size={12} />
+                    <FaMinus size={14} />
                   </button>
-                  <span className="extra-stock-counter-value">{extraQty}</span>
+                  <span className="ExtraStock-counter-value">{extraQty}</span>
                   <button 
                     type="button" 
-                    className="extra-stock-counter-btn"
+                    className="ExtraStock-counter-btn"
                     onClick={() => setExtraQty(prev => prev + 1)}
                   >
-                    <FaPlus size={12} />
+                    <FaPlus size={14} />
                   </button>
                 </div>
               </div>
 
-              <div className="extra-stock-form-group">
-                <label className="extra-stock-label">Total Amount</label>
-                <div className="extra-stock-amount">₹{currentTotalAmount}</div>
+              <div className="ExtraStock-form-group">
+                <label className="ExtraStock-label">Total Amount</label>
+                <div className="ExtraStock-amount">
+                  <span className="ExtraStock-currency">₹</span>
+                  {currentTotalAmount}
+                </div>
               </div>
 
-              <div className="extra-stock-form-group">
-                <label className="extra-stock-label">Reason</label>
-                <select 
-                  className="extra-stock-select" 
-                  value={reason} 
-                  onChange={(e) => setReason(e.target.value)}
-                >
-                  <option value="Customer Requested">Customer Requested</option>
-                  <option value="Event / Party">Event / Party</option>
-                  <option value="Damaged Replacement">Damaged Replacement</option>
-                </select>
+              <div className="ExtraStock-form-group">
+                <label className="ExtraStock-label">Reason</label>
+                <div className="ExtraStock-input-wrapper">
+                  <select 
+                    className="ExtraStock-select" 
+                    value={reason} 
+                    onChange={(e) => setReason(e.target.value)}
+                  >
+                    <option value="Customer Requested">Customer Requested</option>
+                    <option value="Event / Party">Event / Party</option>
+                    <option value="Damaged Replacement">Damaged Replacement</option>
+                  </select>
+                </div>
               </div>
 
             </div>
 
-            <div className="extra-stock-form-right">
-              <img src={jarLeft} alt="Water Jar Extra Stock" className="extra-stock-jar-img" />
+            <div className="ExtraStock-form-right">
+              <div className="ExtraStock-image-showcase">
+                <img src={jarLeft} alt="Water Jar Extra Stock" className="ExtraStock-jar-img" />
+                <div className="ExtraStock-image-glow"></div>
+              </div>
             </div>
 
-            <button type="submit" className={`extra-stock-submit-btn blue-btn ${isEditing ? 'edit-mode-btn' : ''}`}>
+            <button type="submit" className={`ExtraStock-submit-btn ${isEditing ? 'ExtraStock-edit-mode-btn' : 'ExtraStock-primary-btn'}`}>
               {isEditing ? 'Update Stock Details' : 'Add & Update Stock'}
             </button>
           </form>
         </div>
 
         {/* ================= DATA TABLE SECTION ================= */}
-        <div className="table-section-card">
-          <h3 className="table-section-title">Extra Stock Ledger Logs</h3>
-          <div className="table-responsive-wrapper">
-            <table className="custom-data-table">
+        <div className="ExtraStock-table-section-card">
+          <h3 className="ExtraStock-table-section-title">Extra Stock Ledger Logs</h3>
+          <div className="ExtraStock-table-responsive-wrapper">
+            <table className="ExtraStock-custom-data-table">
               <thead>
                 <tr>
                   <th>Sl No.</th>
@@ -189,38 +200,43 @@ const ExtraStock = () => {
               <tbody>
                 {currentItems.length > 0 ? (
                   currentItems.map((item, index) => (
-                    <tr key={item.id}>
-                      <td>{indexOfFirstItem + index + 1}</td>
-                      <td><strong>{item.productSize} Water Jar</strong></td>
-                      <td>{item.quantity}</td>
-                      <td>₹{item.totalAmount}</td>
+                    <tr key={item.id} className="ExtraStock-table-row">
+                      <td className="ExtraStock-col-id">{indexOfFirstItem + index + 1}</td>
+                      <td><strong className="ExtraStock-product-name">{item.productSize} Water Jar</strong></td>
                       <td>
-                        <span className={`reason-badge reason-${item.reason.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+                        <span className="ExtraStock-qty-pill">{item.quantity}</span>
+                      </td>
+                      <td className="ExtraStock-price-cell">₹{item.totalAmount}</td>
+                      <td>
+                        <span className={`ExtraStock-reason-badge ExtraStock-reason-${item.reason.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
                           {item.reason}
                         </span>
                       </td>
-                      <td className="table-actions-cell">
+                      <td className="ExtraStock-table-actions-cell">
                         <button 
-                          className="action-btn edit-action" 
+                          className="ExtraStock-action-btn ExtraStock-edit-action" 
                           title="Edit"
                           onClick={() => handleEdit(item)}
                         >
-                          <FaEdit size={14} />
+                          <FaEdit size={16} />
                         </button>
                         <button 
-                          className="action-btn delete-action" 
+                          className="ExtraStock-action-btn ExtraStock-delete-action" 
                           title="Delete"
                           onClick={() => handleDelete(item.id)}
                         >
-                          <FaTrashAlt size={14} />
+                          <FaTrashAlt size={16} />
                         </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="empty-table-placeholder">
-                      No stock adjustments found. Add entries above to populate ledger.
+                    <td colSpan="6" className="ExtraStock-empty-table-placeholder">
+                      <div className="ExtraStock-empty-state-content">
+                        <span className="ExtraStock-empty-icon">📊</span>
+                        <p>No stock adjustments found. Add entries above to populate ledger.</p>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -230,33 +246,33 @@ const ExtraStock = () => {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="table-pagination-container">
-              <span className="pagination-info-text">
-                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, stockList.length)} of {stockList.length} entries
+            <div className="ExtraStock-table-pagination-container">
+              <span className="ExtraStock-pagination-info-text">
+                Showing <strong>{indexOfFirstItem + 1}</strong> to <strong>{Math.min(indexOfLastItem, stockList.length)}</strong> of <strong>{stockList.length}</strong> entries
               </span>
-              <div className="pagination-button-group">
+              <div className="ExtraStock-pagination-button-group">
                 <button 
-                  className="pagination-nav-btn" 
+                  className="ExtraStock-pagination-nav-btn" 
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
-                  <FaChevronLeft size={10} /> Prev
+                  <FaChevronLeft size={12} /> Prev
                 </button>
                 {Array.from({ length: totalPages }, (_, idx) => (
                   <button
                     key={idx + 1}
-                    className={`pagination-number-btn ${currentPage === idx + 1 ? 'active-page' : ''}`}
+                    className={`ExtraStock-pagination-number-btn ${currentPage === idx + 1 ? 'ExtraStock-active-page' : ''}`}
                     onClick={() => setCurrentPage(idx + 1)}
                   >
                     {idx + 1}
                   </button>
                 ))}
                 <button 
-                  className="pagination-nav-btn" 
+                  className="ExtraStock-pagination-nav-btn" 
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
-                  Next <FaChevronRight size={10} />
+                  Next <FaChevronRight size={12} />
                 </button>
               </div>
             </div>

@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../../assets/ALKA DROPS LOGO.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dropdownRef = useRef(null);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // Handle Navbar background on scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -29,6 +29,23 @@ const Navbar = () => {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
+
+  // Close menus on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
+  }, [location]);
+
+  // Close dropdown on click outside (Desktop)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const closeAllMenus = () => {
     setIsMobileMenuOpen(false);
@@ -52,7 +69,7 @@ const Navbar = () => {
           <img src={logo} alt="Alka Drops Logo" className="navbar-logo" />
         </Link>
 
-        {/* Dynamic Navigation Links Block */}
+        {/* Dynamic Navigation Links Block / Mobile Drawer */}
         <div className={`navbar-menu-container ${isMobileMenuOpen ? 'is-open' : ''}`}>
           <ul className="navbar-menu">
             <li className="navbar-item">
@@ -107,7 +124,10 @@ const Navbar = () => {
             </li>
 
             {/* Dropdown Menu */}
-            <li className={`navbar-item navbar-has-dropdown ${isDropdownOpen ? 'dropdown-active' : ''}`}>
+            <li 
+              ref={dropdownRef}
+              className={`navbar-item navbar-has-dropdown ${isDropdownOpen ? 'dropdown-active' : ''}`}
+            >
               <button
                 type="button"
                 className="navbar-link navbar-dropdown-toggle"
@@ -120,7 +140,7 @@ const Navbar = () => {
                 </svg>
               </button>
 
-              <ul className="navbar-dropdown">
+              <ul className={`navbar-dropdown ${isDropdownOpen ? 'show' : ''}`}>
                 <li className="navbar-dropdown-item">
                   <Link to="/blog" onClick={closeAllMenus}>Blog</Link>
                 </li>
@@ -154,7 +174,7 @@ const Navbar = () => {
           <div className="navbar-mobile-actions">
             <button
               type="button"
-              className="navbar-btn-primary"
+              className="navbar-btn-primary full-width"
               onClick={() => {
                 navigate('/shop');
                 closeAllMenus();
@@ -165,7 +185,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right Desktop Actions */}
+        {/* Right Desktop Actions & Mobile Cart */}
         <div className="navbar-actions">
           <button
             type="button"
@@ -176,7 +196,7 @@ const Navbar = () => {
             }}
             aria-label="View Shopping Cart"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
@@ -185,7 +205,7 @@ const Navbar = () => {
 
           <button
             type="button"
-            className="navbar-btn-primary"
+            className="navbar-btn-primary hide-on-mobile"
             onClick={() => {
               navigate('/shop');
               closeAllMenus();
@@ -193,20 +213,20 @@ const Navbar = () => {
           >
             Order Now
           </button>
-        </div>
 
-        {/* Mobile Toggle Button */}
-        <button
-          type="button"
-          className={`navbar-toggle ${isMobileMenuOpen ? 'is-open' : ''}`}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle Navigation Menu"
-          aria-expanded={isMobileMenuOpen}
-        >
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-        </button>
+          {/* Mobile Toggle Hamburger Button */}
+          <button
+            type="button"
+            className={`navbar-toggle ${isMobileMenuOpen ? 'is-open' : ''}`}
+            onClick={toggleMobileMenu}
+            aria-label="Toggle Navigation Menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+        </div>
       </nav>
 
       {/* Dimmed Backdrop overlay for mobile drawer */}

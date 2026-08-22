@@ -1,119 +1,96 @@
-/* ==========================================================================
-   Base & Reset Variables
-   ========================================================================== */
 :root {
   --nav-height: 72px;
   --nav-bg-hero: rgba(255, 255, 255, 0.95);
-  --nav-bg-scrolled: rgba(255, 255, 255, 0.98);
-  --nav-text-color: #1e293b;
-  --nav-text-hover: #0284c7;
-  --nav-accent: #0ea5e9;
-  --nav-accent-hover: #0284c7;
-  --nav-border: rgba(0, 0, 0, 0.08);
-  --nav-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
-  --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --nav-z-index: 1000;
+  --nav-bg-scrolled: #ffffff;
+  --primary-color: #0284c7;
+  --primary-hover: #0369a1;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
 }
 
-/* ==========================================================================
-   Header Wrapper & Top-level Navigation
-   ========================================================================== */
+/* Base Wrapper */
 .navbar-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: var(--nav-height);
-  z-index: var(--nav-z-index);
-  transition: var(--nav-transition);
-  box-sizing: border-box;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
 }
 
 .navbar-wrapper.hero-state {
-  background-color: var(--nav-bg-hero);
+  background: var(--nav-bg-hero);
   backdrop-filter: blur(10px);
 }
 
 .navbar-wrapper.scrolled-state {
-  background-color: var(--nav-bg-scrolled);
-  backdrop-filter: blur(16px);
-  box-shadow: var(--nav-shadow);
-  border-bottom: 1px solid var(--nav-border);
+  background: var(--nav-bg-scrolled);
+  box-shadow: var(--shadow-subtle);
 }
 
 .navbar {
+  width: 100%;
   max-width: 1280px;
-  height: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-sizing: border-box;
 }
 
-/* ==========================================================================
-   Brand & Logo
-   ========================================================================== */
+/* Brand Logo */
 .navbar-brand {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   text-decoration: none;
-  z-index: calc(var(--nav-z-index) + 2);
+  z-index: 1010;
 }
 
 .navbar-logo {
   height: 40px;
   width: auto;
   object-fit: contain;
-  display: block;
 }
 
-/* ==========================================================================
-   Desktop Navigation Menu
-   ========================================================================== */
+/* Desktop Links */
 .navbar-menu-container {
   display: flex;
   align-items: center;
+  gap: 2rem;
 }
 
 .navbar-menu {
+  display: flex;
+  align-items: center;
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-}
-
-.navbar-item {
-  position: relative;
+  gap: 1.5rem;
 }
 
 .navbar-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  color: var(--text-dark);
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--nav-text-color);
   text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  transition: color 0.2s ease;
+  position: relative;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem 0;
-  transition: color 0.2s ease;
-  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .navbar-link:hover,
 .navbar-link.active-link {
-  color: var(--nav-accent);
-}
-
-/* Active Link Indicator */
-.navbar-link.active-link {
-  position: relative;
+  color: var(--primary-color);
 }
 
 .navbar-link.active-link::after {
@@ -123,15 +100,17 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: var(--nav-accent);
+  background-color: var(--primary-color);
   border-radius: 2px;
 }
 
-/* ==========================================================================
-   Dropdown Styles (Desktop & Hover/Click)
-   ========================================================================== */
+/* Dropdown styling */
+.navbar-has-dropdown {
+  position: relative;
+}
+
 .navbar-arrow {
-  transition: transform 0.25s ease;
+  transition: transform 0.2s ease;
 }
 
 .dropdown-active .navbar-arrow {
@@ -140,103 +119,94 @@
 
 .navbar-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  background: #ffffff;
+  top: calc(100% + 10px);
+  left: 0;
   min-width: 180px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--nav-border);
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   padding: 0.5rem 0;
   list-style: none;
-  margin: 0;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  z-index: 10;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
 }
 
-.navbar-has-dropdown.dropdown-active .navbar-dropdown {
+.navbar-dropdown.show,
+.navbar-has-dropdown:hover .navbar-dropdown {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 .navbar-dropdown-item a {
   display: block;
   padding: 0.6rem 1.2rem;
-  color: var(--nav-text-color);
+  color: var(--text-dark);
+  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .navbar-dropdown-item a:hover {
-  background-color: rgba(14, 165, 233, 0.08);
-  color: var(--nav-accent);
+  background-color: #f1f5f9;
+  color: var(--primary-color);
+  padding-left: 1.4rem;
 }
 
-/* ==========================================================================
-   Actions (Desktop Right-Side & Mobile-Side)
-   ========================================================================== */
+/* Actions & Buttons */
 .navbar-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.navbar-mobile-actions {
-  display: none;
-}
-
 .navbar-icon-btn {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0.5rem;
   cursor: pointer;
-  color: var(--nav-text-color);
-  display: inline-flex;
+  color: var(--text-dark);
+  padding: 0.4rem;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .navbar-icon-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--nav-accent);
+  background-color: #f1f5f9;
+  color: var(--primary-color);
 }
 
 .navbar-btn-primary {
-  background-color: var(--nav-accent);
+  background: var(--primary-color);
   color: #ffffff;
   border: none;
-  padding: 0.65rem 1.35rem;
+  padding: 0.6rem 1.4rem;
   border-radius: 9999px;
-  font-size: 0.9rem;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .navbar-btn-primary:hover {
-  background-color: var(--nav-accent-hover);
-  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
-  transform: translateY(-1px);
+  background: var(--primary-hover);
 }
 
 .navbar-btn-primary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
-/* ==========================================================================
-   Mobile Toggle (Hamburger)
-   ========================================================================== */
+.navbar-mobile-actions {
+  display: none;
+}
+
+/* Mobile Toggle Hamburger */
 .navbar-toggle {
   display: none;
   flex-direction: column;
@@ -247,16 +217,16 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: calc(var(--nav-z-index) + 2);
+  z-index: 1010;
 }
 
 .hamburger-line {
+  display: block;
   width: 100%;
   height: 2px;
-  background-color: var(--nav-text-color);
+  background-color: var(--text-dark);
   border-radius: 2px;
   transition: transform 0.3s ease, opacity 0.3s ease;
-  transform-origin: center;
 }
 
 .navbar-toggle.is-open .hamburger-line:nth-child(1) {
@@ -274,42 +244,36 @@
 .navbar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background-color: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(4px);
-  z-index: calc(var(--nav-z-index) - 1);
+  z-index: 998;
 }
 
-/* ==========================================================================
-   Responsive Breakpoints
-   ========================================================================== */
-
-/* Tablets & Mobile Devices (<= 992px) */
-@media screen and (max-width: 992px) {
+/* Responsive Breakpoint: Mobile & Tablet */
+@media (max-width: 992px) {
   .navbar-toggle {
     display: flex;
   }
 
-  .navbar-actions .navbar-btn-primary {
-    display: none; /* Hide primary CTA from top-bar on mobile, move to drawer */
+  .hide-on-mobile {
+    display: none;
   }
 
   .navbar-menu-container {
     position: fixed;
     top: 0;
     right: 0;
-    width: 290px;
+    width: min(80vw, 320px);
     height: 100vh;
-    background-color: #ffffff;
-    padding: calc(var(--nav-height) + 1.5rem) 1.5rem 2rem;
+    background: #ffffff;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
     flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+    align-items: flex-start;
+    padding: calc(var(--nav-height) + 1.5rem) 1.5rem 2rem;
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
     overflow-y: auto;
-    box-sizing: border-box;
-    z-index: calc(var(--nav-z-index) + 1);
   }
 
   .navbar-menu-container.is-open {
@@ -319,8 +283,8 @@
   .navbar-menu {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
     width: 100%;
+    gap: 0.5rem;
   }
 
   .navbar-item {
@@ -329,64 +293,35 @@
 
   .navbar-link {
     width: 100%;
-    padding: 0.75rem 0.5rem;
-    font-size: 1rem;
     justify-content: space-between;
+    padding: 0.75rem 0.5rem;
+    font-size: 1.05rem;
   }
 
-  .navbar-link.active-link::after {
-    display: none;
-  }
-
-  .navbar-link.active-link {
-    font-weight: 700;
-  }
-
-  /* Inline Mobile Dropdown */
   .navbar-dropdown {
     position: static;
-    transform: none;
     box-shadow: none;
     border: none;
-    border-left: 2px solid var(--nav-border);
-    margin-left: 0.75rem;
-    padding: 0.25rem 0 0.25rem 0.5rem;
+    padding: 0 0 0 1rem;
     display: none;
+    transform: none;
     opacity: 1;
     visibility: visible;
   }
 
-  .navbar-has-dropdown.dropdown-active .navbar-dropdown {
+  .navbar-dropdown.show {
     display: block;
-  }
-
-  .navbar-dropdown-item a {
-    padding: 0.5rem 0.75rem;
   }
 
   .navbar-mobile-actions {
     display: block;
+    width: 100%;
     margin-top: 2rem;
+  }
+
+  .navbar-btn-primary.full-width {
     width: 100%;
-  }
-
-  .navbar-mobile-actions .navbar-btn-primary {
-    width: 100%;
-    padding: 0.8rem 1rem;
-  }
-}
-
-/* Small Screens (<= 480px) */
-@media screen and (max-width: 480px) {
-  .navbar {
-    padding: 0 1rem;
-  }
-
-  .navbar-logo {
-    height: 34px;
-  }
-
-  .navbar-menu-container {
-    width: 82vw;
+    padding: 0.8rem;
+    text-align: center;
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import logo from '../../assets/ALKA DROPS LOGO.png'; // Replace with your exact logo file path
+import logo from "../../assets/ALKA DROPS LOGO.png"; // Replace with your exact logo file path
 import {
   FaCheckCircle,
   FaMapMarkerAlt,

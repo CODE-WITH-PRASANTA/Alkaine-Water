@@ -1,84 +1,172 @@
-import React, { useState } from 'react';
-import { 
-  FaUser, 
-  FaPhoneAlt, 
-  FaMapMarkerAlt, 
-  FaCommentAlt, 
-  FaPaperPlane, 
+import React, { useState } from "react";
+import {
+  FaUser,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaCommentAlt,
+  FaPaperPlane,
   FaWhatsapp,
-  FaCheck
-} from 'react-icons/fa';
-import { IoClose, IoWater } from 'react-icons/io5';
-import './Floating.css';
+  FaCheck,
+} from "react-icons/fa";
+import { IoClose, IoWater } from "react-icons/io5";
+import "./Floating.css";
 
-const Floating = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const Floating = ({ isOpen, onClose }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    address: '',
-    message: ''
+    name: "",
+    phone: "",
+    address: "",
+    message: "",
   });
+
+  /* ============================================
+     INPUT CHANGE
+  ============================================ */
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
+  /* ============================================
+     SUBMIT
+  ============================================ */
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Alka Drops Order Submitted:', formData);
-    
-    // Instantly trigger green state (0.1s CSS transition)
+
+    console.log("Alka Drops Order Submitted:", formData);
+
     setIsSubmitted(true);
-    
-    // Smoothly close modal shortly after showing success state
+
     setTimeout(() => {
-      setIsOpen(false);
-    }, 800);
+      setIsSubmitted(false);
+
+      setFormData({
+        name: "",
+        phone: "",
+        address: "",
+        message: "",
+      });
+
+      onClose();
+    }, 1000);
   };
 
-  if (!isOpen) return null;
+  /* ============================================
+     CALL
+  ============================================ */
+
+  const handleCall = () => {
+    window.location.href = "tel:+919937065001";
+  };
+
+  /* ============================================
+     WHATSAPP
+  ============================================ */
+
+  const handleWhatsApp = () => {
+    const message = encodeURIComponent(
+      "Hello Alka Drops! 👋\n\nI would like to know more about your water delivery service."
+    );
+
+    window.open(
+      `https://wa.me/919937065001?text=${message}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  /* ============================================
+     DON'T RENDER WHEN CLOSED
+  ============================================ */
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="floating-overlay">
+
       <div className="floating-card">
-        {/* Top Water Drop Badge Icon */}
+
+        {/* ======================================
+            WATER BADGE
+        ====================================== */}
+
         <div className="floating-top-badge">
           <IoWater className="floating-badge-icon" />
         </div>
 
-        {/* Small Elegant Close Button */}
-        <button 
-          type="button" 
-          className="floating-close-btn" 
-          onClick={() => setIsOpen(false)}
-          aria-label="Close modal"
+        {/* ======================================
+            CLOSE
+        ====================================== */}
+
+        <button
+          type="button"
+          className="floating-close-btn"
+          onClick={onClose}
+          aria-label="Close Alka Drops form"
         >
           <IoClose />
         </button>
 
-        {/* Header Title Section */}
+        {/* ======================================
+            HEADER
+        ====================================== */}
+
         <div className="floating-header">
+
           <h2 className="floating-title">
-             Alka Drops <br />
-            <span>Water Delivered</span>
+            Alka Drops
+            <br />
+
+            <span>
+              Water Delivered
+            </span>
           </h2>
-          <p className="floating-subtitle-script">to Your Doorstep</p>
+
+          <div className="floating-subtitle-wrapper">
+
+            <span className="floating-subtitle-line"></span>
+
+            <p className="floating-subtitle-script">
+              to Your Doorstep
+            </p>
+
+            <span className="floating-subtitle-line"></span>
+
+          </div>
+
           <p className="floating-description">
-            Pure. Safe. Refreshing. <br />
+            Pure. Safe. Refreshing.
+            <br />
             Delivered with care to your doorstep.
           </p>
+
         </div>
 
-        {/* Form Inputs */}
-        <form className="floating-form" onSubmit={handleSubmit}>
+        {/* ======================================
+            FORM
+        ====================================== */}
+
+        <form
+          className="floating-form"
+          onSubmit={handleSubmit}
+        >
+
+          {/* NAME */}
+
           <div className="floating-input-group">
+
             <FaUser className="floating-input-icon" />
+
             <input
               type="text"
               name="name"
@@ -87,10 +175,15 @@ const Floating = () => {
               onChange={handleChange}
               required
             />
+
           </div>
 
+          {/* PHONE */}
+
           <div className="floating-input-group">
+
             <FaPhoneAlt className="floating-input-icon" />
+
             <input
               type="tel"
               name="phone"
@@ -99,10 +192,15 @@ const Floating = () => {
               onChange={handleChange}
               required
             />
+
           </div>
 
+          {/* ADDRESS */}
+
           <div className="floating-input-group">
+
             <FaMapMarkerAlt className="floating-input-icon" />
+
             <input
               type="text"
               name="address"
@@ -111,67 +209,119 @@ const Floating = () => {
               onChange={handleChange}
               required
             />
+
           </div>
 
+          {/* MESSAGE */}
+
           <div className="floating-input-group floating-textarea-group">
-            <FaCommentAlt className="floating-input-icon floating-textarea-icon" />
+
+            <FaCommentAlt
+              className="floating-input-icon floating-textarea-icon"
+            />
+
             <textarea
               name="message"
               placeholder="Message"
               rows="2"
               value={formData.message}
               onChange={handleChange}
-            ></textarea>
+            />
+
           </div>
 
-          {/* Submit Button with Instant Green Transition */}
-          <button 
-            type="submit" 
-            className={`floating-submit-btn ${isSubmitted ? 'submitted-success' : ''}`}
+          {/* ====================================
+              SUBMIT
+          ==================================== */}
+
+          <button
+            type="submit"
+            className={`floating-submit-btn ${
+              isSubmitted ? "submitted-success" : ""
+            }`}
             disabled={isSubmitted}
           >
+
             {isSubmitted ? (
               <>
                 <FaCheck className="floating-btn-icon" />
-                Confirmed!
+                <span>Confirmed!</span>
               </>
             ) : (
               <>
                 <FaPaperPlane className="floating-btn-icon" />
-                Submit 
+                <span>Submit</span>
               </>
             )}
+
           </button>
+
         </form>
 
-        {/* Call & WhatsApp Quick Buttons */}
+        {/* ======================================
+            CALL + WHATSAPP
+        ====================================== */}
+
         <div className="floating-action-grid">
-          <a href="tel:+919876543210" className="floating-action-card">
+
+          {/* CALL */}
+
+          <button
+            type="button"
+            className="floating-action-card"
+            onClick={handleCall}
+            aria-label="Call Alka Drops"
+          >
+
             <div className="floating-action-icon floating-call-bg">
               <FaPhoneAlt />
             </div>
-            <div className="floating-action-text">
-              <strong>Call Us</strong>
-              <span>Tap to Call</span>
-            </div>
-          </a>
 
-          <a 
-            href="https://wa.me/919876543210" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+            <div className="floating-action-text">
+
+              <strong>
+                Call Us
+              </strong>
+
+              <span>
+                +91 99370 65001
+              </span>
+
+            </div>
+
+          </button>
+
+          {/* WHATSAPP */}
+
+          <button
+            type="button"
             className="floating-action-card"
+            onClick={handleWhatsApp}
+            aria-label="WhatsApp Alka Drops"
           >
+
             <div className="floating-action-icon floating-whatsapp-bg">
               <FaWhatsapp />
             </div>
+
             <div className="floating-action-text">
-              <strong>WhatsApp</strong>
-              <span>Chat with Us</span>
+
+              <strong>
+                WhatsApp
+              </strong>
+
+              <span>
+                Chat with Us
+              </span>
+
             </div>
-          </a>
+
+          </button>
+
         </div>
+
       </div>
+
     </div>
   );
 };

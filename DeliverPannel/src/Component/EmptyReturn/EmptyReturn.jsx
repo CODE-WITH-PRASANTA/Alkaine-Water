@@ -86,38 +86,38 @@ const EmptyReturn = () => {
   const totalPages = Math.ceil(returnsList.length / itemsPerPage);
 
   return (
-    <div className="empty-return-container full-page-view">
-      <div className="empty-return-wrapper full-width-stack">
+    <div className="EmptyReturn-container EmptyReturn-full-page-view">
+      <div className="EmptyReturn-wrapper EmptyReturn-full-width-stack">
         
         {/* ================= CARD: EMPTY BOTTLE RETURN ================= */}
-        <div className="empty-return-card full-size-card">
-          <div className="empty-return-card-header">
-            <h2 className="empty-return-title">Empty Bottle Return</h2>
+        <div className="EmptyReturn-card EmptyReturn-full-size-card">
+          <div className="EmptyReturn-card-header">
+            <h2 className="EmptyReturn-title">Empty Bottle Return</h2>
           </div>
 
-          <form onSubmit={handleEmptyReturnSubmit} className="empty-return-form-content">
-            <div className="empty-return-form-left">
+          <form onSubmit={handleEmptyReturnSubmit} className="EmptyReturn-form-content">
+            <div className="EmptyReturn-form-left">
               
-              <div className="empty-return-form-group">
-                <label className="empty-return-label">Customer ID</label>
+              <div className="EmptyReturn-form-group">
+                <label className="EmptyReturn-label">Customer ID</label>
                 <input 
                   type="text" 
                   required
                   placeholder="Enter Customer ID" 
-                  className="empty-return-input"
+                  className="EmptyReturn-input"
                   value={customerId}
                   onChange={(e) => setCustomerId(e.target.value)}
                 />
               </div>
 
-              <div className="empty-return-form-group">
-                <label className="empty-return-label">Product Name</label>
-                <div className="empty-return-checkbox-group">
+              <div className="EmptyReturn-form-group">
+                <label className="EmptyReturn-label">Product Name</label>
+                <div className="EmptyReturn-checkbox-group">
                   {['20L', '15L', '10L'].map((size) => (
-                    <label key={size} className="empty-return-checkbox-label">
+                    <label key={size} className="EmptyReturn-checkbox-label">
                       <input 
                         type="checkbox" 
-                        className="empty-return-checkbox" 
+                        className="EmptyReturn-checkbox" 
                         checked={returnProduct === size}
                         onChange={() => setReturnProduct(size)}
                       />
@@ -127,20 +127,20 @@ const EmptyReturn = () => {
                 </div>
               </div>
 
-              <div className="empty-return-form-group">
-                <label className="empty-return-label">Quantity</label>
-                <div className="empty-return-counter">
+              <div className="EmptyReturn-form-group">
+                <label className="EmptyReturn-label">Quantity</label>
+                <div className="EmptyReturn-counter">
                   <button 
                     type="button" 
-                    className="empty-return-counter-btn"
+                    className="EmptyReturn-counter-btn"
                     onClick={() => setReturnQty(prev => Math.max(1, prev - 1))}
                   >
                     <FaMinus size={12} />
                   </button>
-                  <span className="empty-return-counter-value">{returnQty}</span>
+                  <span className="EmptyReturn-counter-value">{returnQty}</span>
                   <button 
                     type="button" 
-                    className="empty-return-counter-btn"
+                    className="EmptyReturn-counter-btn"
                     onClick={() => setReturnQty(prev => prev + 1)}
                   >
                     <FaPlus size={12} />
@@ -148,16 +148,16 @@ const EmptyReturn = () => {
                 </div>
               </div>
 
-              <div className="empty-return-form-group">
-                <label className="empty-return-label">Condition</label>
-                <div className="empty-return-radio-group">
+              <div className="EmptyReturn-form-group">
+                <label className="EmptyReturn-label">Condition</label>
+                <div className="EmptyReturn-radio-group">
                   {['Good', 'Not Returned', 'Average'].map((cond) => (
-                    <label key={cond} className="empty-return-radio-label">
+                    <label key={cond} className="EmptyReturn-radio-label">
                       <input 
                         type="radio" 
                         name="condition"
                         value={cond}
-                        className="empty-return-radio" 
+                        className="EmptyReturn-radio" 
                         checked={condition === cond}
                         onChange={(e) => setCondition(e.target.value)}
                       />
@@ -167,12 +167,12 @@ const EmptyReturn = () => {
                 </div>
               </div>
 
-              <div className="empty-return-form-group">
-                <label className="empty-return-label">Remarks (Optional)</label>
+              <div className="EmptyReturn-form-group">
+                <label className="EmptyReturn-label">Remarks (Optional)</label>
                 <input 
                   type="text" 
                   placeholder="Enter remarks..." 
-                  className="empty-return-input"
+                  className="EmptyReturn-input"
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                 />
@@ -180,21 +180,21 @@ const EmptyReturn = () => {
 
             </div>
 
-            <div className="empty-return-form-right">
-              <img src={jarRight} alt="Water Jar Return" className="empty-return-jar-img" />
+            <div className="EmptyReturn-form-right">
+              <img src={jarRight} alt="Water Jar Return" className="EmptyReturn-jar-img" />
             </div>
 
-            <button type="submit" className={`empty-return-submit-btn blue-btn ${isEditing ? 'edit-mode-btn' : ''}`}>
+            <button type="submit" className={`EmptyReturn-submit-btn EmptyReturn-blue-btn ${isEditing ? 'EmptyReturn-edit-mode-btn' : ''}`}>
               {isEditing ? 'Update Return Details' : 'Save Return'}
             </button>
           </form>
         </div>
 
         {/* ================= DATA TABLE SECTION ================= */}
-        <div className="table-section-card">
-          <h3 className="table-section-title">Return Records Logs</h3>
-          <div className="table-responsive-wrapper">
-            <table className="custom-data-table">
+        <div className="EmptyReturn-table-section-card">
+          <h3 className="EmptyReturn-table-section-title">Return Records Logs</h3>
+          <div className="EmptyReturn-table-responsive-wrapper">
+            <table className="EmptyReturn-custom-data-table">
               <thead>
                 <tr>
                   <th>Sl No.</th>
@@ -215,21 +215,21 @@ const EmptyReturn = () => {
                       <td>{item.productSize} Water Jar</td>
                       <td>{item.quantity}</td>
                       <td>
-                        <span className={`status-badge cond-${item.condition.toLowerCase().replace(' ', '-')}`}>
+                        <span className={`EmptyReturn-status-badge EmptyReturn-cond-${item.condition.toLowerCase().replace(' ', '-')}`}>
                           {item.condition}
                         </span>
                       </td>
                       <td>{item.remarks}</td>
-                      <td className="table-actions-cell">
+                      <td className="EmptyReturn-table-actions-cell">
                         <button 
-                          className="action-btn edit-action" 
+                          className="EmptyReturn-action-btn EmptyReturn-edit-action" 
                           title="Edit"
                           onClick={() => handleEdit(item)}
                         >
                           <FaEdit size={14} />
                         </button>
                         <button 
-                          className="action-btn delete-action" 
+                          className="EmptyReturn-action-btn EmptyReturn-delete-action" 
                           title="Delete"
                           onClick={() => handleDelete(item.id)}
                         >
@@ -240,7 +240,7 @@ const EmptyReturn = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="empty-table-placeholder">
+                    <td colSpan="7" className="EmptyReturn-empty-table-placeholder">
                       No matching records found. Submit entry records above.
                     </td>
                   </tr>
@@ -251,13 +251,13 @@ const EmptyReturn = () => {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="table-pagination-container">
-              <span className="pagination-info-text">
+            <div className="EmptyReturn-table-pagination-container">
+              <span className="EmptyReturn-pagination-info-text">
                 Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, returnsList.length)} of {returnsList.length} entries
               </span>
-              <div className="pagination-button-group">
+              <div className="EmptyReturn-pagination-button-group">
                 <button 
-                  className="pagination-nav-btn" 
+                  className="EmptyReturn-pagination-nav-btn" 
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
@@ -266,14 +266,14 @@ const EmptyReturn = () => {
                 {Array.from({ length: totalPages }, (_, idx) => (
                   <button
                     key={idx + 1}
-                    className={`pagination-number-btn ${currentPage === idx + 1 ? 'active-page' : ''}`}
+                    className={`EmptyReturn-pagination-number-btn ${currentPage === idx + 1 ? 'EmptyReturn-active-page' : ''}`}
                     onClick={() => setCurrentPage(idx + 1)}
                   >
                     {idx + 1}
                   </button>
                 ))}
                 <button 
-                  className="pagination-nav-btn" 
+                  className="EmptyReturn-pagination-nav-btn" 
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >

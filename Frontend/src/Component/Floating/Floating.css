@@ -1,0 +1,440 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+/* ===================================================
+   1. FULLSCREEN BACKDROP & DYNAMIC AMBIENT GLOW
+   =================================================== */
+.floating-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background: radial-gradient(
+    circle at 50% 30%, 
+    rgba(10, 38, 71, 0.78) 0%, 
+    rgba(3, 15, 38, 0.92) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: floatingOverlayFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@keyframes floatingOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dual Multi-color Background Glow Balls */
+.floating-overlay::before,
+.floating-overlay::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.floating-overlay::before {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.35) 0%, rgba(0, 114, 255, 0) 70%);
+  animation: floatingAmbientPulse 6s ease-in-out infinite alternate;
+}
+
+.floating-overlay::after {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(0, 210, 255, 0) 70%);
+  bottom: 15%;
+  right: 25%;
+  animation: floatingAmbientPulse 8s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatingAmbientPulse {
+  0% { transform: scale(0.9) translateY(-12px); opacity: 0.5; }
+  100% { transform: scale(1.25) translateY(12px); opacity: 0.85; }
+}
+
+/* ===================================================
+   2. MAIN VIBRANT GLASS CARD CONTAINER
+   =================================================== */
+.floating-card {
+  position: relative;
+  width: 100%;
+  max-width: 395px;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  /* Vibrant Aqua Glass Gradient */
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(236, 248, 255, 0.95) 40%,
+    rgba(215, 238, 255, 0.96) 100%
+  );
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 36px;
+  padding: 38px 24px 26px;
+  box-shadow: 
+    0 30px 70px -10px rgba(0, 48, 120, 0.45),
+    0 12px 30px -5px rgba(0, 180, 255, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 1);
+  box-sizing: border-box;
+  animation: floatingPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.floating-card::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes floatingPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===================================================
+   3. TOP BADGE & ELEGANT CLOSE BUTTON
+   =================================================== */
+.floating-top-badge {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 10px 24px rgba(0, 140, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 102, 255, 0.2);
+  border: 3px solid #bae6fd;
+  animation: floatingFloatIcon 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes floatingFloatIcon {
+  0% { transform: translateX(-50%) translateY(0); }
+  100% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.floating-badge-icon {
+  font-size: 30px;
+  color: #0284c7;
+  filter: drop-shadow(0 3px 6px rgba(2, 132, 199, 0.4));
+}
+
+.floating-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  color: #0284c7;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-close-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+/* ===================================================
+   4. HEADER TYPOGRAPHY
+   =================================================== */
+.floating-header {
+  text-align: center;
+  margin-top: 14px;
+  margin-bottom: 20px;
+}
+
+.floating-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #032b53;
+  line-height: 1.22;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+/* Gradient text accent for "Water Delivered" */
+.floating-title span {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.floating-subtitle-script {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #0369a1;
+  margin: 4px 0 10px;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.floating-subtitle-script::before,
+.floating-subtitle-script::after {
+  content: '';
+  position: absolute;
+  top: 55%;
+  width: 26px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, #38bdf8);
+}
+
+.floating-subtitle-script::before {
+  right: 100%;
+  margin-right: 10px;
+}
+
+.floating-subtitle-script::after {
+  left: 100%;
+  margin-left: 10px;
+  background: linear-gradient(90deg, #38bdf8, transparent);
+}
+
+.floating-description {
+  font-size: 12px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+/* ===================================================
+   5. INPUT FIELDS WITH NEON FOCUS RINGS
+   =================================================== */
+.floating-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.floating-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.floating-input-icon {
+  position: absolute;
+  left: 16px;
+  color: #0284c7;
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  opacity: 0.7;
+}
+
+.floating-textarea-icon {
+  top: 15px;
+}
+
+.floating-input-group input,
+.floating-input-group textarea {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  background: #ffffff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 16px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.04);
+}
+
+.floating-input-group textarea {
+  resize: none;
+}
+
+.floating-input-group input::placeholder,
+.floating-input-group textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Neon Focus Glow Effect */
+.floating-input-group input:focus,
+.floating-input-group textarea:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 
+    0 0 0 4px rgba(2, 132, 199, 0.18),
+    0 6px 20px rgba(2, 132, 199, 0.12);
+}
+
+.floating-input-group input:focus ~ .floating-input-icon,
+.floating-input-group textarea:focus ~ .floating-input-icon,
+.floating-input-group:focus-within .floating-input-icon {
+  color: #0284c7;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ===================================================
+   6. BUTTONS & INSTANT 0.1s GREEN TRANSITION
+   =================================================== */
+.floating-submit-btn {
+  margin-top: 4px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  cursor: pointer;
+  box-shadow: 
+    0 10px 24px rgba(2, 132, 199, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  /* 0.1s fast transition */
+  transition: background 0.1s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+.floating-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(2, 132, 199, 0.5);
+}
+
+.floating-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 0.1s Emerald Green Success Button State */
+.floating-submit-btn.submitted-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.45) !important;
+  cursor: default;
+  transform: scale(1.02);
+}
+
+.floating-btn-icon {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.floating-submit-btn:hover .floating-btn-icon {
+  transform: translateX(3px) translateY(-1px);
+}
+
+/* Quick Action Grid (Call & WhatsApp) */
+.floating-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.floating-action-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 18px;
+  text-decoration: none;
+  border: 1.5px solid #e0f2fe;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.05);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-action-card:hover {
+  transform: translateY(-2px);
+  border-color: #7dd3fc;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.12);
+}
+
+.floating-action-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.floating-call-bg {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+.floating-whatsapp-bg {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+}
+
+.floating-action-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-action-text strong {
+  font-size: 12.5px;
+  color: #0f172a;
+}
+
+.floating-action-text span {
+  font-size: 9.5px;
+  color: #64748b;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .floating-card {
+    padding: 34px 18px 20px;
+    border-radius: 28px;
+  }
+
+  .floating-title {
+    font-size: 21px;
+  }
+
+  .floating-subtitle-script {
+    font-size: 15px;
+  }
+
+  .floating-action-grid {
+    gap: 8px;
+  }
+}

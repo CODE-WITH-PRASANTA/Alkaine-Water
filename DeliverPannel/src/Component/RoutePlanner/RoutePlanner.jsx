@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Custom Blue Marker Config for delivery stops
+// Custom Teal Marker Config for delivery stops
 const stopIcon = (number) => new L.DivIcon({
   html: `<div class="map-stop-marker">${number}</div>`,
   className: 'custom-stop-icon',
@@ -83,7 +83,8 @@ const RoutePlanner = () => {
               center={[20.3340, 85.8230]} 
               zoom={13} 
               className="rp-leaflet-map"
-              scrollWheelZoom={true}
+              scrollWheelZoom={false}
+              dragging={!L.Browser.mobile}
             >
               {/* Sleek Minimalist Map Theme Layer */}
               <TileLayer
@@ -107,7 +108,7 @@ const RoutePlanner = () => {
               ))}
 
               {/* Dynamic Path Polyline connecting points */}
-              <Polyline positions={routePolyline} color="#2F60FF" weight={4} opacity={0.8} />
+              <Polyline positions={routePolyline} color="#0b6b55" weight={4} opacity={0.8} />
             </MapContainer>
           </div>
 
@@ -142,13 +143,15 @@ const RoutePlanner = () => {
         </div>
 
         {/* Action Trigger Button */}
-        <button 
-          onClick={handleStartNavigation} 
-          className={`rp-nav-btn ${isNavigating ? 'active' : ''}`}
-        >
-          <Navigation className="rp-btn-icon" />
-          {isNavigating ? "Navigation Active" : "Start Navigation"}
-        </button>
+        <div className="rp-btn-container">
+          <button 
+            onClick={handleStartNavigation} 
+            className={`rp-nav-btn ${isNavigating ? 'active' : ''}`}
+          >
+            <Navigation className="rp-btn-icon" />
+            {isNavigating ? "Navigation Active" : "Start Navigation"}
+          </button>
+        </div>
 
       </div>
     </div>

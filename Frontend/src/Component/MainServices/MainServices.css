@@ -1,414 +1,1001 @@
 /* ==========================================================================
-   MainServices Stylesheet (Featuring Increased Card Heights)
+   ALKA DROPS - MAIN SERVICES
    ========================================================================== */
 
 .MainServices-wrapper {
   position: relative;
   width: 100%;
-  padding: 100px 0 160px 0;
-  background-color: #ffffff;
+  padding: 100px 0 120px;
+  background: #ffffff;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
+/* ==========================================================================
+   BACKGROUND PATTERN
+   ========================================================================== */
 
 .MainServices-bg-pattern {
   position: absolute;
   top: 0;
-  margin-top: 96px;
   right: 0;
-  width: 54%;
+
+  width: 52%;
   height: 100%;
-  background-color: #d1d3d4;
-  border-top-left-radius: 90px;
+
+  background-color: #f3f6f9;
+
+  border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
+
   z-index: 1;
-  background-image: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
-  opacity: 0.7;
+  opacity: 0.9;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='8' viewBox='0 0 80 8'%3E%3Cpath d='M0 4 Q 20 1, 40 4 T 80 4' fill='none' stroke='%23dbe3ec' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  background-repeat: repeat;
+  background-size: 80px 8px;
 }
+
+/* ==========================================================================
+   CONTAINER
+   ========================================================================== */
 
 .MainServices-container {
   position: relative;
   width: 100%;
   max-width: 1240px;
+
   margin: 0 auto;
   padding: 0 20px;
+
   z-index: 2;
 }
 
-/* --- HEADER SEGMENTS --- */
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+
 .MainServices-header {
-  max-width: 520px;
+  width: 100%;
+  max-width: 650px;
+
   margin-bottom: 70px;
 }
 
 .MainServices-subtitle {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
   color: #0056b3;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 1.2px;
+
+  font-size: 0.82rem;
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
   text-transform: uppercase;
-  display: block;
-  margin-bottom: 12px;
+
+  margin-bottom: 14px;
 }
 
-.MainServices-title {
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: #1a1a1a;
-  line-height: 1.15;
-  margin: 0 0 16px 0;
-  letter-spacing: -0.5px;
+.MainServices-subtitle::before {
+  content: "";
+
+  width: 30px;
+  height: 3px;
+
+  margin-right: 10px;
+
+  border-radius: 20px;
+
+  background: #0056b3;
 }
+
+/* ==========================================================================
+   H1
+   ========================================================================== */
+
+.MainServices-title {
+  margin: 0 0 20px;
+
+  color: #101820;
+
+  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+
+  font-weight: 850;
+
+  line-height: 1.08;
+
+  letter-spacing: -1.5px;
+}
+
+.MainServices-title span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #0056b3;
+
+  font-size: 0.58em;
+
+  font-weight: 750;
+
+  line-height: 1.25;
+
+  letter-spacing: -0.3px;
+}
+
+/* ==========================================================================
+   HEADER DESCRIPTION
+   ========================================================================== */
+
+.MainServices-description {
+  max-width: 610px;
+
+  margin: 0 0 12px;
+
+  color: #536273;
+
+  font-size: 1rem;
+
+  line-height: 1.75;
+
+  font-weight: 400;
+}
+
+.MainServices-description strong {
+  color: #0056b3;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   WAVE DIVIDER
+   ========================================================================== */
 
 .MainServices-wave-divider {
   width: 65px;
   height: 14px;
+
+  margin-top: 22px;
 }
 
-/* --- GRIDS AND ELONGATED CARD DESIGN --- */
-.MainServices-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 35px;
-}
-
-.MainServices-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  
-  /* Increased layout height properties */
-  min-height: 560px; 
-  
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.MainServices-card-banner {
-  position: relative;
-  height: 205px;
-  background: linear-gradient(135deg, #6fd6f6 0%, #b6dbf8 100%);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  border-bottom-left-radius: 50% 24px;
-  border-bottom-right-radius: 50% 24px;
-}
-
-.MainServices-image-frame {
-  position: relative;
-  width: 156px;
-  height: 156px;
-  border-radius: 50%;
-  border: 4px solid #ffffff;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-  transform: translateY(35px);
-  z-index: 3;
-}
-
-.MainServices-image-frame img {
+.MainServices-wave-divider svg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
 
-/* --- ICON BADGE HOVER ACTIONS --- */
-.MainServices-icon-badge {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  border: 2px solid #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.MainServices-badge-icon {
-  font-size: 1.4rem;
-  color: #0056b3;
-  transition: color 0.3s ease;
   display: block;
 }
 
-/* Hover States for Cards */
+/* ==========================================================================
+   SERVICES GRID
+   ========================================================================== */
+
+.MainServices-grid {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 34px;
+
+  width: 100%;
+}
+
+/* ==========================================================================
+   SERVICE CARD
+   ========================================================================== */
+
+.MainServices-card {
+  position: relative;
+
+  min-height: 570px;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 35px rgba(15, 23, 42, 0.055),
+    0 2px 8px rgba(15, 23, 42, 0.025);
+
+  display: flex;
+  flex-direction: column;
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.MainServices-card::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 4px;
+
+  background: linear-gradient(
+    90deg,
+    #0056b3,
+    #36bdf8,
+    #0056b3
+  );
+
+  transform: scaleX(0);
+
+  transform-origin: center;
+
+  transition: transform 0.4s ease;
+}
+
 .MainServices-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.09);
+  transform: translateY(-10px);
+
+  box-shadow:
+    0 25px 55px rgba(15, 23, 42, 0.12),
+    0 8px 20px rgba(0, 86, 179, 0.06);
+}
+
+.MainServices-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   CARD BANNER
+   ========================================================================== */
+
+.MainServices-card-banner {
+  position: relative;
+
+  height: 210px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #63cdef 0%,
+      #91d7f5 50%,
+      #c1e5fa 100%
+    );
+
+  border-bottom-left-radius: 50% 28px;
+  border-bottom-right-radius: 50% 28px;
+}
+
+/* Soft shine */
+
+.MainServices-card-banner::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.22),
+    transparent 55%
+  );
+
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   IMAGE FRAME
+   ========================================================================== */
+
+.MainServices-image-frame {
+  position: relative;
+
+  width: 158px;
+  height: 158px;
+
+  border-radius: 50%;
+
+  border: 5px solid #ffffff;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.1);
+
+  transform: translateY(38px);
+
+  overflow: visible;
+
+  z-index: 3;
+
+  transition:
+    transform 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+.MainServices-card:hover .MainServices-image-frame {
+  transform: translateY(33px) scale(1.035);
+
+  box-shadow:
+    0 16px 35px rgba(0, 86, 179, 0.16);
+}
+
+.MainServices-image-frame img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   ICON BADGE
+   ========================================================================== */
+
+.MainServices-icon-badge {
+  position: absolute;
+
+  left: 50%;
+  bottom: -7px;
+
+  width: 48px;
+  height: 48px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border: 2px solid #ffffff;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, 0.1);
+
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  z-index: 5;
+}
+
+.MainServices-badge-icon {
+  display: block;
+
+  color: #0056b3;
+
+  font-size: 1.35rem;
+
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
 }
 
 .MainServices-card:hover .MainServices-icon-badge {
-  background-color: #0056b3; 
-  border-color: #ffffff;     
+  background: #0056b3;
+
+  transform:
+    translateX(-50%)
+    scale(1.08);
+
+  box-shadow:
+    0 8px 20px rgba(0, 86, 179, 0.25);
 }
 
 .MainServices-card:hover .MainServices-badge-icon {
-  color: #ffffff;            
+  color: #ffffff;
+
+  transform: scale(1.08);
 }
 
-/* --- TEXT CONTENT AND INTERIOR SPACE TWEAKS --- */
+/* ==========================================================================
+   CARD CONTENT
+   ========================================================================== */
+
 .MainServices-card-content {
-  /* Added more bottom/top spacing inside the container padding to extend spatial aesthetics */
-  padding: 65px 30px 45px 30px;
+  padding: 70px 30px 38px;
+
   text-align: center;
-  flex-grow: 1;
+
+  flex: 1;
+
   display: flex;
   flex-direction: column;
 }
 
+.MainServices-card-content h2,
 .MainServices-card-content h3 {
-  font-size: 1.55rem;
-  font-weight: 700;
-  color: #111111;
-  margin: 0 0 16px 0;
+  margin: 0 0 17px;
+
+  color: #111827;
+
+  font-size: 1.42rem;
+
+  font-weight: 750;
+
+  line-height: 1.3;
+
+  letter-spacing: -0.3px;
 }
 
 .MainServices-card-content p {
-  font-size: 0.96rem;
-  color: #526071;
+  margin: 0 0 15px;
+
+  color: #607083;
+
+  font-size: 0.94rem;
+
   line-height: 1.75;
-  margin: 0 0 32px 0;
-  flex-grow: 1;
 }
 
+.MainServices-card-content p strong {
+  color: #0056b3;
+
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   READ MORE
+   ========================================================================== */
+
 .MainServices-link {
+  position: relative;
+
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #111111;
+
+  width: fit-content;
+
+  margin: auto auto 0;
+
+  padding-top: 15px;
+
+  color: #111827;
+
+  font-size: 0.78rem;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
   text-decoration: none;
-  letter-spacing: 0.6px;
+
   text-transform: uppercase;
-  margin-top: auto;
-  transition: color 0.2s ease;
+
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.MainServices-link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: -5px;
+
+  width: 100%;
+  height: 2px;
+
+  border-radius: 10px;
+
+  background: #0056b3;
+
+  transform: scaleX(0);
+
+  transform-origin: right;
+
+  transition: transform 0.35s ease;
 }
 
 .MainServices-link:hover {
   color: #0056b3;
+
+  transform: translateY(-2px);
 }
 
-.MainServices-link-arrow {
-  font-size: 0.7rem;
-}
+.MainServices-link:hover::after {
+  transform: scaleX(1);
 
-/* --- SCROLL COMPONENT BUTTON --- */
-.MainServices-scroll-top {
-  position: absolute;
-  bottom: -45px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #0056b3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, background-color 0.2s;
-}
-
-.MainServices-scroll-top:hover {
-  background-color: #f8fafc;
-  transform: translateY(-3px);
+  transform-origin: left;
 }
 
 /* ==========================================================================
-   Responsive Adaptations
+   SEO CONTENT
    ========================================================================== */
 
-@media (max-width: 1024px) {
-  .MainServices-grid {
-    gap: 24px;
-  }
-  .MainServices-card {
-    min-height: 520px;
-  }
-}
-
-@media (max-width: 768px) {
-  .MainServices-wrapper {
-    padding: 60px 0 110px 0;
-  }
-  .MainServices-bg-pattern {
-    width: 100%;
-    height: 65%;
-    top: auto;
-    bottom: 0;
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
-  
-  }
-  .MainServices-grid {
-    grid-template-columns: 1fr;
-    gap: 60px;
-  }
-  .MainServices-card {
-    min-height: auto; /* Fallback fluid scaling on pure mobile screens */
-  }
-  .MainServices-header {
-    text-align: center;
-    margin: 0 auto 45px auto;
-  }
-  .MainServices-wave-divider {
-    margin: 0 auto;
-  }
-}  .MainServices-bg-pattern {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  z-index: 1;
-  opacity: 0.7;
-  
-  /* Highly decreased height to 8px for a super tight vertical gap */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='8' viewBox='0 0 80 8'%3E%3Cpath d='M0 4 Q 20 1, 40 4 T 80 4' fill='none' stroke='%23dbe3ec' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 80px 8px;
-}/* ==========================================================
-   SEO CONTENT SECTION
-========================================================== */
-
 .MainServices-seo-content {
-  width: 100%;
-  max-width: 1100px;
-  margin: 80px auto 0;
-  padding: 0 20px;
-  text-align: center;
   position: relative;
+
+  width: 100%;
+  max-width: 1000px;
+
+  margin: 90px auto 0;
+
+  padding: 0 20px;
+
+  text-align: center;
+
   z-index: 2;
 }
 
+.MainServices-seo-content h2,
 .MainServices-seo-content h3 {
-  font-size: clamp(1.8rem, 2vw, 2.4rem);
-  font-weight: 700;
+  margin: 0 0 20px;
+
   color: #0b3d91;
-  margin-bottom: 20px;
+
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+
+  font-weight: 800;
+
   line-height: 1.3;
+
+  letter-spacing: -0.5px;
 }
 
 .MainServices-seo-content p {
   max-width: 900px;
+
   margin: 0 auto 18px;
-  color: #5f6368;
-  font-size: 1rem;
-  line-height: 1.9;
-  font-weight: 400;
+
+  color: #5f6b78;
+
+  font-size: 0.98rem;
+
+  line-height: 1.85;
 }
+
+.MainServices-seo-content strong {
+  color: #0056b3;
+
+  font-weight: 700;
+}
+
+.MainServices-seo-content a {
+  color: #0056b3;
+
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.MainServices-seo-content a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   SEO TAGS
+   ========================================================================== */
 
 .MainServices-seo-tags {
   display: flex;
+
   justify-content: center;
   align-items: center;
+
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 35px;
+
+  gap: 10px;
+
+  margin-top: 30px;
 }
 
 .MainServices-seo-tags span {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  padding: 10px 18px;
+
+  padding: 9px 16px;
+
   border-radius: 50px;
+
   background: #eef6ff;
-  border: 1px solid rgba(0, 86, 179, 0.15);
+
+  border: 1px solid rgba(0, 86, 179, 0.12);
+
   color: #0056b3;
-  font-size: 0.92rem;
+
+  font-size: 0.84rem;
+
   font-weight: 600;
-  transition: all 0.35s ease;
-  cursor: default;
+
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .MainServices-seo-tags span:hover {
   background: #0056b3;
+
   color: #ffffff;
+
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2);
+
+  box-shadow:
+    0 8px 20px rgba(0, 86, 179, 0.18);
 }
 
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
+/* ==========================================================================
+   RESPONSIVE - 1200px
+   ========================================================================== */
 
-@media (max-width: 992px) {
-  .MainServices-seo-content {
-    margin-top: 70px;
+@media (max-width: 1200px) {
+  .MainServices-container {
+    max-width: 1100px;
   }
 
-  .MainServices-seo-content h3 {
-    font-size: 1.9rem;
+  .MainServices-grid {
+    gap: 24px;
   }
 
-  .MainServices-seo-content p {
-    font-size: 0.98rem;
-    line-height: 1.8;
+  .MainServices-card-content {
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
+
+/* ==========================================================================
+   RESPONSIVE - 1024px
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .MainServices-wrapper {
+    padding: 80px 0 110px;
+  }
+
+  .MainServices-header {
+    max-width: 600px;
+
+    margin-bottom: 60px;
+  }
+
+  .MainServices-title {
+    font-size: 3rem;
+  }
+
+  .MainServices-grid {
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+  }
+
+  .MainServices-card {
+    min-height: 540px;
+  }
+
+  .MainServices-card-banner {
+    height: 190px;
+  }
+
+  .MainServices-image-frame {
+    width: 145px;
+    height: 145px;
+  }
+
+  .MainServices-card-content {
+    padding: 65px 20px 35px;
+  }
+
+  .MainServices-card-content h2,
+  .MainServices-card-content h3 {
+    font-size: 1.28rem;
+  }
+
+  .MainServices-card-content p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE - 768px
+   ========================================================================== */
 
 @media (max-width: 768px) {
-  .MainServices-seo-content {
-    margin-top: 60px;
+  .MainServices-wrapper {
+    padding: 65px 0 90px;
+  }
+
+  .MainServices-bg-pattern {
+    width: 100%;
+    height: 65%;
+
+    top: auto;
+    bottom: 0;
+
+    border-radius: 45px 45px 0 0;
+  }
+
+  .MainServices-container {
     padding: 0 18px;
   }
 
-  .MainServices-seo-content h3 {
-    font-size: 1.6rem;
+  .MainServices-header {
+    max-width: 650px;
+
+    margin: 0 auto 50px;
+
+    text-align: center;
   }
 
-  .MainServices-seo-content p {
-    font-size: 0.95rem;
-    line-height: 1.8;
+  .MainServices-subtitle {
+    justify-content: center;
+
+    font-size: 0.76rem;
   }
 
-  .MainServices-seo-tags {
-    gap: 10px;
+  .MainServices-subtitle::before {
+    width: 22px;
   }
 
-  .MainServices-seo-tags span {
-    font-size: 0.85rem;
-    padding: 8px 16px;
+  .MainServices-title {
+    font-size: clamp(2.2rem, 8vw, 3.2rem);
+
+    letter-spacing: -1px;
+  }
+
+  .MainServices-title span {
+    margin-top: 8px;
+
+    font-size: 0.55em;
+
+    line-height: 1.3;
+  }
+
+  .MainServices-description {
+    max-width: 620px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    font-size: 0.94rem;
+
+    line-height: 1.75;
+  }
+
+  .MainServices-wave-divider {
+    margin: 20px auto 0;
+  }
+
+  .MainServices-grid {
+    grid-template-columns: 1fr;
+
+    gap: 55px;
+
+    max-width: 560px;
+
+    margin: 0 auto;
+  }
+
+  .MainServices-card {
+    min-height: auto;
+  }
+
+  .MainServices-card-banner {
+    height: 205px;
+  }
+
+  .MainServices-image-frame {
+    width: 155px;
+    height: 155px;
+  }
+
+  .MainServices-card-content {
+    padding: 70px 28px 40px;
+  }
+
+  .MainServices-card-content h2,
+  .MainServices-card-content h3 {
+    font-size: 1.45rem;
+  }
+
+  .MainServices-card-content p {
+    font-size: 0.94rem;
+  }
+
+  .MainServices-seo-content {
+    margin-top: 70px;
+
+    padding: 0 10px;
   }
 }
 
+/* ==========================================================================
+   RESPONSIVE - 576px
+   ========================================================================== */
+
 @media (max-width: 576px) {
-  .MainServices-seo-content {
-    margin-top: 50px;
+  .MainServices-wrapper {
+    padding: 55px 0 80px;
+  }
+
+  .MainServices-container {
     padding: 0 15px;
   }
 
+  .MainServices-header {
+    margin-bottom: 42px;
+  }
+
+  .MainServices-subtitle {
+    font-size: 0.7rem;
+
+    letter-spacing: 1.3px;
+  }
+
+  .MainServices-title {
+    font-size: 2.15rem;
+
+    line-height: 1.1;
+  }
+
+  .MainServices-title span {
+    font-size: 0.52em;
+
+    line-height: 1.35;
+  }
+
+  .MainServices-description {
+    font-size: 0.9rem;
+
+    line-height: 1.7;
+  }
+
+  .MainServices-grid {
+    gap: 45px;
+  }
+
+  .MainServices-card {
+    border-radius: 15px;
+  }
+
+  .MainServices-card-banner {
+    height: 190px;
+  }
+
+  .MainServices-image-frame {
+    width: 145px;
+    height: 145px;
+
+    transform: translateY(35px);
+  }
+
+  .MainServices-card:hover .MainServices-image-frame {
+    transform: translateY(31px) scale(1.02);
+  }
+
+  .MainServices-icon-badge {
+    width: 44px;
+    height: 44px;
+  }
+
+  .MainServices-badge-icon {
+    font-size: 1.2rem;
+  }
+
+  .MainServices-card-content {
+    padding: 65px 22px 35px;
+  }
+
+  .MainServices-card-content h2,
+  .MainServices-card-content h3 {
+    font-size: 1.3rem;
+
+    line-height: 1.35;
+  }
+
+  .MainServices-card-content p {
+    font-size: 0.9rem;
+
+    line-height: 1.7;
+  }
+
+  .MainServices-link {
+    font-size: 0.74rem;
+  }
+
+  .MainServices-seo-content {
+    margin-top: 55px;
+
+    padding: 0;
+  }
+
+  .MainServices-seo-content h2,
   .MainServices-seo-content h3 {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
+
+    line-height: 1.35;
   }
 
   .MainServices-seo-content p {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
+
     line-height: 1.75;
   }
 
   .MainServices-seo-tags {
-    justify-content: center;
-    gap: 8px;
+    gap: 7px;
+
+    margin-top: 25px;
   }
 
   .MainServices-seo-tags span {
-    padding: 7px 14px;
-    font-size: 0.8rem;
+    padding: 7px 12px;
+
+    font-size: 0.76rem;
+  }
+}
+
+/* ==========================================================================
+   VERY SMALL DEVICES
+   ========================================================================== */
+
+@media (max-width: 380px) {
+  .MainServices-title {
+    font-size: 1.9rem;
+  }
+
+  .MainServices-title span {
+    font-size: 0.5em;
+  }
+
+  .MainServices-card-banner {
+    height: 180px;
+  }
+
+  .MainServices-image-frame {
+    width: 135px;
+    height: 135px;
+  }
+
+  .MainServices-card-content {
+    padding: 60px 18px 30px;
+  }
+
+  .MainServices-card-content h2,
+  .MainServices-card-content h3 {
+    font-size: 1.18rem;
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .MainServices-card,
+  .MainServices-image-frame,
+  .MainServices-icon-badge,
+  .MainServices-badge-icon,
+  .MainServices-link,
+  .MainServices-link::after,
+  .MainServices-seo-tags span {
+    transition: none;
   }
 }

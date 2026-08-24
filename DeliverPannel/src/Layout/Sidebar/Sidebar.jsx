@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
   ClipboardList,
@@ -10,16 +10,18 @@ import {
   CreditCard,
   BarChart3,
   Settings,
+  User,
   LogOut,
   CalendarPlus, // Leave Apply
   FileText,     // Leave Request
-  X,            // Mobile close icon
-  User          // Profile icon (replaced duplicate Settings)
+  X             // Mobile close icon
 } from "lucide-react";
-import './Sidebar.css';
 import { FaWineBottle } from 'react-icons/fa';
+import './Sidebar.css';
 
 const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
+  const location = useLocation();
+
   // Navigation items configuration
   const menuItems = [
     { type: 'link', icon: <Home size={20} />, text: 'Dashboard', path: '/' },
@@ -29,11 +31,8 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
     { type: 'link', icon: <Truck size={20} />, text: 'Vehicle Stock', path: '/wdms/vehicle-stock' },
     { type: 'link', icon: <RotateCcw size={20} />, text: 'Empty Return', path: '/wdms/empty-return' },
     { type: 'link', icon: <FaWineBottle size={20} />, text: 'Extra Stock', path: '/wdms/extra-stock' },
-
-    // Leave Management items
     { type: 'link', icon: <CalendarPlus size={20} />, text: 'Leave Apply', path: '/wdms/leave-apply' },
     { type: 'link', icon: <FileText size={20} />, text: 'Leave Request', path: '/wdms/leave-request' },
-
     { type: 'link', icon: <CreditCard size={20} />, text: 'Payments', path: '/wdms/payments' },
     { type: 'link', icon: <BarChart3 size={20} />, text: 'Reports', path: '/wdms/reports' },
     { type: 'link', icon: <Settings size={20} />, text: 'Settings', path: '/wdms/settings' },
@@ -104,19 +103,22 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
 
         {/* Navigation Section */}
         <nav className="Sidebar-nav">
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              to={item.path}
-              onClick={handleNavClick}
-              style={{ '--i': index }}
-              className={`Sidebar-link ${item.text === 'Dashboard' ? 'active' : ''}`}
-              title={isCollapsed ? item.text : undefined}
-            >
-              <span className="Sidebar-icon">{item.icon}</span>
-              {!isCollapsed && <span className="Sidebar-text">{item.text}</span>}
-            </Link>
-          ))}
+          {menuItems.map((item, index) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={handleNavClick}
+                style={{ '--i': index }}
+                className={`Sidebar-link ${isActive ? 'active' : ''}`}
+                title={isCollapsed ? item.text : undefined}
+              >
+                <span className="Sidebar-icon">{item.icon}</span>
+                {!isCollapsed && <span className="Sidebar-text">{item.text}</span>}
+              </Link>
+            );
+          })}
 
           <button
             type="button"
@@ -159,8 +161,12 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
                 </defs>
                 <rect x="20" y="0" width="20" height="14" rx="3" fill="url(#capGradSmall)" />
                 <rect x="20" y="10" width="20" height="3" fill="#0a4a44" opacity="0.5" />
-                <path d="M18 14 h24 v10 c8 6 8 14 8 20 v70 a8 8 0 0 1 -8 8 h-24 a8 8 0 0 1 -8 -8 v-70 c0-6 0-14 8-20 Z"
-                      fill="url(#bottleGradSmall)" stroke="#8fd8e8" strokeWidth="0.75" />
+                <path
+                  d="M18 14 h24 v10 c8 6 8 14 8 20 v70 a8 8 0 0 1 -8 8 h-24 a8 8 0 0 1 -8 -8 v-70 c0-6 0-14 8-20 Z"
+                  fill="url(#bottleGradSmall)"
+                  stroke="#8fd8e8"
+                  strokeWidth="0.75"
+                />
                 <rect x="10" y="70" width="40" height="30" rx="4" fill="#0d9488" opacity="0.92" />
                 <text x="30" y="88" fontSize="7" fill="#ffffff" textAnchor="middle" fontWeight="700">Alka</text>
                 <text x="30" y="96" fontSize="5.5" fill="#e0fbff" textAnchor="middle">Drops</text>
@@ -185,8 +191,12 @@ const Sidebar = ({ isCollapsed, isMobileOpen, onLogout, onClose }) => {
                 </defs>
                 <rect x="24" y="0" width="22" height="16" rx="3" fill="url(#capGradLarge)" />
                 <rect x="24" y="11" width="22" height="3.5" fill="#0a4a44" opacity="0.5" />
-                <path d="M22 16 h26 v10 c9 7 9 16 9 22 v78 a9 9 0 0 1 -9 9 h-26 a9 9 0 0 1 -9 -9 v-78 c0-6 0-15 9-22 Z"
-                      fill="url(#bottleGradLarge)" stroke="#7fd4e6" strokeWidth="0.75" />
+                <path
+                  d="M22 16 h26 v10 c9 7 9 16 9 22 v78 a9 9 0 0 1 -9 9 h-26 a9 9 0 0 1 -9 -9 v-78 c0-6 0-15 9-22 Z"
+                  fill="url(#bottleGradLarge)"
+                  stroke="#7fd4e6"
+                  strokeWidth="0.75"
+                />
                 <rect x="12" y="82" width="46" height="34" rx="4" fill="#0d9488" />
                 <text x="35" y="100" fontSize="8" fill="#ffffff" textAnchor="middle" fontWeight="700">Alka</text>
                 <text x="35" y="109" fontSize="6" fill="#e0fbff" textAnchor="middle">Drops</text>

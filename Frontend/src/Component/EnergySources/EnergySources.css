@@ -7,40 +7,148 @@
   padding: 60px 5%;
   font-family: 'Inter', sans-serif;
   background-color: #f4f5f6;
+  align-items: center;
 }
 
-.energy-title { font-size: 3rem; color: #002233; line-height: 1.1; margin-bottom: 30px; }
+.energy-title { 
+  font-size: 2.3rem; 
+  color: #002233; 
+  line-height: 1.2; 
+  margin-bottom: 16px; 
+  font-weight: 700;
+}
 
-.benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+.energy-subtitle {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
 
-.benefit-item { display: flex; align-items: center; color: #333; }
-.checkmark { color: #1e1e20; margin-right: 10px; font-weight: bold; }
+.benefits-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 12px; 
+  margin-bottom: 28px; 
+}
 
-.read-more-btn { background: #2570d9; color: white; padding: 15px 30px; border: none; border-radius: 30px; cursor: pointer; }
+.benefit-item { 
+  display: flex; 
+  align-items: center; 
+  color: #333; 
+  font-size: 0.95rem;
+}
+
+.checkmark { 
+  color: #2570d9; 
+  margin-right: 8px; 
+  font-weight: bold; 
+}
+
+.cta-wrapper {
+  margin-bottom: 24px;
+}
+
+.read-more-btn { 
+  display: inline-block;
+  background: #2570d9; 
+  color: white; 
+  padding: 14px 28px; 
+  border: none; 
+  border-radius: 30px; 
+  cursor: pointer; 
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+.read-more-btn:hover {
+  background: #1b5bb5;
+}
+
+.nap-info {
+  font-style: normal;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  border-top: 1px solid #dcdfe4;
+  padding-top: 16px;
+}
+
+.nap-info strong {
+  color: #002233;
+}
+
+.nap-info a {
+  color: #2570d9;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nap-info a:hover {
+  text-decoration: underline;
+}
 
 /* Cards Grid */
-.cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.cards-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px; 
+}
 
-.card { padding: 30px; border-radius: 20px; position: relative; overflow: hidden; } /* Added position: relative */
-.white-card { background: white; }
-.red-card { background: #256dd9; color: white; }
+.card { 
+  padding: 28px; 
+  border-radius: 20px; 
+  position: relative; 
+  overflow: hidden; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
 
-.mg-level { font-weight: 600; margin: 10px 0; }
-.description { font-size: 0.9rem; opacity: 0.9; }
+.white-card { 
+  background: white; 
+  color: #1e293b;
+}
+
+.white-card h3 {
+  font-size: 1.5rem;
+  color: #002233;
+}
+
+.red-card { 
+  background: #256dd9; 
+  color: white; 
+}
+
+.red-card h3 {
+  font-size: 1.5rem;
+}
+
+.mg-level { 
+  font-weight: 600; 
+  margin: 8px 0 12px; 
+}
+
+.description { 
+  font-size: 0.88rem; 
+  line-height: 1.4;
+  opacity: 0.92; 
+}
 
 /* Enhanced Bubble Card Styles */
 .bubble-card { 
-  background: #e0e0e0; 
-  padding: 0; /* Remove padding to let image fill */
+  background: #002233; 
+  padding: 0; 
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  min-height: 180px;
 }
 
 .bubble-bg-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures the image covers the card */
+  object-fit: cover; 
   position: absolute;
   top: 0;
   left: 0;
@@ -50,11 +158,16 @@
 .bubble-card-text {
   position: relative;
   z-index: 3;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+  background: rgba(0, 20, 35, 0.72); 
   color: white;
-  padding: 20px;
+  padding: 18px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+}
+
+.bubble-card-text h3 {
+  font-size: 1.3rem;
+  margin-bottom: 4px;
 }
 
 /* The Dynamic Animation Overlay */
@@ -72,14 +185,18 @@
   animation: riseBubbles 8s linear infinite;
 }
 
-/* New animation keyframe for rising bubbles */
 @keyframes riseBubbles {
   0% { background-position: 0 0, 0 0; }
-  100% { background-position: 0 -500px, 0 -300px; /* Moves bubbles upwards */ }
+  100% { background-position: 0 -500px, 0 -300px; }
 }
 
 /* Responsive */
 @media (max-width: 992px) {
-  .energy-container { grid-template-columns: 1fr; }
-  .cards-grid { grid-template-columns: 1fr; }
+  .energy-container { grid-template-columns: 1fr; gap: 30px; padding: 40px 5%; }
+  .energy-title { font-size: 1.8rem; }
+}
+
+@media (max-width: 560px) {
+  .benefits-grid, .cards-grid { grid-template-columns: 1fr; }
+  .read-more-btn { width: 100%; text-align: center; box-sizing: border-box; }
 }

@@ -1,21 +1,25 @@
 import React from 'react';
 import './EnergySources.css';
-// Assuming bulbs.jpg is in the same directory, or adjust the path as needed.
 import bulbsImage from '../../assets/bulbs.jpg'; 
 
 const EnergySources = () => {
   const benefits = [
-     "Energy Boost", "Strong Immunity", "Weight Support",
-     "Healthy Skin", "Mood Balance","Better Sleep",
-     "Heart Health", "Longevity", "Good Digestion", "Bone Strength"
-   
+    "Energy Boost", "Strong Immunity", "Weight Support",
+    "Healthy Skin", "Mood Balance", "Better Sleep",
+    "Heart Health", "Longevity", "Good Digestion", "Bone Strength"
   ];
 
   return (
     <section className="energy-container">
       {/* Left Column */}
       <div className="energy-text-section">
-        <h2 className="energy-title">Oxygenated, mineral-rich Alka Drops work in harmony with your body for total wellness</h2>
+        <h1 className="energy-title">
+          Best Drinking Water Supply in Bhubaneswar — Pure, Oxygenated & Mineral-Rich
+        </h1>
+        <p className="energy-subtitle">
+          Alka Drops delivers certified packaged drinking water and 20 litre water jars directly to homes and offices across Bhubaneswar, Odisha.
+        </p>
+
         <div className="benefits-grid">
           {benefits.map((item, index) => (
             <div key={index} className="benefit-item">
@@ -23,7 +27,19 @@ const EnergySources = () => {
             </div>
           ))}
         </div>
-        <button className="read-more-btn">Read More</button>
+
+        <div className="cta-wrapper">
+          <a href="tel:+917327092477" className="read-more-btn">
+            Order Home Delivery: +91 7327092477
+          </a>
+        </div>
+
+        {/* Local NAP details */}
+        <address className="nap-info">
+          <strong>Alka Drops</strong> — Packaged Drinking Water Plant<br />
+          Plot-N5/22, Main Street, Block N5, IRC Village, Nayapalli, Bhubaneswar, Odisha 751012<br />
+          Helpline / Wholesale Orders: <a href="tel:+917327092477">+91 7327092477</a>
+        </address>
       </div>
 
       {/* Right Column (Grid of Cards) */}
@@ -31,36 +47,33 @@ const EnergySources = () => {
         <div className="card white-card">
           <h3>Ca2+</h3>
           <p className="mg-level">15-70 mg/l</p>
-          <p className="description">Strengthens bones and teeth and affects the softness of water</p>
+          <p className="description">Essential calcium strengthens bones, teeth, and naturally balances water softness.</p>
         </div>
 
         <div className="card red-card">
           <h3>Mg2+</h3>
           <p className="mg-level">5.2-43 mg/l</p>
-          <p className="description">Magnesium supports the functioning of the heart and muscles</p>
+          <p className="description">Active magnesium supports cardiovascular function and muscle recovery.</p>
         </div>
 
         {/* Enhanced Bubble Card */}
         <div className="card bubble-card">
-          {/* Static background image from bulbs.jpg */}
           <img 
             src={bulbsImage} 
-            alt="Water bubbles background" 
+            alt="Oxygenated packaged drinking water supply in Bhubaneswar" 
             className="bubble-bg-img" 
           />
-          {/* Dynamic animated bubble overlay */}
           <div className="bubble-animation-overlay"></div>
-          {/* Optional text overlay to provide context */}
           <div className="bubble-card-text">
             <h3>H2O Purity</h3>
-            <p className="description">Crystal clear and oxygenated</p>
+            <p className="description">Multi-stage filtered, oxygenated 20 litre jar delivery.</p>
           </div>
         </div>
 
         <div className="card white-card">
           <h3>Na+</h3>
           <p className="mg-level">5-50 mg/l</p>
-          <p className="description">Sodium is necessary for fluid balance in the body</p>
+          <p className="description">Optimized sodium levels maintain proper hydration and electrolyte balance.</p>
         </div>
       </div>
     </section>

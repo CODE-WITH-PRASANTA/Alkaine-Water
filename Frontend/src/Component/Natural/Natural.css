@@ -49,38 +49,119 @@
 }
 
 /* Content */
-.natural-content { flex: 1; }
+.natural-content { 
+  flex: 1; 
+}
 
 .natural-title {
-  font-size: 2.8rem;
+  font-size: 2.4rem;
   font-weight: 700;
-  margin-bottom: 25px;
+  line-height: 1.25;
+  margin-bottom: 20px;
+  color: #1a2b3c;
 }
 
 .natural-description {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.7;
   color: #4a5a6a;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
+}
+
+/* Feature List */
+.natural-features {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
 }
 
 .feature-item {
   display: flex;
-  align-items: center;
-  padding: 25px 0;
+  align-items: flex-start;
+  padding: 18px 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .feature-number {
   color: #131313;
   font-weight: 700;
-  margin-right: 25px;
-  font-size: 1.3rem;
+  margin-right: 20px;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.feature-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1a2b3c;
+  margin-bottom: 4px;
+}
+
+.feature-subtext {
+  font-size: 0.92rem;
+  color: #5f6c7b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* NAP Block */
+.nap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  background-color: #f8fafc;
+  border-left: 4px solid #1a2b3c;
+  border-radius: 8px;
+}
+
+.nap-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.nap-label {
+  font-weight: 600;
+  color: #1a2b3c;
+}
+
+.nap-value {
+  color: #4a5a6a;
+}
+
+.nap-link {
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nap-link:hover {
+  text-decoration: underline;
 }
 
 /* Responsive */
 @media (max-width: 992px) {
-  .natural-container { flex-direction: column; padding: 40px 5%; }
-  .natural-title { font-size: 2rem; }
-  .logo-container { width: 90px; height: 90px; }
+  .natural-container { 
+    flex-direction: column; 
+    padding: 40px 5%; 
+    gap: 40px; 
+  }
+  
+  .natural-title { 
+    font-size: 1.9rem; 
+  }
+  
+  .logo-container { 
+    width: 90px; 
+    height: 90px; 
+  }
 }

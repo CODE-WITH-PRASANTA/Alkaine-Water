@@ -5,23 +5,68 @@
   background-color: #ffffff;
 }
 
-.ms-header { text-align: center; margin-bottom: 50px; }
+.ms-header { 
+  text-align: center; 
+  margin-bottom: 50px; 
+}
 
-.ms-title { font-size: 2.5rem; line-height: 1.3; font-weight: 600; }
-.ms-highlight { color: #2564d9; }
+.ms-title { 
+  font-size: 2.3rem; 
+  line-height: 1.3; 
+  font-weight: 700; 
+  margin-bottom: 15px;
+}
 
-.ms-image-wrapper { width: 100%; display: flex; justify-content: center; margin-bottom: 60px; }
-.ms-mountain-img { max-width: 800px; width: 100%; height: auto; }
+.ms-highlight { 
+  color: #2564d9; 
+}
+
+.ms-subtitle {
+  font-size: 1.1rem;
+  color: #4a5568;
+  max-width: 850px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.ms-image-wrapper { 
+  width: 100%; 
+  display: flex; 
+  justify-content: center; 
+  margin-bottom: 60px; 
+}
+
+.ms-mountain-img { 
+  max-width: 800px; 
+  width: 100%; 
+  height: auto; 
+  border-radius: 12px;
+}
 
 .ms-stats-grid { 
   display: grid; 
   grid-template-columns: repeat(4, 1fr); 
   gap: 30px; 
+  margin-bottom: 60px;
 }
 
-.ms-stat-card { display: flex; flex-direction: column; }
-.ms-stat-value { font-size: 3.5rem; margin: 0; font-weight: 700; }
-.ms-stat-title { font-size: 1.2rem; font-weight: 600; margin: 10px 0; }
+.ms-stat-card { 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.ms-stat-value { 
+  font-size: 3rem; 
+  margin: 0; 
+  font-weight: 700; 
+  color: #2564d9;
+}
+
+.ms-stat-title { 
+  font-size: 1.15rem; 
+  font-weight: 600; 
+  margin: 10px 0; 
+}
 
 .ms-divider { 
   width: 100%; 
@@ -30,16 +75,84 @@
   margin: 15px 0; 
 }
 
-.ms-stat-desc { font-size: 0.9rem; color: #555; line-height: 1.5; }
+.ms-stat-desc { 
+  font-size: 0.9rem; 
+  color: #555555; 
+  line-height: 1.5; 
+}
+
+/* NAP & Local Contact Box */
+.ms-nap-wrapper {
+  margin-top: 40px;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.ms-nap-card {
+  text-align: center;
+}
+
+.ms-nap-heading {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #002233;
+}
+
+.ms-address p {
+  font-size: 1rem;
+  color: #4a5568;
+  margin: 5px 0 15px 0;
+}
+
+.ms-contact {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ms-helpline-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.ms-phone {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2564d9;
+  text-decoration: none;
+}
+
+.ms-phone:hover {
+  text-decoration: underline;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
-  .ms-stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .ms-title { font-size: 2rem; }
+  .ms-stats-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  .ms-title { 
+    font-size: 1.9rem; 
+  }
 }
 
 @media (max-width: 600px) {
-  .ms-stats-grid { grid-template-columns: 1fr; }
-  .ms-title { font-size: 1.5rem; }
-  .ms-stat-value { font-size: 2.5rem; }
+  .ms-container {
+    padding: 50px 5%;
+  }
+  .ms-stats-grid { 
+    grid-template-columns: 1fr; 
+  }
+  .ms-title { 
+    font-size: 1.5rem; 
+  }
+  .ms-stat-value { 
+    font-size: 2.3rem; 
+  }
 }

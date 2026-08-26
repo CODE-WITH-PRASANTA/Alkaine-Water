@@ -28,19 +28,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 20px;
 }
 
 .ContactHeroContent {
   text-align: center;
   color: #ffffff;
   z-index: 2;
+  max-width: 900px;
 }
 
 .ContactHeroTitle {
-  font-size: 3rem;
+  font-size: 2.2rem;
+  line-height: 1.3;
   font-weight: 700;
   margin-bottom: 15px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .ContactHeroBreadcrumbs {
@@ -59,7 +62,7 @@
 
 /* Form Layout Grid */
 .ContactFormSection {
-  padding: 100px 5%;
+  padding: 80px 5%;
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -85,10 +88,10 @@
 }
 
 .ContactFormLabel {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #3b82f6;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 
 .ContactLabelLine {
@@ -98,11 +101,11 @@
 }
 
 .ContactFormTitle {
-  font-size: 2.8rem;
-  line-height: 1.2;
+  font-size: 2.4rem;
+  line-height: 1.25;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .HighlightTitle {
@@ -112,42 +115,43 @@
 }
 
 .ContactFormDescription {
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.65;
   color: #64748b;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 }
 
 .ContactFormInfoList {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 22px;
 }
 
 .ContactFormInfoItem {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 18px;
 }
 
 .ContactFormIconBadge {
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
   border-radius: 12px;
   background-color: #eff6ff;
   color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .ContactFormInfoItem:hover .ContactFormIconBadge {
   background-color: #3b82f6;
   color: #ffffff;
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
 }
 
@@ -157,15 +161,31 @@
 }
 
 .ContactInfoLabel {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #94a3b8;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
 }
 
 .ContactFormInfoValue {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #1e293b;
   font-weight: 600;
+  line-height: 1.4;
+}
+
+.ContactFormInfoLink {
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ContactFormInfoLink:hover {
+  color: #2563eb;
 }
 
 /* Right Panel - Input Fields Column */
@@ -180,16 +200,35 @@
 .ContactFormElement {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.ContactFormInputRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
-.ContactFormInputWrapper, .ContactFormTextareaWrapper {
+.ContactFormFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.ContactFormFieldLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1f2a44;
+}
+
+.ContactFormInputRow {
+  display: flex;
+  gap: 20px;
+}
+
+.ContactFormInputRow .ContactFormFieldGroup {
+  flex: 1;
+}
+
+.ContactFormInputWrapper, 
+.ContactFormTextareaWrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -201,11 +240,12 @@
   color: #94a3b8;
   font-size: 1.1rem;
   transition: color 0.3s ease;
+  pointer-events: none;
 }
 
 .ContactFormInput {
   width: 100%;
-  padding: 16px 16px 16px 50px;
+  padding: 14px 16px 14px 48px;
   border-radius: 10px;
   border: 1.5px solid #e2e8f0;
   background-color: #f8fafc;
@@ -217,7 +257,7 @@
 
 .ContactFormTextarea {
   width: 100%;
-  padding: 16px;
+  padding: 14px 16px;
   border-radius: 10px;
   border: 1.5px solid #e2e8f0;
   background-color: #f8fafc;
@@ -239,9 +279,10 @@
   transform: translateX(-50%);
 }
 
-.ContactFormInput:focus, .ContactFormTextarea:focus {
+.ContactFormInput:focus, 
+.ContactFormTextarea:focus {
   background-color: #ffffff;
-  border-color: transparent;
+  border-color: #93c5fd;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
 }
 
@@ -263,7 +304,7 @@
   font-size: 1rem;
   font-weight: 600;
   border: none;
-  padding: 16px 30px;
+  padding: 15px 25px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -276,7 +317,7 @@
 
 .ContactFormSubmitButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 }
 
@@ -358,56 +399,24 @@
 @media (max-width: 968px) {
   .ContactFormGrid {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 40px;
   }
   
+  .ContactHeroTitle {
+    font-size: 1.8rem;
+  }
+
   .ContactFormTitle {
-    font-size: 2.3rem;
+    font-size: 2rem;
   }
-}
-
-@media (max-width: 480px) {
-  .ContactFormInputRow {
-    grid-template-columns: 1fr;
-  }
-  
-  .PremiumFormCard {
-    padding: 24px;
-  }
-}
-/* ============================================================
-   ADD-ON: Field label styling (uppercase labels above inputs)
-   Append this block to your existing Contact.css
-   ============================================================ */
-
-.ContactFormFieldGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.ContactFormFieldLabel {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--contact-label-color, #1f2a44);
-}
-
-/* Keep input rows aligning two field groups side by side,
-   same as your existing .ContactFormInputRow behavior */
-.ContactFormInputRow {
-  display: flex;
-  gap: 20px;
-}
-
-.ContactFormInputRow .ContactFormFieldGroup {
-  flex: 1;
 }
 
 @media (max-width: 640px) {
   .ContactFormInputRow {
     flex-direction: column;
+  }
+  
+  .PremiumFormCard {
+    padding: 24px 16px;
   }
 }

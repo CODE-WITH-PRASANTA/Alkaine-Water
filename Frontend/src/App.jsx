@@ -1,14 +1,32 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
 import "./App.css";
 
-// Layout Components
+// =====================================================
+// LAYOUT
+// =====================================================
+
 import Topbar from "./Component/Topbar/Topbar";
 import Navbar from "./Component/Navbar/Navbar";
 import Footer from "./Component/Footer/Footer";
-import Floating from "./Component/Floating/Floating";
 
-// Page Components
+// =====================================================
+// FLOATING
+// =====================================================
+
+import Floating from "./Component/Floating/Floating";
+import FloatingIcon from "./Component/FloatingIcon/FloatingIcon";
+
+// =====================================================
+// PAGES
+// =====================================================
+
 import Home from "./Pages/Home/Home";
 import About from "./Pages/About/About";
 import Shop from "./Pages/Shop/Shop";
@@ -25,62 +43,328 @@ import Blog from "./Pages/Blog/Blog";
 import BlogDetails from "./Pages/BlogDetails/BlogDetails";
 import Contact from "./Pages/Contact/Contact";
 
-// Auxiliary / Demo Components
-import OurTeam from "./Component/OurTeam/OurTeam";
-import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
+// =====================================================
+// SECONDARY COMPONENTS
+// =====================================================
 
-// Conditional Floating Wrapper Component
-const ConditionalFloating = () => {
+import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
+import OurTeam from "./Component/OurTeam/OurTeam";
+
+// =====================================================
+// CONDITIONAL FLOATING
+// =====================================================
+
+const ConditionalFloating = ({ isOpen, onClose }) => {
   const location = useLocation();
 
-  // Only render Floating when path is exactly "/"
-  if (location.pathname !== "/") {
+  // Show popup only on homepage
+  if (location.pathname !== "/" && location.pathname !== "/home") {
     return null;
   }
 
-  return <Floating />;
+  return (
+    <Floating
+      isOpen={isOpen}
+      onClose={onClose}
+    />
+  );
 };
 
+// =====================================================
+// APP
+// =====================================================
+
 function App() {
+  const [isFloatingOpen, setIsFloatingOpen] = useState(false);
+
+  // ===================================================
+  // FLOATING POPUP INITIALIZATION
+  // ===================================================
+
+  useEffect(() => {
+    /*
+      Browser Navigation Types:
+
+      "navigate"
+        = first website entry / normal navigation
+
+      "reload"
+        = browser refresh
+
+      "back_forward"
+        = browser back / forward
+    */
+
+    const navigationEntry =
+      performance.getEntriesByType("navigation")[0];
+
+    const navigationType =
+      navigationEntry?.type || "navigate";
+
+    /*
+      SHOW POPUP:
+
+      - First website entry
+      - Browser refresh
+
+      DON'T SHOW:
+
+      - Back button
+      - Forward button
+      - React route navigation
+    */
+
+    if (
+      navigationType === "navigate" ||
+      navigationType === "reload"
+    ) {
+      setIsFloatingOpen(true);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
-      {/* Fixed Layout Components */}
+      {/* =========================================
+          TOPBAR
+      ========================================= */}
+
       <Topbar />
+
+      {/* =========================================
+          NAVBAR
+      ========================================= */}
+
       <Navbar />
 
-      {/* Floating Modal - Rendered conditionally on Home route only */}
-      <ConditionalFloating />
+      {/* =========================================
+          ROUTES
+      ========================================= */}
 
-      {/* Direct Clean Routes */}
       <Routes>
-        {/* Core Pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<OurServices />} />
-        <Route path="/product/details" element={<WhiteQuartz />} />
-        <Route path="/pricing" element={<PricingAndPlans />} />
-        <Route path="/gallery" element={<GalaryMain />} />
-        <Route path="/team" element={<MainTeam />} />
-        <Route path="/testimonials" element={<Testimonial />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/contact" element={<Contact />} />
+        {/* =========================================
+            HOME
+        ========================================= */}
 
-        {/* E-Commerce */}
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Cheakout />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        {/* Blog */}
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:id" element={<BlogDetails />} />
+        <Route
+          path="/home"
+          element={<Home />}
+        />
 
-        {/* Components Preview */}
-        <Route path="/our-team-preview" element={<OurTeam />} />
-        <Route path="/gallery-preview" element={<AkaineGalary />} />
+        {/* =========================================
+            ABOUT
+        ========================================= */}
+
+        <Route
+          path="/about"
+          element={<About />}
+        />
+
+        {/* =========================================
+            SERVICES
+        ========================================= */}
+
+        <Route
+          path="/services"
+          element={<OurServices />}
+        />
+
+        <Route
+          path="/services/all"
+          element={<OurServices />}
+        />
+
+        {/* =========================================
+            PRODUCTS
+        ========================================= */}
+
+        <Route
+          path="/product/details"
+          element={<WhiteQuartz />}
+        />
+
+        <Route
+          path="/whitequartz"
+          element={<WhiteQuartz />}
+        />
+
+        <Route
+          path="/pricing"
+          element={<PricingAndPlans />}
+        />
+
+        <Route
+          path="/products/pricing"
+          element={<PricingAndPlans />}
+        />
+
+        <Route
+          path="/products/testimonials"
+          element={<Testimonial />}
+        />
+
+        <Route
+          path="/testimonials"
+          element={<Testimonial />}
+        />
+
+        {/* =========================================
+            SHOP
+        ========================================= */}
+
+        <Route
+          path="/shop"
+          element={<Shop />}
+        />
+
+        <Route
+          path="/cart"
+          element={<Cart />}
+        />
+
+        <Route
+          path="/shop/cart"
+          element={<Cart />}
+        />
+
+        <Route
+          path="/checkout"
+          element={<Cheakout />}
+        />
+
+        <Route
+          path="/shop/checkout"
+          element={<Cheakout />}
+        />
+
+        {/* =========================================
+            GALLERY
+        ========================================= */}
+
+        <Route
+          path="/gallery"
+          element={<GalaryMain />}
+        />
+
+        <Route
+          path="/resources/gallary"
+          element={<GalaryMain />}
+        />
+
+        {/* =========================================
+            TEAM
+        ========================================= */}
+
+        <Route
+          path="/team"
+          element={<MainTeam />}
+        />
+
+        <Route
+          path="/resources/team"
+          element={<MainTeam />}
+        />
+
+        {/* =========================================
+            FAQ
+        ========================================= */}
+
+        <Route
+          path="/faq"
+          element={<Faq />}
+        />
+
+        <Route
+          path="/resources/faqs"
+          element={<Faq />}
+        />
+
+        {/* =========================================
+            CONTACT
+        ========================================= */}
+
+        <Route
+          path="/contact"
+          element={<Contact />}
+        />
+
+        {/* =========================================
+            BLOG
+        ========================================= */}
+
+        <Route
+          path="/blog"
+          element={<Blog />}
+        />
+
+        <Route
+          path="/resources/blog"
+          element={<Blog />}
+        />
+
+        <Route
+          path="/blog/:id"
+          element={<BlogDetails />}
+        />
+
+        <Route
+          path="/blogdetails/:id"
+          element={<BlogDetails />}
+        />
+
+        {/* =========================================
+            COMPONENT PREVIEWS
+        ========================================= */}
+
+        <Route
+          path="/our-team-preview"
+          element={<OurTeam />}
+        />
+
+        <Route
+          path="/team-component"
+          element={<OurTeam />}
+        />
+
+        <Route
+          path="/gallery-preview"
+          element={<AkaineGalary />}
+        />
+
+        <Route
+          path="/gallery-component"
+          element={<AkaineGalary />}
+        />
       </Routes>
 
-      {/* Footer */}
+      {/* =========================================
+          FOOTER
+      ========================================= */}
+
       <Footer />
+
+      {/* =========================================
+          ALKA DROPS FLOATING POPUP
+
+          Only visible on:
+          /
+          /home
+      ========================================= */}
+
+      <ConditionalFloating
+        isOpen={isFloatingOpen}
+        onClose={() => setIsFloatingOpen(false)}
+      />
+
+      {/* =========================================
+          FLOATING ICON
+      ========================================= */}
+
+      <FloatingIcon />
     </BrowserRouter>
   );
 }

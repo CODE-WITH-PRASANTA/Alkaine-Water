@@ -3,25 +3,25 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background-color: #f7f9fc; /* Light clean gray background for the bottom */
+  background-color: #f7f9fc;
   padding: 60px 20px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* The banner background restricted to only the top portions */
+/* The banner background restricted to top section */
 .AlkaDropsPricing__banner-bg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 480px; /* Adjust height to match where your cards split */
+  height: 540px;
   background-size: cover;
   background-position: center;
   z-index: 1;
 }
 
-/* Safe layout wrapper to force content above absolute background */
+/* Safe layout wrapper */
 .AlkaDropsPricing__content {
   position: relative;
   z-index: 2;
@@ -33,7 +33,7 @@
 .AlkaDropsPricing__header {
   text-align: center;
   color: #ffffff;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .AlkaDropsPricing__subtitle {
@@ -46,17 +46,18 @@
 }
 
 .AlkaDropsPricing__title {
-  font-size: 38px;
+  font-size: 34px;
   font-weight: 700;
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
+  line-height: 1.25;
 }
 
-.AlkaDropsPricing__seo-text {
-  max-width: 700px;
+.AlkaDropsPricing__intro-text {
+  max-width: 750px;
   margin: 15px auto 0 auto;
   font-size: 15px;
   line-height: 1.6;
-  opacity: 0.85;
+  color: #e2ecfc;
 }
 
 /* Wave Decoration */
@@ -65,6 +66,7 @@
   justify-content: center;
   gap: 4px;
 }
+
 .AlkaDropsPricing__wave span {
   width: 12px;
   height: 4px;
@@ -83,7 +85,7 @@
   margin-top: 20px;
 }
 
-/* The Pricing Card Styles matching reference perfectly */
+/* Pricing Card Styles */
 .AlkaDropsPricing__card {
   background: #ffffff;
   border-radius: 12px;
@@ -107,17 +109,19 @@
 }
 
 .AlkaDropsPricing__plan-name {
-  font-size: 24px;
+  font-size: 22px;
   color: #1a1a1a;
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
   font-weight: 700;
 }
 
 .AlkaDropsPricing__plan-sub {
-  font-size: 11px;
-  color: #999999;
+  font-size: 10px;
+  color: #777777;
   letter-spacing: 0.5px;
   display: block;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 /* Price Badge Circle Layout */
@@ -139,7 +143,6 @@
   background-color: #ffffff;
 }
 
-/* Inner decorative ring shadows */
 .AlkaDropsPricing__price-circle::before {
   content: '';
   position: absolute;
@@ -207,11 +210,13 @@
   margin-right: 12px;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .AlkaDropsPricing__feature-text {
-  font-size: 14px;
+  font-size: 13.5px;
   color: #4a4a4a;
+  line-height: 1.4;
 }
 
 /* Action Order Button */
@@ -220,9 +225,11 @@
 }
 
 .AlkaDropsPricing__button {
+  display: block;
   width: 100%;
   background-color: #0056b3;
-  color: #ffffff;
+  color: #ffffff !important;
+  text-decoration: none;
   border: none;
   padding: 14px;
   font-size: 14px;
@@ -230,6 +237,8 @@
   border-radius: 25px;
   cursor: pointer;
   letter-spacing: 1px;
+  box-sizing: border-box;
+  text-align: center;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
@@ -241,19 +250,56 @@
   transform: scale(0.98);
 }
 
+/* Visible Local SEO Information Block */
+.AlkaDropsPricing__seo-info {
+  margin-top: 50px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #0056b3;
+}
+
+.AlkaDropsPricing__seo-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.15rem;
+  color: #1a1a1a;
+}
+
+.AlkaDropsPricing__seo-info p {
+  font-size: 0.95rem;
+  color: #555555;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+}
+
+.AlkaDropsPricing__contact-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+.AlkaDropsPricing__contact-item a {
+  color: #0056b3;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.AlkaDropsPricing__contact-item a:hover {
+  text-decoration: underline;
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 992px) {
   .AlkaDropsPricing__banner-bg {
-    height: 540px; /* Expand banner depth slightly when layout stacks */
+    height: 560px;
   }
-}/* The banner background - increased height from 480px to 540px */
-.AlkaDropsPricing__banner-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 540px; /* Increased to push the blue background a bit further down behind the cards */
-  background-size: cover;
-  background-position: center;
-  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .AlkaDropsPricing__title {
+    font-size: 26px;
+  }
 }

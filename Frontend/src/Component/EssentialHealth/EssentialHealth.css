@@ -3,7 +3,7 @@
   position: relative;
   width: 100%;
   min-height: 620px;
-  background-color: #253e65; /* True deep water blue */
+  background-color: #253e65;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -13,7 +13,7 @@
   box-sizing: border-box;
 }
 
-/* Glass Graphic Overlay (Faded background silhouette matching reference image) */
+/* Background Water Overlay */
 .EssentialHealth-water-glass {
   position: absolute;
   top: 0;
@@ -27,62 +27,89 @@
   pointer-events: none;
 }
 
-/* Primary Content Flexbox and Grid Matrix */
+/* Content Matrix */
 .EssentialHealth-container {
   position: relative;
   z-index: 2;
   width: 100%;
   max-width: 1200px;
   display: grid;
-  grid-template-columns: 1fr 1.35fr; 
-  gap: 60px;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 50px;
   align-items: center;
 }
 
-/* Left Typography Column block styles */
+/* Typography Column */
 .EssentialHealth-content {
   color: #ffffff;
 }
 
-.EssentialHealth-title {
-  font-size: 3.2rem;
+.EssentialHealth-badge {
+  display: inline-block;
+  background-color: rgba(91, 192, 222, 0.2);
+  color: #5bc0de;
   font-weight: 700;
-  line-height: 1.15;
-  margin: 0 0 25px 0;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.EssentialHealth-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 20px 0;
   letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.EssentialHealth-subtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #acc9f8;
+  margin: 20px 0 10px 0;
 }
 
 .EssentialHealth-description {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #d2e3fc;
-  line-height: 1.5;
-  margin-bottom: 30px;
-  max-width: 400px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 500px;
 }
 
 /* Checklist Items */
 .EssentialHealth-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 40px 0;
+  margin: 0 0 35px 0;
 }
 
 .EssentialHealth-list li {
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
-  font-size: 1.05rem;
+  margin-bottom: 12px;
+  font-size: 1rem;
   color: #e2ecfc;
 }
 
 .EssentialHealth-list-icon {
-  color: #ffffff; 
+  color: #5bc0de;
   margin-right: 12px;
-  font-size: 0.95rem;
-  opacity: 0.8;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
-/* Button & Droplet matching layout reference image */
+/* Button & Action Section */
+.EssentialHealth-action-area {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
 .EssentialHealth-btn-wrapper {
   position: relative;
   display: inline-block;
@@ -90,40 +117,71 @@
 
 .EssentialHealth-btn {
   position: relative;
-  z-index: 2;
-  background-color: #1f4d6f;
-  color: #acc9f8;
-  border: none;
-  padding: 14px 40px;
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #004a99;
+  color: #ffffff !important;
+  text-decoration: none;
+  padding: 14px 38px;
+  border-radius: 50px;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  border-radius: 30px;
+  overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.EssentialHealth-btn:hover {
-  background-color: #f0f5ff;
-  transform: translateY(-1px);
-}
-
-/* The light-cyan droplet element extending from the right side of button */
-.EssentialHealth-btn-droplet {
-  position: absolute;
-  right: -8px;
-  top: 0;
-  width: 40px;
-  height: 46px;
-  background-color: #9ecbec;
-  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-  border-top-left-radius: 0px; 
-  transform: rotate(-45deg);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
   z-index: 1;
 }
 
-/* Right Side Image Canvas */
+.EssentialHealth-btn span:first-child {
+  position: relative;
+  z-index: 2;
+}
+
+.EssentialHealth-btn-droplet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: #5bc0de;
+  transition: width 0.4s ease-out;
+  z-index: 1;
+}
+
+.EssentialHealth-btn:hover {
+  transform: translateY(-2px);
+}
+
+.EssentialHealth-btn:hover .EssentialHealth-btn-droplet {
+  width: 100%;
+}
+
+.EssentialHealth-contact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.EssentialHealth-helpline-label {
+  font-size: 0.8rem;
+  color: #d2e3fc;
+}
+
+.EssentialHealth-phone {
+  color: #5bc0de;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.EssentialHealth-phone:hover {
+  text-decoration: underline;
+}
+
+/* Video Section */
 .EssentialHealth-video-wrapper {
   display: flex;
   justify-content: center;
@@ -134,9 +192,9 @@
 .EssentialHealth-thumbnail-card {
   position: relative;
   width: 100%;
-  max-width: 680px; 
+  max-width: 600px;
   border-radius: 16px;
-  overflow: hidden; 
+  overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -147,7 +205,6 @@
   display: block;
 }
 
-/* Play Button Layout Design matching image view */
 .EssentialHealth-play-btn {
   position: absolute;
   top: 50%;
@@ -161,8 +218,8 @@
 }
 
 .EssentialHealth-play-outer {
-  width: 80px;
-  height: 80px;
+  width: 75px;
+  height: 75px;
   background-color: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -173,16 +230,16 @@
 }
 
 .EssentialHealth-play-icon {
-  color: #93b8f4; 
-  font-size: 1.6rem;
-  margin-left: 6px; /* Offsets center alignment to align exactly inside circular vector */
+  color: #004a99;
+  font-size: 1.5rem;
+  margin-left: 5px;
 }
 
 .EssentialHealth-play-btn:hover .EssentialHealth-play-outer {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
-/* Iframe Video Modal Frame Box */
+/* Modal Frame */
 .EssentialHealth-modal {
   position: fixed;
   top: 0;
@@ -222,17 +279,12 @@
   justify-content: center;
   cursor: pointer;
   z-index: 2010;
-  transition: background-color 0.2s ease;
-}
-
-.EssentialHealth-modal-close:hover {
-  background: rgba(255, 255, 255, 0.4);
 }
 
 .EssentialHealth-iframe-container {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  padding-top: 56.25%;
 }
 
 .EssentialHealth-iframe-container iframe {
@@ -241,102 +293,26 @@
   left: 0;
   width: 100%;
   height: 100%;
+  border: 0;
 }
 
-/* Media Screen Breaks */
+/* Media Queries */
 @media (max-width: 992px) {
-  .EssentialHealth-title {
-    font-size: 2.5rem;
-  }
-  .EssentialHealth-container {
-    grid-template-columns: 1fr 1.2fr;
-    gap: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .EssentialHealth {
-    padding: 60px 20px;
-  }
   .EssentialHealth-container {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 40px;
   }
-  .EssentialHealth-content {
-    text-align: center;
-    display: flex;
+  .EssentialHealth-title {
+    font-size: 2.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .EssentialHealth {
+    padding: 50px 20px;
+  }
+  .EssentialHealth-action-area {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
-  .EssentialHealth-list {
-    display: inline-block;
-    text-align: left;
-  }
-}/* Button Styling */
-.EssentialHealth-btn {
-  position: relative;
-  background-color: #004a99; /* Deep blue color */
-  color: #ffffff;
-  padding: 15px 40px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  overflow: hidden; /* This clips the droplet shape */
-  transition: color 0.3s ease;
-  z-index: 1;
-}
-
-/* The light blue shape */
-.EssentialHealth-btn-droplet {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  background-color: #5bc0de; /* Light blue color */
-  border-top-left-radius: 50px;
-  border-bottom-left-radius: 50px;
-  transform: translateX(100%); /* Start hidden off-screen */
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: -1; /* Ensure it stays behind the text */
-}
-
-/* Animation on Hover */
-.EssentialHealth-btn:hover .EssentialHealth-btn-droplet {
-  transform: translateX(0); /* Slide into view */
-}/* Button Base Styling */
-.EssentialHealth-btn {
-  position: relative;
-  background-color: #004a99; /* Deep blue base */
-  color: #ffffff;
-  padding: 15px 40px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  overflow: hidden; /* Clips the droplet so it stays within the button bounds */
-  transition: color 0.3s ease;
-  z-index: 1;
-  /* Ensure the text color stays white during transition */
-  transition: color 0.3s ease;
-}
-
-/* The light blue overlay */
-.EssentialHealth-btn-droplet {
-  position: absolute;
-  top: 0;
-  left: 0; /* Changed from right to left */
-  width: 0%; /* Start at 0% width */
-  height: 100%;
-  background-color: #5bc0de; /* Light blue color */
-  transition: width 0.4s ease-out; /* Animate the width */
-  z-index: -1; /* Keep behind text */
-}
-
-/* Hover Effect: Expands the light blue span to fill the whole button */
-.EssentialHealth-btn:hover .EssentialHealth-btn-droplet {
-  width: 100%; 
 }

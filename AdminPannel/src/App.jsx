@@ -14,7 +14,7 @@ import Dashboards from "./Pages/Dashboards/Dashboards";
 import OurTeam from "./Components/OurTeam/OurTeam";
 import Gallery from "./Components/Gallery/Gallery";
 
-import ShopPosting from "./Components/ShopPosting/ShopPosting";
+
 import Contact from "./Components/Contact/Contact";
 import AlkaMyProfile from "./Components/AlkaMyProfile/AlkaMyProfile";
 import AlkaNotificationSetting from "./Components/AlkaNotificationSetting/AlkaNotificationSetting";
@@ -48,6 +48,8 @@ import LeaveRequest from "./Components/LeaveRequest/LeaveRequest";
 import SubscriptionManagement from "./Pages/SubscriptionManagement/SubscriptionManagement";
 import DeliveryId from "./Pages/DeliveryId/DeliveryId";
 import Testiminial from "./Components/Testiminial/Testiminial";
+import SubscriptionForm from "./Components/SubscriptionForm/SubscriptionForm";
+import ShopForm from "./Components/ShopForm/ShopForm";
 
 const App = () => {
   return (
@@ -70,7 +72,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboards />} />
             <Route path="/team" element={<OurTeam />} />
             <Route path="/gallery" element={<Gallery />} />
-            <Route path="/shop" element={<ShopPosting />} />
+          
             <Route path="/contact" element={<Contact />} />
 
             {/* Account & Settings */}
@@ -110,7 +112,8 @@ const App = () => {
             {/* Resource Routes */}
             <Route path="/resources/team" element={<OurTeam />} />
             <Route path="/resources/gallery" element={<Gallery />} />
-
+<Route path="/subscriptionform" element={<SubscriptionForm/>}/>
+<Route path="/shopform" element={<ShopForm/>}/>
           </Route>
         </Route>
 

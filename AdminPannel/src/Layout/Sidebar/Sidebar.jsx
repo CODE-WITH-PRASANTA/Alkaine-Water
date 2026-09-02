@@ -166,11 +166,13 @@ const Sidebar = ({ isCollapsed, isMobileOpen }) => {
       icon: <ShoppingBag size={20} />,
       text: 'Shop & Content',
       subItems: [
-        { text: 'Shop Main', path: '/shop' },
+        { text: 'Shop Main', path: '/shopform' },
         { text: 'Testimonials', path: '/products/testimonials' },
         { text: 'Blog Portal', path: '/blog' },
         { text: 'Blog Management', path: '/blog-management' },
         { text: 'Contact Us', path: '/contact' },
+        { text: 'Subscription', path: '/subscriptionform' },
+        
       ],
     },
     

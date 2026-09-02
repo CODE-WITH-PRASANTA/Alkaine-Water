@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   FiSearch, 
   FiChevronDown, 
@@ -6,12 +6,18 @@ import {
   FiArrowRight, 
   FiShoppingCart, 
   FiCheck,
-  FiX
+  FiX,
+  FiDroplet,
+  FiTag,
+  FiBox,
+  FiFeather,
+  FiShield,
+  FiZap
 } from 'react-icons/fi';
 import './Shop.css';
 
 // =========================================================
-// LOCAL IMAGE IMPORTS (Replace these with your file paths)
+// LOCAL IMAGE IMPORTS
 // =========================================================
 import WhiteQuartzImg from '../../assets/shop1.jpg'; 
 import EternalFlowImg from '../../assets/shop_01.jpg';
@@ -23,24 +29,178 @@ import ReverseOsmosisImg from '../../assets/shop_10.jpg';
 import BannerBgImg from '../../assets/breadcrum.jpeg';
 
 // =========================================================
-// PRODUCT DATA ARRAY USING IMPORTED IMAGES
+// PRODUCT DATA ARRAY
 // =========================================================
 const ALL_PRODUCTS = [
-  // Page 1 Products
-  { id: 1, name: "White Quartz 2l", price: 3.99, rating: 5, category: "Products", tags: ["#water", "#delivery"], image: WhiteQuartzImg, isSale: false },
-  { id: 2, name: "Eternal Flow 0.5l Tide", price: 1.50, rating: 5, category: "Products", tags: ["#water"], image: EternalFlowImg, isSale: false },
-  { id: 3, name: "Mist Valley 1.5l", price: 2.99, rating: 4, category: "Water", tags: ["#company"], image: MistValleyImg, isSale: false },
-  { id: 4, name: "Pure Glacier 1l", price: 2.10, rating: 5, category: "Water", tags: ["#delivery"], image: PureGlacierImg, isSale: false },
-  { id: 5, name: "Aqua Vitae 0.75l", price: 4.50, rating: 5, category: "Filters", tags: ["#experts"], image: AquaVitaeImg, isSale: false },
-  { id: 6, name: "Alpine Dew 2.5l", price: 5.00, rating: 4, category: "Company", tags: ["#strategy"], image: AlpineDewImg, isSale: false },
-
-  // Page 2 Products (Dummy page data layout)
-  { id: 7, name: "Liquid Sky 1.5l", price: 2.49, rating: 5, category: "Company", tags: ["#water", "#strategy"], image: WhiteQuartzImg, isSale: false },
-  { id: 8, name: "Calm Source 0.75l", price: 5.99, rating: 4, category: "Filters", tags: ["#services"], image: EternalFlowImg, isSale: false },
-  { id: 9, name: "Blue Pulse 0.5l", price: 2.49, rating: 5, category: "Products", tags: ["#delivery"], image: MistValleyImg, isSale: false },
-  { id: 10, name: "Reverse Osmosis Pro", price: 6.49, originalPrice: 7.00, rating: 5, category: "Filters", tags: ["#technologies", "#water"], image: ReverseOsmosisImg, isSale: true },
-  { id: 11, name: "Whisper Spring 0.75l", price: 3.99, rating: 5, category: "Water", tags: ["#experts"], image: PureGlacierImg, isSale: false },
-  { id: 12, name: "Additional Cartridges Pro", price: 5.49, rating: 4, category: "Filters", tags: ["#services", "#technologies"], image: AlpineDewImg, isSale: false }
+  { 
+    id: 1, 
+    name: "White Quartz 2l", 
+    price: 3.99, 
+    rating: 5, 
+    category: "Products", 
+    tags: ["#water", "#delivery"], 
+    image: WhiteQuartzImg, 
+    isSale: false,
+    gallery: [WhiteQuartzImg, EternalFlowImg, MistValleyImg, PureGlacierImg],
+    packSize: "2 Litre",
+    type: "Natural Spring Water",
+    benefits: "Active Hydration, Balanced pH, Electrolytes"
+  },
+  { 
+    id: 2, 
+    name: "Eternal Flow 0.5l Tide", 
+    price: 1.50, 
+    rating: 5, 
+    category: "Products", 
+    tags: ["#water"], 
+    image: EternalFlowImg, 
+    isSale: false,
+    gallery: [EternalFlowImg, WhiteQuartzImg, AlpineDewImg],
+    packSize: "0.5 Litre",
+    type: "Electrolyte Water",
+    benefits: "Rapid Hydration, Trace Minerals"
+  },
+  { 
+    id: 3, 
+    name: "Mist Valley 1.5l", 
+    price: 2.99, 
+    rating: 4, 
+    category: "Water", 
+    tags: ["#company"], 
+    image: MistValleyImg, 
+    isSale: false,
+    gallery: [MistValleyImg, AquaVitaeImg, ReverseOsmosisImg],
+    packSize: "1.5 Litre",
+    type: "Mineral Water",
+    benefits: "Natural Calcium & Magnesium"
+  },
+  { 
+    id: 4, 
+    name: "Pure Glacier 1l", 
+    price: 2.10, 
+    rating: 5, 
+    category: "Water", 
+    tags: ["#delivery"], 
+    image: PureGlacierImg, 
+    isSale: false,
+    gallery: [PureGlacierImg, MistValleyImg, WhiteQuartzImg],
+    packSize: "1 Litre",
+    type: "Glacier Water",
+    benefits: "Crisp Taste, Low Mineral Content"
+  },
+  { 
+    id: 5, 
+    name: "Aqua Vitae 0.75l", 
+    price: 4.50, 
+    rating: 5, 
+    category: "Filters", 
+    tags: ["#experts"], 
+    image: AquaVitaeImg, 
+    isSale: false,
+    gallery: [AquaVitaeImg, EternalFlowImg],
+    packSize: "0.75 Litre",
+    type: "Alkaline Water",
+    benefits: "Detoxification, Cellular Energy"
+  },
+  { 
+    id: 6, 
+    name: "Alpine Dew 2.5l", 
+    price: 5.00, 
+    rating: 4, 
+    category: "Company", 
+    tags: ["#strategy"], 
+    image: AlpineDewImg, 
+    isSale: false,
+    gallery: [AlpineDewImg, WhiteQuartzImg],
+    packSize: "2.5 Litre",
+    type: "Mountain Water",
+    benefits: "High Purity, Pure Source"
+  },
+  { 
+    id: 7, 
+    name: "Liquid Sky 1.5l", 
+    price: 2.49, 
+    rating: 5, 
+    category: "Company", 
+    tags: ["#water", "#strategy"], 
+    image: WhiteQuartzImg, 
+    isSale: false,
+    gallery: [WhiteQuartzImg, EternalFlowImg],
+    packSize: "1.5 Litre",
+    type: "Vapour Distilled",
+    benefits: "Essential Minerals Added"
+  },
+  { 
+    id: 8, 
+    name: "Calm Source 0.75l", 
+    price: 5.99, 
+    rating: 4, 
+    category: "Filters", 
+    tags: ["#services"], 
+    image: EternalFlowImg, 
+    isSale: false,
+    gallery: [EternalFlowImg, PureGlacierImg],
+    packSize: "0.75 Litre",
+    type: "Spring Blend",
+    benefits: "Daily Balance, Clean Finish"
+  },
+  { 
+    id: 9, 
+    name: "Blue Pulse 0.5l", 
+    price: 2.49, 
+    rating: 5, 
+    category: "Products", 
+    tags: ["#delivery"], 
+    image: MistValleyImg, 
+    isSale: false,
+    gallery: [MistValleyImg, ReverseOsmosisImg],
+    packSize: "0.5 Litre",
+    type: "Structured Water",
+    benefits: "Deep Absorption"
+  },
+  { 
+    id: 10, 
+    name: "Reverse Osmosis Pro", 
+    price: 6.49, 
+    originalPrice: 7.00, 
+    rating: 5, 
+    category: "Filters", 
+    tags: ["#technologies", "#water"], 
+    image: ReverseOsmosisImg, 
+    isSale: true,
+    gallery: [ReverseOsmosisImg, WhiteQuartzImg, PureGlacierImg, AlpineDewImg],
+    packSize: "2 Litre",
+    type: "Alkaline Mineral Water",
+    benefits: "Hydration, pH Balance, Essential Minerals"
+  },
+  { 
+    id: 11, 
+    name: "Whisper Spring 0.75l", 
+    price: 3.99, 
+    rating: 5, 
+    category: "Water", 
+    tags: ["#experts"], 
+    image: PureGlacierImg, 
+    isSale: false,
+    gallery: [PureGlacierImg, MistValleyImg],
+    packSize: "0.75 Litre",
+    type: "Artesian Water",
+    benefits: "Smooth Taste, Natural Silica"
+  },
+  { 
+    id: 12, 
+    name: "Additional Cartridges Pro", 
+    price: 5.49, 
+    rating: 4, 
+    category: "Filters", 
+    tags: ["#services", "#technologies"], 
+    image: AlpineDewImg, 
+    isSale: false,
+    gallery: [AlpineDewImg, AquaVitaeImg],
+    packSize: "Pack of 2",
+    type: "Multi-stage Purifier",
+    benefits: "Removes Micro-particles, High Flow"
+  }
 ];
 
 const Shop = () => {
@@ -51,18 +211,36 @@ const Shop = () => {
   const [selectedTag, setSelectedTag] = useState(null);
   const [sortOption, setSortOption] = useState("Default sorting");
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(2); // Starts on Page 2 default
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Modal State
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [modalQuantity, setModalQuantity] = useState(1);
 
   const itemsPerPage = 6;
 
+  // Prevent background scrolling when popup is active
+  useEffect(() => {
+    if (selectedProduct) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProduct]);
+
   // --- ACTIONS ---
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (product, quantity = 1, e) => {
+    if (e) e.stopPropagation();
     setCart((prevCart) => {
       const existing = prevCart.find(item => item.id === product.id);
       if (existing) {
-        return prevCart.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
+        return prevCart.map(item => item.id === product.id ? { ...item, qty: item.qty + quantity } : item);
       }
-      return [...prevCart, { ...product, qty: 1 }];
+      return [...prevCart, { ...product, qty: quantity }];
     });
   };
 
@@ -73,6 +251,16 @@ const Shop = () => {
   const handlePriceChange = (e) => {
     setPriceRange(parseFloat(e.target.value));
     setCurrentPage(1);
+  };
+
+  const openProductModal = (product) => {
+    setSelectedProduct(product);
+    setActiveImageIdx(0);
+    setModalQuantity(1);
+  };
+
+  const closeProductModal = () => {
+    setSelectedProduct(null);
   };
 
   // --- FILTERING & SORTING LOGIC ---
@@ -106,7 +294,6 @@ const Shop = () => {
     return result;
   }, [searchQuery, priceRange, selectedCategory, selectedTag, sortOption]);
 
-  // --- PAGINATION COMPONENT VALUES ---
   const totalResults = filteredAndSortedProducts.length;
   const totalPages = Math.ceil(totalResults / itemsPerPage);
   
@@ -118,6 +305,10 @@ const Shop = () => {
   const startResultIdx = totalResults === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endResultIdx = Math.min(currentPage * itemsPerPage, totalResults);
   const cartSubtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0).toFixed(2);
+
+  const activeGallery = selectedProduct?.gallery?.length 
+    ? selectedProduct.gallery 
+    : (selectedProduct ? [selectedProduct.image] : []);
 
   return (
     <div className="Shop">
@@ -142,7 +333,7 @@ const Shop = () => {
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
               />
-              <button className="ShopSearchButton"><FiSearch /></button>
+              <button className="ShopSearchButton" type="button"><FiSearch /></button>
             </div>
           </div>
 
@@ -260,7 +451,6 @@ const Shop = () => {
               Showing {startResultIdx}–{endResultIdx} of {totalResults} results
             </div>
             
-            {/* Sorting custom Dropdown wrapper */}
             <div className="ShopSortingDropdownWrapper">
               <div className="ShopSelectedSortBox" onClick={() => setIsSortOpen(!isSortOpen)}>
                 <span>{sortOption}</span>
@@ -298,7 +488,11 @@ const Shop = () => {
             {paginatedProducts.map((product) => {
               const isAddedToCart = cart.some(item => item.id === product.id);
               return (
-                <div key={product.id} className="ShopProductCardItem">
+                <div 
+                  key={product.id} 
+                  className="ShopProductCardItem clickableCard"
+                  onClick={() => openProductModal(product)}
+                >
                   <div className="ShopCardImageFrameContainer">
                     {product.isSale && <span className="ShopSaleRibbonBadge">%</span>}
                     <img src={product.image} alt={product.name} className="ShopProductItemCoreImage" />
@@ -306,7 +500,8 @@ const Shop = () => {
                     <div className="ShopCardHoverActionOverlay">
                       <button 
                         className={`ShopCardCircleActionBtn ${isAddedToCart ? 'addedSuccessState' : ''}`}
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(e) => handleAddToCart(product, 1, e)}
+                        aria-label="Add to cart"
                       >
                         {isAddedToCart ? <FiCheck className="ShopActionCheckmark" /> : <FiShoppingCart />}
                       </button>
@@ -340,7 +535,7 @@ const Shop = () => {
             })}
           </div>
 
-          {/* Pagination Navigation Controls */}
+          {/* Pagination Navigation */}
           {totalPages > 1 && (
             <div className="ShopPaginationNavigationLayout">
               <button 
@@ -372,6 +567,170 @@ const Shop = () => {
           )}
         </main>
       </div>
+
+      {/* QUICK VIEW DETAILS MODAL POPUP */}
+      {selectedProduct && (
+        <div className="ShopModalOverlay" onClick={closeProductModal}>
+          <div className="ShopModalCardWrapper" onClick={(e) => e.stopPropagation()}>
+            <button className="ShopModalCloseBtn" onClick={closeProductModal}>
+              <FiX />
+            </button>
+
+            {/* Left Side: Images & Gallery */}
+            <div className="ShopModalLeftPane">
+              <div className="ShopModalHeroImageContainer">
+                {selectedProduct.isSale && <span className="ShopModalSaleBadge">%</span>}
+                
+                {activeGallery.length > 1 && (
+                  <button 
+                    className="ShopModalNavArrow prev" 
+                    onClick={() => setActiveImageIdx(prev => (prev === 0 ? activeGallery.length - 1 : prev - 1))}
+                  >
+                    ‹
+                  </button>
+                )}
+
+                <img 
+                  src={activeGallery[activeImageIdx] || selectedProduct.image} 
+                  alt={selectedProduct.name} 
+                  className="ShopModalCoreImg"
+                />
+
+                {activeGallery.length > 1 && (
+                  <button 
+                    className="ShopModalNavArrow next" 
+                    onClick={() => setActiveImageIdx(prev => (prev === activeGallery.length - 1 ? 0 : prev + 1))}
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
+
+              {/* Thumbnails Row */}
+              {activeGallery.length > 1 && (
+                <div className="ShopModalThumbsRow">
+                  {activeGallery.map((imgSrc, idx) => (
+                    <button
+                      key={idx}
+                      className={`ShopModalThumbBtn ${idx === activeImageIdx ? 'selected' : ''}`}
+                      onClick={() => setActiveImageIdx(idx)}
+                    >
+                      <img src={imgSrc} alt={`Thumbnail ${idx + 1}`} />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right Side: Product Details */}
+            <div className="ShopModalRightPane">
+              <div className="ShopModalRatingStars">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i} className="ShopModalStar">★</span>
+                ))}
+              </div>
+
+              <h2 className="ShopModalTitle">{selectedProduct.name}</h2>
+
+              <p className="ShopModalDescription">
+                Pure, family-sized alkaline water enriched with vital minerals for everyday cellular energy.
+              </p>
+
+              <div className="ShopModalPricingRow">
+                {selectedProduct.originalPrice && (
+                  <span className="ShopModalOriginalPrice">${selectedProduct.originalPrice.toFixed(2)}</span>
+                )}
+                <span className="ShopModalFinalPrice">${selectedProduct.price.toFixed(2)}</span>
+              </div>
+
+              {/* Info Matrix List */}
+              <div className="ShopModalSpecsList">
+                <div className="ShopModalSpecItem">
+                  <div className="ShopModalSpecIcon"><FiDroplet /></div>
+                  <div className="ShopModalSpecText">
+                    <span className="ShopModalSpecLabel">Category</span>
+                    <span className="ShopModalSpecValue">{selectedProduct.category}</span>
+                  </div>
+                </div>
+
+                <div className="ShopModalSpecItem">
+                  <div className="ShopModalSpecIcon"><FiTag /></div>
+                  <div className="ShopModalSpecText">
+                    <span className="ShopModalSpecLabel">Tag</span>
+                    <span className="ShopModalTagGreenPill">New</span>
+                  </div>
+                </div>
+
+                <div className="ShopModalSpecItem">
+                  <div className="ShopModalSpecIcon"><FiBox /></div>
+                  <div className="ShopModalSpecText">
+                    <span className="ShopModalSpecLabel">Pack Size</span>
+                    <span className="ShopModalSpecValue">{selectedProduct.packSize || "2 Litre"}</span>
+                  </div>
+                </div>
+
+                <div className="ShopModalSpecItem">
+                  <div className="ShopModalSpecIcon"><FiFeather /></div>
+                  <div className="ShopModalSpecText">
+                    <span className="ShopModalSpecLabel">Type</span>
+                    <span className="ShopModalSpecValue">{selectedProduct.type || "Alkaline Mineral Water"}</span>
+                  </div>
+                </div>
+
+                <div className="ShopModalSpecItem">
+                  <div className="ShopModalSpecIcon"><FiShield /></div>
+                  <div className="ShopModalSpecText">
+                    <span className="ShopModalSpecLabel">Benefits</span>
+                    <span className="ShopModalSpecValue">{selectedProduct.benefits || "Hydration, pH Balance, Essential Minerals"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quantity Selector */}
+              <div className="ShopModalQuantitySection">
+                <span className="ShopModalQtyHeader">Quantity</span>
+                <div className="ShopModalQtyInputGroup">
+                  <button 
+                    type="button"
+                    onClick={() => setModalQuantity(prev => Math.max(prev - 1, 1))}
+                  >
+                    –
+                  </button>
+                  <span>{modalQuantity}</span>
+                  <button 
+                    type="button"
+                    onClick={() => setModalQuantity(prev => prev + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="ShopModalActionButtonsRow">
+                <button 
+                  className="ShopModalAddCartBtn"
+                  onClick={() => {
+                    handleAddToCart(selectedProduct, modalQuantity);
+                    closeProductModal();
+                  }}
+                >
+                  <FiShoppingCart /> Add to Cart
+                </button>
+                <button 
+                  className="ShopModalBuyNowBtn"
+                  onClick={() => {
+                    handleAddToCart(selectedProduct, modalQuantity);
+                    closeProductModal();
+                  }}
+                >
+                  <FiZap /> Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

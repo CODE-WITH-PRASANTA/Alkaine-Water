@@ -29,13 +29,13 @@ import ReverseOsmosisImg from '../../assets/shop_10.jpg';
 import BannerBgImg from '../../assets/breadcrum.jpeg';
 
 // =========================================================
-// PRODUCT DATA ARRAY
+// PRODUCT DATA ARRAY (Prices in INR)
 // =========================================================
 const ALL_PRODUCTS = [
   { 
     id: 1, 
     name: "White Quartz 2l", 
-    price: 3.99, 
+    price: 99.00, 
     rating: 5, 
     category: "Products", 
     tags: ["#water", "#delivery"], 
@@ -49,7 +49,7 @@ const ALL_PRODUCTS = [
   { 
     id: 2, 
     name: "Eternal Flow 0.5l Tide", 
-    price: 1.50, 
+    price: 45.00, 
     rating: 5, 
     category: "Products", 
     tags: ["#water"], 
@@ -63,7 +63,7 @@ const ALL_PRODUCTS = [
   { 
     id: 3, 
     name: "Mist Valley 1.5l", 
-    price: 2.99, 
+    price: 75.00, 
     rating: 4, 
     category: "Water", 
     tags: ["#company"], 
@@ -77,7 +77,7 @@ const ALL_PRODUCTS = [
   { 
     id: 4, 
     name: "Pure Glacier 1l", 
-    price: 2.10, 
+    price: 60.00, 
     rating: 5, 
     category: "Water", 
     tags: ["#delivery"], 
@@ -91,7 +91,7 @@ const ALL_PRODUCTS = [
   { 
     id: 5, 
     name: "Aqua Vitae 0.75l", 
-    price: 4.50, 
+    price: 120.00, 
     rating: 5, 
     category: "Filters", 
     tags: ["#experts"], 
@@ -105,7 +105,7 @@ const ALL_PRODUCTS = [
   { 
     id: 6, 
     name: "Alpine Dew 2.5l", 
-    price: 5.00, 
+    price: 150.00, 
     rating: 4, 
     category: "Company", 
     tags: ["#strategy"], 
@@ -119,7 +119,7 @@ const ALL_PRODUCTS = [
   { 
     id: 7, 
     name: "Liquid Sky 1.5l", 
-    price: 2.49, 
+    price: 80.00, 
     rating: 5, 
     category: "Company", 
     tags: ["#water", "#strategy"], 
@@ -133,7 +133,7 @@ const ALL_PRODUCTS = [
   { 
     id: 8, 
     name: "Calm Source 0.75l", 
-    price: 5.99, 
+    price: 140.00, 
     rating: 4, 
     category: "Filters", 
     tags: ["#services"], 
@@ -147,7 +147,7 @@ const ALL_PRODUCTS = [
   { 
     id: 9, 
     name: "Blue Pulse 0.5l", 
-    price: 2.49, 
+    price: 65.00, 
     rating: 5, 
     category: "Products", 
     tags: ["#delivery"], 
@@ -161,8 +161,8 @@ const ALL_PRODUCTS = [
   { 
     id: 10, 
     name: "Reverse Osmosis Pro", 
-    price: 6.49, 
-    originalPrice: 7.00, 
+    price: 180.00, 
+    originalPrice: 220.00, 
     rating: 5, 
     category: "Filters", 
     tags: ["#technologies", "#water"], 
@@ -176,7 +176,7 @@ const ALL_PRODUCTS = [
   { 
     id: 11, 
     name: "Whisper Spring 0.75l", 
-    price: 3.99, 
+    price: 110.00, 
     rating: 5, 
     category: "Water", 
     tags: ["#experts"], 
@@ -190,7 +190,7 @@ const ALL_PRODUCTS = [
   { 
     id: 12, 
     name: "Additional Cartridges Pro", 
-    price: 5.49, 
+    price: 250.00, 
     rating: 4, 
     category: "Filters", 
     tags: ["#services", "#technologies"], 
@@ -206,7 +206,7 @@ const ALL_PRODUCTS = [
 const Shop = () => {
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState(20);
+  const [priceRange, setPriceRange] = useState(500);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTag, setSelectedTag] = useState(null);
   const [sortOption, setSortOption] = useState("Default sorting");
@@ -353,14 +353,14 @@ const Shop = () => {
                       <img src={item.image} alt={item.name} className="ShopCartItemImage" />
                       <div className="ShopCartItemMeta">
                         <span className="ShopCartItemName">{item.name}</span>
-                        <span className="ShopCartItemPrice">{item.qty} x ${item.price.toFixed(2)}</span>
+                        <span className="ShopCartItemPrice">{item.qty} x ₹{item.price.toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="ShopSidebarCartSubtotal">
                   <span>Subtotal:</span>
-                  <span className="ShopSubtotalAmount">${cartSubtotal}</span>
+                  <span className="ShopSubtotalAmount">₹{cartSubtotal}</span>
                 </div>
                 <div className="ShopSidebarCartButtons">
                   <button className="ShopCartBtn ViewCartBtn">View cart</button>
@@ -375,22 +375,22 @@ const Shop = () => {
             <h3 className="ShopWidgetTitle">FILTER BY PRICE</h3>
             <div className="ShopPriceSliderWrapper">
               <div className="ShopSliderLineTrack">
-                <div className="ShopSliderLineProgress" style={{ width: `${(priceRange / 20) * 100}%` }}></div>
+                <div className="ShopSliderLineProgress" style={{ width: `${(priceRange / 500) * 100}%` }}></div>
               </div>
               <input 
                 type="range" 
                 min="0" 
-                max="20" 
-                step="0.01" 
+                max="500" 
+                step="1" 
                 value={priceRange} 
                 onChange={handlePriceChange}
                 className="ShopActualSliderInput"
               />
               <div className="ShopSliderKnob left"></div>
-              <div className="ShopSliderKnob right" style={{ left: `${(priceRange / 20) * 100}%` }}></div>
+              <div className="ShopSliderKnob right" style={{ left: `${(priceRange / 500) * 100}%` }}></div>
             </div>
             <div className="ShopPriceFilterFooter">
-              <span className="ShopPriceOutputDisplay">Price: $0 — ${priceRange.toFixed(0)}</span>
+              <span className="ShopPriceOutputDisplay">Price: ₹0 — ₹{priceRange.toFixed(0)}</span>
               <button className="ShopFilterActionBtn">Filter</button>
             </div>
           </div>
@@ -525,9 +525,9 @@ const Shop = () => {
                     </p>
                     <div className="ShopProductCardPricingRow">
                       {product.isSale && (
-                        <span className="ShopProductCardOriginalCrossedPrice">${product.originalPrice?.toFixed(2)}</span>
+                        <span className="ShopProductCardOriginalCrossedPrice">₹{product.originalPrice?.toFixed(2)}</span>
                       )}
-                      <span className="ShopProductCardActiveSalePrice">${product.price.toFixed(2)}</span>
+                      <span className="ShopProductCardActiveSalePrice">₹{product.price.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -638,9 +638,9 @@ const Shop = () => {
 
               <div className="ShopModalPricingRow">
                 {selectedProduct.originalPrice && (
-                  <span className="ShopModalOriginalPrice">${selectedProduct.originalPrice.toFixed(2)}</span>
+                  <span className="ShopModalOriginalPrice">₹{selectedProduct.originalPrice.toFixed(2)}</span>
                 )}
-                <span className="ShopModalFinalPrice">${selectedProduct.price.toFixed(2)}</span>
+                <span className="ShopModalFinalPrice">₹{selectedProduct.price.toFixed(2)}</span>
               </div>
 
               {/* Info Matrix List */}

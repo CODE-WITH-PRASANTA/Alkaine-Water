@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import './SubscriptionForm.css';
 import { 
   FaRegIdCard, 
@@ -12,15 +13,17 @@ import {
   FaRegSave, 
   FaSearch, 
   FaPencilAlt, 
-  FaTrashAlt 
+  FaTrashAlt,
+  FaStar,
+  FaCheckCircle
 } from 'react-icons/fa';
 
 const initialPlans = [
   {
     id: 1,
     name: 'Basic Plan',
-    subtext: 'Ideal 20 litre water supply near me home delivery...',
-    tag: 'MO',
+    subtext: '<p>Ideal 20 litre water supply near me home delivery...</p>',
+    tags: ['MO', 'Popular'],
     price: '1,499',
     period: 'Monthly',
     bestFor: 'Home & Small Families',
@@ -29,8 +32,8 @@ const initialPlans = [
   {
     id: 2,
     name: 'Premium Plan',
-    subtext: 'Free express delivery and more benefits.',
-    tag: 'YR',
+    subtext: '<p>Free express delivery and more benefits.</p>',
+    tags: ['YR', 'Best Value'],
     price: '2,999',
     period: 'Yearly',
     bestFor: 'Best Value Annual Subscription',
@@ -39,8 +42,8 @@ const initialPlans = [
   {
     id: 3,
     name: 'Advanced Plan',
-    subtext: 'High-demand drinking water supply for corporate...',
-    tag: 'MO',
+    subtext: '<p>High-demand drinking water supply for corporate...</p>',
+    tags: ['MO'],
     price: '2,199',
     period: 'Monthly',
     bestFor: 'Workplaces, Gyms & Studios',
@@ -53,28 +56,53 @@ const emptyForm = {
   name: '',
   period: '',
   price: '',
-  tag: '',
+  tags: [],
   bestFor: '',
   description: '',
-  features: ['', '', '', '']
+  features: ['', '', '']
 };
 
 const SubscriptionForm = () => {
   const [plans, setPlans] = useState(initialPlans);
   const [formData, setFormData] = useState(emptyForm);
+  const [tagInput, setTagInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  // Pagination & Filter States
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  // Pagination & Search Filter
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Form Handlers
+  // Field Handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleEditorChange = (content) => {
+    setFormData(prev => ({ ...prev, description: content }));
+  };
+
+  // Tag Pill System
+  const handleTagKeyDown = (e) => {
+    if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+      e.preventDefault();
+      const formattedTag = tagInput.trim().replace(/^,/, '');
+      if (!formData.tags.includes(formattedTag)) {
+        setFormData(prev => ({ ...prev, tags: [...prev.tags, formattedTag] }));
+      }
+      setTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  // Dynamic Features List
   const handleFeatureChange = (index, value) => {
     const updatedFeatures = [...formData.features];
     updatedFeatures[index] = value;
@@ -92,24 +120,29 @@ const SubscriptionForm = () => {
 
   const handleReset = () => {
     setFormData(emptyForm);
+    setTagInput('');
     setIsEditing(false);
   };
 
+  // Submission Management
   const handleSavePlan = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.price) return;
+    if (!formData.name || !formData.price || !formData.period) return;
+
+    const cleanedFeatures = formData.features.filter(f => f.trim() !== '');
 
     if (isEditing) {
       setPlans(plans.map(p => p.id === formData.id ? {
         ...formData,
-        subtext: formData.description || p.subtext
+        subtext: formData.description || p.subtext,
+        features: cleanedFeatures
       } : p));
     } else {
       const newPlan = {
         ...formData,
         id: Date.now(),
-        subtext: formData.description || 'Custom plan package',
-        period: formData.period || 'Monthly'
+        subtext: formData.description || '<p>Standard subscription package.</p>',
+        features: cleanedFeatures
       };
       setPlans([...plans, newPlan]);
     }
@@ -124,10 +157,10 @@ const SubscriptionForm = () => {
       name: plan.name || '',
       period: plan.period || '',
       price: plan.price || '',
-      tag: plan.tag || '',
+      tags: plan.tags || (plan.tag ? [plan.tag] : []),
       bestFor: plan.bestFor || '',
       description: plan.subtext || '',
-      features: plan.features && plan.features.length ? plan.features : ['', '', '', '']
+      features: plan.features && plan.features.length ? plan.features : ['', '']
     });
   };
 
@@ -136,10 +169,11 @@ const SubscriptionForm = () => {
     if (formData.id === id) handleReset();
   };
 
-  // Search & Pagination Logic
+  // Filtering & Pagination
   const filteredPlans = plans.filter(plan => 
     plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    plan.bestFor.toLowerCase().includes(searchTerm.toLowerCase())
+    plan.bestFor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    plan.period.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredPlans.length / entriesPerPage) || 1;
@@ -148,105 +182,136 @@ const SubscriptionForm = () => {
 
   return (
     <div className="SubscriptionForm-container">
-      {/* Left Column - Form Card */}
+      {/* Form Section */}
       <div className="SubscriptionForm-card">
         <div className="SubscriptionForm-header">
-          <h2>Add / Update Plan</h2>
-          <p>Fill in the details to add a new subscription plan.</p>
+          <h2>{isEditing ? 'Update Plan' : 'Add Subscription Plan'}</h2>
+          <p>Configure plan structure and pricing options below.</p>
         </div>
 
         <form onSubmit={handleSavePlan} className="SubscriptionForm-body">
-          <div className="SubscriptionForm-group">
-            <label>Plan Name</label>
-            <div className="SubscriptionForm-input-wrapper">
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="Enter plan name" 
-                value={formData.name}
-                onChange={handleInputChange}
-              />
-              <FaRegIdCard className="SubscriptionForm-icon" />
+          {/* Row 1: Plan Name & Billing Period */}
+          <div className="SubscriptionForm-row">
+            <div className="SubscriptionForm-group">
+              <label>Plan Name *</label>
+              <div className="SubscriptionForm-input-wrapper">
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="e.g. Pro Plan" 
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <FaRegIdCard className="SubscriptionForm-icon" />
+              </div>
+            </div>
+
+            <div className="SubscriptionForm-group">
+              <label>Billing Period *</label>
+              <div className="SubscriptionForm-input-wrapper">
+                <select 
+                  name="period" 
+                  value={formData.period} 
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="" disabled hidden>Select Period</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="Quarterly">Quarterly</option>
+                </select>
+                <FaRegCalendarAlt className="SubscriptionForm-icon" />
+              </div>
             </div>
           </div>
 
-          <div className="SubscriptionForm-group">
-            <label>Billing Period</label>
-            <div className="SubscriptionForm-input-wrapper">
-              <select 
-                name="period" 
-                value={formData.period} 
-                onChange={handleInputChange}
-              >
-                <option value="" disabled hidden>Select billing period</option>
-                <option value="Monthly">Monthly</option>
-                <option value="Yearly">Yearly</option>
-                <option value="Quarterly">Quarterly</option>
-              </select>
-              <FaRegCalendarAlt className="SubscriptionForm-icon" />
+          {/* Row 2: Price & Tag Inputs */}
+          <div className="SubscriptionForm-row">
+            <div className="SubscriptionForm-group">
+              <label>Price (₹) *</label>
+              <div className="SubscriptionForm-input-wrapper">
+                <input 
+                  type="text" 
+                  name="price" 
+                  placeholder="e.g. 1,499" 
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  required
+                />
+                <FaRupeeSign className="SubscriptionForm-icon" />
+              </div>
+            </div>
+
+            <div className="SubscriptionForm-group">
+              <label>Tags / Badges (Press Enter)</label>
+              <div className="SubscriptionForm-input-wrapper">
+                <input 
+                  type="text" 
+                  placeholder="Add tag..." 
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                />
+                <FaTag className="SubscriptionForm-icon" />
+              </div>
+              {formData.tags.length > 0 && (
+                <div className="SubscriptionForm-tags-badge-list">
+                  {formData.tags.map((tag, idx) => (
+                    <span key={idx} className="SubscriptionForm-tag-pill">
+                      {tag}
+                      <button type="button" onClick={() => handleRemoveTag(tag)}>
+                        <FaTimes />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="SubscriptionForm-group">
-            <label>Price (₹)</label>
-            <div className="SubscriptionForm-input-wrapper">
-              <input 
-                type="text" 
-                name="price" 
-                placeholder="Enter price" 
-                value={formData.price}
-                onChange={handleInputChange}
-              />
-              <FaRupeeSign className="SubscriptionForm-icon" />
-            </div>
-          </div>
-
-          <div className="SubscriptionForm-group">
-            <label>Tag / Badge</label>
-            <div className="SubscriptionForm-input-wrapper">
-              <input 
-                type="text" 
-                name="tag" 
-                placeholder="e.g. MO, YR" 
-                value={formData.tag}
-                onChange={handleInputChange}
-              />
-              <FaTag className="SubscriptionForm-icon" />
-            </div>
-          </div>
-
+          {/* Row 3: Target Audience */}
           <div className="SubscriptionForm-group">
             <label>Best For</label>
-            <input 
-              type="text" 
-              name="bestFor" 
-              placeholder="e.g. Home & Small Families" 
-              value={formData.bestFor}
-              onChange={handleInputChange}
-              className="SubscriptionForm-standalone-input"
-            />
+            <div className="SubscriptionForm-input-wrapper">
+              <input 
+                type="text" 
+                name="bestFor" 
+                placeholder="e.g. Home & Small Families" 
+                value={formData.bestFor}
+                onChange={handleInputChange}
+              />
+              <FaStar className="SubscriptionForm-icon" />
+            </div>
           </div>
 
+          {/* TinyMCE Description Editor */}
           <div className="SubscriptionForm-group">
             <label>Description</label>
-            <textarea 
-              name="description" 
-              placeholder="Enter plan description" 
+            <Editor
+              tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js"
               value={formData.description}
-              onChange={handleInputChange}
-              rows={3}
+              init={{
+                height: 180,
+                menubar: false,
+                plugins: ['advlist', 'autolink', 'lists', 'link', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'table', 'code', 'help', 'wordcount'],
+                toolbar: 'undo redo | blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
+                content_style: 'body { font-family:Inter,sans-serif; font-size:13px }'
+              }}
+              onEditorChange={handleEditorChange}
             />
           </div>
 
+          {/* Dynamic Feature List */}
           <div className="SubscriptionForm-group">
-            <label>Features</label>
+            <label>Included Features</label>
             <div className="SubscriptionForm-features-list">
               {formData.features.map((feature, index) => (
                 <div key={index} className="SubscriptionForm-feature-item">
                   <FaGripLines className="SubscriptionForm-grip" />
                   <input 
                     type="text" 
-                    placeholder="Enter feature" 
+                    placeholder={`Feature #${index + 1}`} 
                     value={feature}
                     onChange={(e) => handleFeatureChange(index, e.target.value)}
                   />
@@ -265,10 +330,11 @@ const SubscriptionForm = () => {
               className="SubscriptionForm-add-feature-btn" 
               onClick={handleAddFeature}
             >
-              <FaPlus /> Add Feature
+              <FaPlus /> Add Feature Row
             </button>
           </div>
 
+          {/* Form Actions */}
           <div className="SubscriptionForm-actions">
             <button type="button" className="SubscriptionForm-btn-reset" onClick={handleReset}>
               <FaUndo /> Reset
@@ -280,15 +346,16 @@ const SubscriptionForm = () => {
         </form>
       </div>
 
-      {/* Right Column - Table Card */}
+      {/* Subscription Table Section */}
       <div className="SubscriptionForm-card">
         <div className="SubscriptionForm-header SubscriptionForm-table-header">
           <div>
             <h2>Plans List</h2>
-            <p>View and manage all subscription plans.</p>
+            <p>Manage existing pricing tiers and features.</p>
           </div>
         </div>
 
+        {/* Search and Table Filters */}
         <div className="SubscriptionForm-controls">
           <div className="SubscriptionForm-show-entries">
             Show 
@@ -316,16 +383,17 @@ const SubscriptionForm = () => {
           </div>
         </div>
 
+        {/* Data Table */}
         <div className="SubscriptionForm-table-wrapper">
           <table className="SubscriptionForm-table">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Plan Name</th>
-                <th>Tag</th>
-                <th>Price (₹)</th>
+                <th>Plan Overview</th>
+                <th>Tags</th>
+                <th>Price</th>
                 <th>Period</th>
-                <th>Best For</th>
+                <th>Features</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -336,23 +404,38 @@ const SubscriptionForm = () => {
                     <td>{startIndex + index + 1}</td>
                     <td className="SubscriptionForm-name-cell">
                       <span className="SubscriptionForm-plan-title">{plan.name}</span>
-                      <span className="SubscriptionForm-plan-desc">{plan.subtext}</span>
+                      <span className="SubscriptionForm-plan-audience">{plan.bestFor}</span>
+                      <div 
+                        className="SubscriptionForm-plan-desc-preview"
+                        dangerouslySetInnerHTML={{ __html: plan.subtext }} 
+                      />
                     </td>
                     <td>
-                      {plan.tag && (
-                        <span className={`SubscriptionForm-tag ${plan.tag === 'YR' ? 'yr' : 'mo'}`}>
-                          {plan.tag}
-                        </span>
-                      )}
+                      <div className="SubscriptionForm-table-tags">
+                        {plan.tags && plan.tags.length > 0 ? (
+                          plan.tags.map((t, i) => (
+                            <span key={i} className="SubscriptionForm-badge">{t}</span>
+                          ))
+                        ) : (
+                          <span className="SubscriptionForm-no-data">-</span>
+                        )}
+                      </div>
                     </td>
-                    <td>{plan.price}</td>
-                    <td>{plan.period}</td>
-                    <td>{plan.bestFor}</td>
+                    <td className="SubscriptionForm-price-text">₹{plan.price}</td>
+                    <td><span className="SubscriptionForm-period-badge">{plan.period}</span></td>
+                    <td>
+                      <ul className="SubscriptionForm-table-features">
+                        {plan.features && plan.features.map((feat, fIdx) => (
+                          <li key={fIdx}><FaCheckCircle className="check-icon" /> {feat}</li>
+                        ))}
+                      </ul>
+                    </td>
                     <td className="SubscriptionForm-actions-cell">
                       <button 
                         type="button" 
                         className="SubscriptionForm-action-edit"
                         onClick={() => handleEdit(plan)}
+                        title="Edit Plan"
                       >
                         <FaPencilAlt />
                       </button>
@@ -360,6 +443,7 @@ const SubscriptionForm = () => {
                         type="button" 
                         className="SubscriptionForm-action-delete"
                         onClick={() => handleDelete(plan.id)}
+                        title="Delete Plan"
                       >
                         <FaTrashAlt />
                       </button>
@@ -368,13 +452,14 @@ const SubscriptionForm = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="SubscriptionForm-empty-td">No plans found</td>
+                  <td colSpan="7" className="SubscriptionForm-empty-td">No active subscription plans found</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
 
+        {/* Pagination Footer */}
         <div className="SubscriptionForm-footer">
           <div className="SubscriptionForm-showing-info">
             Showing {filteredPlans.length ? startIndex + 1 : 0} to {Math.min(startIndex + entriesPerPage, filteredPlans.length)} of {filteredPlans.length} entries

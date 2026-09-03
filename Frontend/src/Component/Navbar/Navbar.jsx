@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../../assets/ALKA DROPS LOGO.png';
@@ -6,11 +6,9 @@ import logo from '../../assets/ALKA DROPS LOGO.png';
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dropdownRef = useRef(null);
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Handle Navbar background on scroll
   useEffect(() => {
@@ -33,32 +31,14 @@ const Navbar = () => {
   // Close menus on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    setIsDropdownOpen(false);
   }, [location]);
-
-  // Close dropdown on click outside (Desktop)
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const closeAllMenus = () => {
     setIsMobileMenuOpen(false);
-    setIsDropdownOpen(false);
   };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
-  };
-
-  const toggleDropdown = (e) => {
-    e.preventDefault();
-    setIsDropdownOpen((prev) => !prev);
   };
 
   return (
@@ -123,40 +103,55 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            {/* Dropdown Menu */}
-            <li 
-              ref={dropdownRef}
-              className={`navbar-item navbar-has-dropdown ${isDropdownOpen ? 'dropdown-active' : ''}`}
-            >
-              <button
-                type="button"
-                className="navbar-link navbar-dropdown-toggle"
-                onClick={toggleDropdown}
-                aria-expanded={isDropdownOpen}
+            {/* Previously in Dropdown, now inline */}
+            <li className="navbar-item">
+              <NavLink
+                to="/blog"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
               >
-                <span>More</span>
-                <svg className="navbar-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none">
-                  <path d="M1 1.5L6 5.5L11 1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+                Blog
+              </NavLink>
+            </li>
 
-              <ul className={`navbar-dropdown ${isDropdownOpen ? 'show' : ''}`}>
-                <li className="navbar-dropdown-item">
-                  <Link to="/blog" onClick={closeAllMenus}>Blog</Link>
-                </li>
-                <li className="navbar-dropdown-item">
-                  <Link to="/faq" onClick={closeAllMenus}>FAQs</Link>
-                </li>
-                <li className="navbar-dropdown-item">
-                  <Link to="/team" onClick={closeAllMenus}>Our Team</Link>
-                </li>
-                <li className="navbar-dropdown-item">
-                  <Link to="/gallery" onClick={closeAllMenus}>Gallery</Link>
-                </li>
-                <li className="navbar-dropdown-item">
-                  <Link to="/testimonials" onClick={closeAllMenus}>Testimonials</Link>
-                </li>
-              </ul>
+            <li className="navbar-item">
+              <NavLink
+                to="/faq"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                FAQs
+              </NavLink>
+            </li>
+
+            <li className="navbar-item">
+              <NavLink
+                to="/team"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Our Team
+              </NavLink>
+            </li>
+
+            <li className="navbar-item">
+              <NavLink
+                to="/gallery"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Gallery
+              </NavLink>
+            </li>
+
+            <li className="navbar-item">
+              <NavLink
+                to="/testimonials"
+                className={({ isActive }) => `navbar-link ${isActive ? 'active-link' : ''}`}
+                onClick={closeAllMenus}
+              >
+                Testimonials
+              </NavLink>
             </li>
 
             <li className="navbar-item">

@@ -1,333 +1,617 @@
-import React, { useEffect, useState, useRef } from "react";
-import API, { IMG_URL } from "../../api/axios";
-import "./Blog.css";
+import React, { useState, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import {
+  FaRegIdCard,
+  FaTag,
+  FaCalendarAlt,
+  FaSearch,
+  FaPencilAlt,
+  FaTrashAlt,
+  FaTimes,
+  FaGlobe,
+  FaKey,
+  FaFileAlt,
+  FaUpload,
+  FaUndo,
+  FaRegSave,
+  FaUserTie
+} from "react-icons/fa";
+import "./Blog.css";
 
-const getImageUrl = (image) => {
-  if (!image) return "";
-  if (image.startsWith("http")) return image;
-  return `${IMG_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+// Mock Data for UI Demonstration
+const initialBlogs = [
+  {
+    id: 1,
+    name: "Alex Johnson",
+    designation: "Technical Writer",
+    title: "Designing Scalable Web Applications in 2026",
+    category: "Development",
+    date: "2026-03-15",
+    metaTitle: "Designing Scalable Web Applications | Dev Blog",
+    metaSlug: "designing-scalable-web-applications-2026",
+    metaKeywords: ["React", "WebDev", "Scalability"],
+    metaDescription: "A practical guide to building clean, maintainable web applications.",
+    description: "<p>Building modern web systems requires modular architecture and clear layout balance...</p>",
+    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=150&q=80"
+  },
+  {
+    id: 2,
+    name: "Sophia Martinez",
+    designation: "Product Designer",
+    title: "Mastering UI Micro-interactions",
+    category: "UI/UX Design",
+    date: "2026-02-28",
+    metaTitle: "Mastering UI Micro-interactions for Modern Web",
+    metaSlug: "mastering-ui-micro-interactions",
+    metaKeywords: ["UI", "UX", "Micro-interactions"],
+    metaDescription: "Learn how small animations improve user engagement.",
+    description: "<p>Micro-interactions bridge the gap between static screens and tactile UI experiences...</p>",
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=150&q=80"
+  }
+];
+
+const emptyForm = {
+  id: null,
+  name: "",
+  designation: "",
+  title: "",
+  category: "",
+  date: "",
+  metaTitle: "",
+  metaSlug: "",
+  metaKeywords: [],
+  metaDescription: "",
+  description: "",
+  image: null
 };
 
 const Blog = () => {
-  const initialState = {
-    name: "",
-    designation: "",
-    title: "",
-    category: "",
-    date: "",
-    description: "",
-    image: null,
-  };
-
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState(initialBlogs);
+  const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState(initialState);
   const [preview, setPreview] = useState("");
-  
-  // Use a ref to cleanly reset the file input field
+  const [keywordInput, setKeywordInput] = useState("");
+
+  // Table Controls State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    fetchBlogs();
-
-    const editBlog = localStorage.getItem("editBlog");
-    if (editBlog) {
-      const blog = JSON.parse(editBlog);
-      setEditingId(blog._id);
-      setFormData({
-        name: blog.name || "",
-        designation: blog.designation || "",
-        title: blog.title || "",
-        category: blog.category || "",
-        date: blog.date || "",
-        description: blog.description || "",
-        image: null,
-      });
-      setPreview(getImageUrl(blog.image));
-      localStorage.removeItem("editBlog");
-    }
-  }, []);
-
-  // ================= FETCH BLOGS =================
-  const fetchBlogs = async () => {
-    try {
-      const res = await API.get("/blog/all");
-      if (res.data.success) {
-        setBlogs(res.data.blogs);
-      }
-    } catch (error) {
-      console.error("Fetch Blogs Error:", error);
-    }
-  };
-
-  // ================= INPUT CHANGE =================
+  // Field Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Auto-generate slug from title if user hasn't explicitly edited the slug manually
+    if (name === "title" && !editingId) {
+      const generatedSlug = value
+        .toLowerCase()
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+      setFormData((prev) => ({ ...prev, metaSlug: generatedSlug }));
+    }
   };
 
-  // ================= IMAGE CHANGE =================
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file,
-      }));
+      setFormData((prev) => ({ ...prev, image: file }));
       setPreview(URL.createObjectURL(file));
     }
   };
 
-  // ================= SUBMIT =================
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // 1. Frontend Validation
-    if (!editingId && !formData.image) {
-      return alert("Please upload a blog image.");
-    }
-    if (!formData.description || formData.description.trim() === "") {
-      return alert("Please enter a blog description.");
-    }
-
-    try {
-      const data = new FormData();
-      
-      // Append text fields
-      data.append("name", formData.name);
-      data.append("designation", formData.designation);
-      data.append("title", formData.title);
-      data.append("category", formData.category);
-      data.append("date", formData.date);
-      data.append("description", formData.description);
-
-      // Append image only if it exists (user selected a new one)
-      if (formData.image) {
-        data.append("image", formData.image);
+  // SEO Keywords Tag Manager
+  const handleKeywordKeyDown = (e) => {
+    if ((e.key === "Enter" || e.key === ",") && keywordInput.trim()) {
+      e.preventDefault();
+      const formattedKey = keywordInput.trim().replace(/^,/, "");
+      if (!formData.metaKeywords.includes(formattedKey)) {
+        setFormData((prev) => ({
+          ...prev,
+          metaKeywords: [...prev.metaKeywords, formattedKey]
+        }));
       }
-
-      // 2. API Call
-      if (editingId) {
-        await API.put(`/blog/update/${editingId}`, data, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        alert("Blog Updated Successfully");
-      } else {
-        await API.post("/blog/create", data, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        alert("Blog Created Successfully");
-      }
-
-      // 3. Reset Form
-      fetchBlogs();
-      setFormData(initialState);
-      setEditingId(null);
-      setPreview("");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Clears the file input UI
-      }
-
-    } catch (error) {
-      console.error("Submit Error:", error);
-      alert(error.response?.data?.message || "Failed to save blog. Please check your data.");
+      setKeywordInput("");
     }
   };
 
-  // ================= EDIT =================
-  const handleEdit = (blog) => {
-    setEditingId(blog._id);
-    setFormData({
-      name: blog.name || "",
-      designation: blog.designation || "",
-      title: blog.title || "",
-      category: blog.category || "",
-      date: blog.date || "",
-      description: blog.description || "",
-      image: null, // Keep null so we don't accidentally send a string URL to Multer
-    });
+  const handleRemoveKeyword = (keywordToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      metaKeywords: prev.metaKeywords.filter((k) => k !== keywordToRemove)
+    }));
+  };
 
-    setPreview(getImageUrl(blog.image));
+  // Form Reset
+  const handleReset = () => {
+    setFormData(emptyForm);
+    setEditingId(null);
+    setPreview("");
+    setKeywordInput("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Local Submit Action
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (editingId) {
+      setBlogs((prev) =>
+        prev.map((item) =>
+          item.id === editingId
+            ? {
+                ...formData,
+                image: preview || item.image
+              }
+            : item
+        )
+      );
+    } else {
+      const newBlog = {
+        ...formData,
+        id: Date.now(),
+        image: preview || "https://placehold.co/150x150?text=Blog+Cover"
+      };
+      setBlogs([newBlog, ...blogs]);
+    }
+
+    handleReset();
+  };
+
+  // Edit Trigger
+  const handleEdit = (blog) => {
+    setEditingId(blog.id);
+    setFormData({
+      ...blog,
+      image: null
+    });
+    setPreview(typeof blog.image === "string" ? blog.image : "");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ================= DELETE =================
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
-    if (!confirmDelete) return;
-
-    try {
-      await API.delete(`/blog/delete/${id}`);
-      alert("Blog Deleted Successfully");
-      fetchBlogs();
-    } catch (error) {
-      console.error("Delete Error:", error);
-      alert("Failed to delete blog.");
+  // Delete Trigger
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to remove this blog entry?")) {
+      setBlogs((prev) => prev.filter((item) => item.id !== id));
+      if (editingId === id) handleReset();
     }
   };
 
+  // Table Logic (Search & Pagination)
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.metaSlug.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredBlogs.length / entriesPerPage) || 1;
+  const startIndex = (currentPage - 1) * entriesPerPage;
+  const currentBlogs = filteredBlogs.slice(
+    startIndex,
+    startIndex + entriesPerPage
+  );
+
   return (
-    <div className="blog-container">
-      {/* FORM SECTION */}
-      <div className="form-section">
-        <h2>{editingId ? "Update Blog" : "Create Blog"}</h2>
+    <div className="Blog-container">
+      {/* Editor / Form Section */}
+      <div className="Blog-card">
+        <div className="Blog-header">
+          <h2>{editingId ? "Update Blog Entry" : "Create New Blog"}</h2>
+          <p>Configure post content, author details, and SEO metadata.</p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <label>Full Name</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+        <form onSubmit={handleSubmit} className="Blog-form">
+          {/* Row 1: Author & Designation */}
+          <div className="Blog-row">
+            <div className="Blog-group">
+              <label>Author Name *</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="e.g. Jane Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                <FaRegIdCard className="Blog-icon" />
+              </div>
+            </div>
 
-          <label>Designation</label>
-          <input type="text" name="designation" value={formData.designation} onChange={handleChange} required />
+            <div className="Blog-group">
+              <label>Author Designation *</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  name="designation"
+                  placeholder="e.g. Senior Editor"
+                  value={formData.designation}
+                  onChange={handleChange}
+                  required
+                />
+                <FaUserTie className="Blog-icon" />
+              </div>
+            </div>
+          </div>
 
-          <label>Title</label>
-          <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+          {/* Row 2: Title & Category */}
+          <div className="Blog-row">
+            <div className="Blog-group">
+              <label>Blog Title *</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="e.g. Future of Design Systems"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+                <FaFileAlt className="Blog-icon" />
+              </div>
+            </div>
 
-          <label>Category</label>
-          <input type="text" name="category" value={formData.category} onChange={handleChange} required />
+            <div className="Blog-group">
+              <label>Category *</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  name="category"
+                  placeholder="e.g. Technology"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                />
+                <FaTag className="Blog-icon" />
+              </div>
+            </div>
+          </div>
 
-          <label>Date</label>
-          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+          {/* Row 3: Publish Date & Cover Image */}
+          <div className="Blog-row">
+            <div className="Blog-group">
+              <label>Publish Date *</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                />
+                <FaCalendarAlt className="Blog-icon" />
+              </div>
+            </div>
 
-          <label>Upload Image</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageChange} 
-            ref={fileInputRef} // Attached ref here for clean resets
-          />
+            <div className="Blog-group">
+              <label>Cover Image</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  ref={fileInputRef}
+                />
+                <FaUpload className="Blog-icon" />
+              </div>
+            </div>
+          </div>
 
+          {/* Image Preview Box */}
           {preview && (
-            <img
-              src={preview}
-              alt="preview"
-              style={{
-                marginTop: "10px",
-                borderRadius: "10px",
-                objectFit: "cover",
-                height: "120px",
-                width: "auto",
-                maxWidth: "100%"
+            <div className="Blog-preview-wrapper">
+              <img src={preview} alt="Blog Thumbnail Preview" />
+              <button
+                type="button"
+                className="Blog-remove-preview"
+                onClick={() => {
+                  setPreview("");
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+              >
+                <FaTimes /> Remove Image
+              </button>
+            </div>
+          )}
+
+          {/* SEO Metadata Sub-section */}
+          <div className="Blog-seo-fieldset">
+            <div className="Blog-seo-header">
+              <FaGlobe /> <span>SEO Metadata Settings</span>
+            </div>
+
+            <div className="Blog-row">
+              <div className="Blog-group">
+                <label>Meta Title</label>
+                <div className="Blog-input-wrapper">
+                  <input
+                    type="text"
+                    name="metaTitle"
+                    placeholder="Page title for search engines"
+                    value={formData.metaTitle}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="Blog-group">
+                <label>Meta Slug</label>
+                <div className="Blog-input-wrapper">
+                  <input
+                    type="text"
+                    name="metaSlug"
+                    placeholder="e.g. future-of-design-systems"
+                    value={formData.metaSlug}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="Blog-group">
+              <label>Meta Keywords (Press Enter or Comma)</label>
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="Add keyword..."
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onKeyDown={handleKeywordKeyDown}
+                />
+                <FaKey className="Blog-icon" />
+              </div>
+
+              {formData.metaKeywords.length > 0 && (
+                <div className="Blog-tags-badge-list">
+                  {formData.metaKeywords.map((kw, idx) => (
+                    <span key={idx} className="Blog-tag-pill">
+                      {kw}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveKeyword(kw)}
+                      >
+                        <FaTimes />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="Blog-group" style={{ marginTop: "12px" }}>
+              <label>Meta Description</label>
+              <textarea
+                name="metaDescription"
+                rows="2"
+                placeholder="Brief summary for Google search result snippets..."
+                value={formData.metaDescription}
+                onChange={handleChange}
+                className="Blog-textarea"
+              ></textarea>
+            </div>
+          </div>
+
+          {/* Rich Text Main Content Description */}
+          <div className="Blog-group">
+            <label>Main Body Content</label>
+            <Editor
+              tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js"
+              value={formData.description}
+              init={{
+                height: 240,
+                menubar: false,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "searchreplace",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "table",
+                  "wordcount"
+                ],
+                toolbar:
+                  "undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table | removeformat",
+                content_style:
+                  "body { font-family:Inter,sans-serif; font-size:13px }"
               }}
+              onEditorChange={(content) =>
+                setFormData((prev) => ({ ...prev, description: content }))
+              }
             />
-          )}
+          </div>
 
-          <label>Description</label>
-          <Editor
-            apiKey="jeq7g2k84sqpi9364o8x9ptqf09aoesaq8jxmp49dl4sh57z"
-            value={formData.description}
-            init={{
-              height: 400,
-              menubar: true,
-              plugins: [
-                "advlist", "autolink", "lists", "link", "image", "charmap",
-                "preview", "anchor", "searchreplace", "visualblocks", "code",
-                "fullscreen", "insertdatetime", "media", "table", "help", "wordcount",
-              ],
-              toolbar:
-                "undo redo | blocks | bold italic underline forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat | code fullscreen",
-              content_style: "body { font-family:Poppins,sans-serif; font-size:14px }",
-            }}
-            onEditorChange={(content) => {
-              setFormData((prev) => ({
-                ...prev,
-                description: content,
-              }));
-            }}
-          />
-
-          <button type="submit" style={{ marginTop: "20px", cursor: "pointer" }}>
-            {editingId ? "Update Blog" : "Submit Blog"}
-          </button>
-          
-          {editingId && (
-            <button 
-              type="button" 
-              onClick={() => {
-                setEditingId(null);
-                setFormData(initialState);
-                setPreview("");
-                if(fileInputRef.current) fileInputRef.current.value = "";
-              }} 
-              style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: "#6c757d" }}
+          {/* Form Actions */}
+          <div className="Blog-actions">
+            <button
+              type="button"
+              className="Blog-btn-reset"
+              onClick={handleReset}
             >
-              Cancel Edit
+              <FaUndo /> Reset
             </button>
-          )}
+            <button type="submit" className="Blog-btn-save">
+              <FaRegSave /> {editingId ? "Update Article" : "Save Article"}
+            </button>
+          </div>
         </form>
       </div>
 
-      {/* TABLE SECTION */}
-      <div className="table-section">
-        <h2>Blog List</h2>
-        <div className="table-wrapper">
-          <table>
+      {/* Table Section */}
+      <div className="Blog-card">
+        <div className="Blog-header">
+          <h2>Published Articles</h2>
+          <p>Search, review, and edit blog posts & SEO tags.</p>
+        </div>
+
+        {/* Filters */}
+        <div className="Blog-controls">
+          <div className="Blog-show-entries">
+            Show
+            <select
+              value={entriesPerPage}
+              onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+            entries
+          </div>
+
+          <div className="Blog-search">
+            <input
+              type="text"
+              placeholder="Search by title, author, slug..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button type="button" className="Blog-search-btn">
+              <FaSearch />
+            </button>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className="Blog-table-wrapper">
+          <table className="Blog-table">
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Designation</th>
-                <th>Title</th>
+                <th>Cover</th>
+                <th>Article Info</th>
+                <th>Author</th>
+                <th>SEO / Slug</th>
                 <th>Category</th>
                 <th>Date</th>
-                <th>Description</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {blogs.length > 0 ? (
-                blogs.map((blog) => (
-                  <tr key={blog._id}>
+              {currentBlogs.length > 0 ? (
+                currentBlogs.map((blog) => (
+                  <tr key={blog.id}>
                     <td>
                       <img
-                        src={getImageUrl(blog.image)}
+                        src={blog.image}
                         alt={blog.title}
-                        style={{
-                          width: "70px",
-                          height: "70px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          border: "1px solid #ddd",
-                        }}
+                        className="Blog-table-img"
                         onError={(e) => {
-                          e.target.src = "https://placehold.co/70x70?text=No+Image";
+                          e.target.src =
+                            "https://placehold.co/70x70?text=No+Image";
                         }}
                       />
                     </td>
-                    <td>{blog.name}</td>
-                    <td>{blog.designation}</td>
-                    <td>{blog.title}</td>
-                    <td>{blog.category}</td>
-                    <td>{blog.date}</td>
-                    <td>
+                    <td className="Blog-title-cell">
+                      <span className="Blog-post-title">{blog.title}</span>
                       <div
+                        className="Blog-post-desc-preview"
                         dangerouslySetInnerHTML={{ __html: blog.description }}
-                        style={{ maxHeight: "100px", overflow: "hidden", textOverflow: "ellipsis" }}
                       />
                     </td>
                     <td>
-                      <button onClick={() => handleEdit(blog)}>Edit</button>
+                      <div className="Blog-author-info">
+                        <span className="Blog-author-name">{blog.name}</span>
+                        <span className="Blog-author-desig">
+                          {blog.designation}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="Blog-seo-cell">
+                        <code className="Blog-slug-code">/{blog.metaSlug}</code>
+                        {blog.metaKeywords && blog.metaKeywords.length > 0 && (
+                          <div className="Blog-table-keywords">
+                            {blog.metaKeywords.map((kw, kIdx) => (
+                              <span key={kIdx} className="Blog-mini-badge">
+                                {kw}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <span className="Blog-category-badge">
+                        {blog.category}
+                      </span>
+                    </td>
+                    <td className="Blog-date-cell">{blog.date}</td>
+                    <td className="Blog-actions-cell">
                       <button
-                        onClick={() => handleDelete(blog._id)}
-                        style={{ marginLeft: "8px", backgroundColor: "#dc3545", color: "white" }}
+                        type="button"
+                        className="Blog-action-edit"
+                        onClick={() => handleEdit(blog)}
+                        title="Edit Article"
                       >
-                        Delete
+                        <FaPencilAlt />
+                      </button>
+                      <button
+                        type="button"
+                        className="Blog-action-delete"
+                        onClick={() => handleDelete(blog.id)}
+                        title="Delete Article"
+                      >
+                        <FaTrashAlt />
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
-                    No Blogs Found
+                  <td colSpan="7" className="Blog-empty-td">
+                    No articles found match your selection.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="Blog-footer">
+          <div className="Blog-showing-info">
+            Showing {filteredBlogs.length ? startIndex + 1 : 0} to{" "}
+            {Math.min(startIndex + entriesPerPage, filteredBlogs.length)} of{" "}
+            {filteredBlogs.length} entries
+          </div>
+          <div className="Blog-pagination">
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={currentPage === page ? "active" : ""}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

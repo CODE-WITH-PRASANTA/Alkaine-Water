@@ -1,19 +1,17 @@
 :root {
   --nav-height: 72px;
-  --nav-bg-hero: rgba(255, 255, 255, 0.95);
+  --nav-bg-hero: rgba(255, 255, 255, 0.98);
   --nav-bg-scrolled: #ffffff;
   --primary-color: #0284c7;
   --primary-hover: #0369a1;
   --text-dark: #1e293b;
   --text-light: #64748b;
-  --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+  --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
 }
 
-/* Base Wrapper */
+/* Relative positioning allows topbar to stay above it inside sticky wrapper */
 .navbar-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: var(--nav-height);
   z-index: 1000;
@@ -249,7 +247,7 @@
   z-index: 998;
 }
 
-/* Responsive Breakpoint: Mobile & Tablet */
+/* Responsive Breakpoint */
 @media (max-width: 992px) {
   .navbar-toggle {
     display: flex;

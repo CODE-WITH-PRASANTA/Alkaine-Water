@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import API, { IMG_URL, BASE_URL } from "../../api/axios";
 import {
   FaThLarge,
   FaList,
@@ -16,52 +17,6 @@ import {
   FaFileAlt
 } from "react-icons/fa";
 import "./BlogManagement.css";
-
-// Sample initial data with SEO fields
-const initialBlogs = [
-  {
-    _id: "1",
-    name: "Alex Johnson",
-    designation: "Tech Architect",
-    title: "Designing Scalable Micro Frontends in 2026",
-    category: "Architecture",
-    date: "2026-03-01",
-    metaTitle: "Designing Scalable Micro Frontends | Modern Web",
-    metaSlug: "designing-scalable-micro-frontends-2026",
-    metaKeywords: ["MicroFrontend", "React", "Architecture"],
-    metaDescription: "Learn how to build scalable and decoupled web micro frontends using current web tools.",
-    status: "Published",
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    _id: "2",
-    name: "Sophia Martinez",
-    designation: "UI/UX Lead",
-    title: "The Evolution of Motion Design in Web Apps",
-    category: "Design",
-    date: "2026-02-18",
-    metaTitle: "The Evolution of Motion Design in Web Apps",
-    metaSlug: "evolution-of-motion-design-web-apps",
-    metaKeywords: ["UI/UX", "Animation", "CSS"],
-    metaDescription: "Discover how functional motion design improves usability and user retention.",
-    status: "Draft",
-    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80"
-  },
-  {
-    _id: "3",
-    name: "David Chen",
-    designation: "DevOps Engineer",
-    title: "Zero-Downtime Deployments with Kubernetes",
-    category: "DevOps",
-    date: "2026-01-22",
-    metaTitle: "Zero-Downtime Kubernetes Deployments Guide",
-    metaSlug: "zero-downtime-deployments-kubernetes",
-    metaKeywords: ["DevOps", "Kubernetes", "CI/CD"],
-    metaDescription: "A step-by-step tutorial on rolling updates and blue-green deployments.",
-    status: "Published",
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=600&q=80"
-  }
-];
 
 const emptyBlogForm = {
   _id: null,
@@ -81,7 +36,7 @@ const emptyBlogForm = {
 const ITEMS_PER_PAGE = 6;
 
 const BlogManagement = () => {
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const [blogs, setBlogs] = useState([]);
   const [viewMode, setViewMode] = useState("list"); // 'list' or 'grid'
   const [currentPage, setCurrentPage] = useState(1);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -92,6 +47,59 @@ const BlogManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState(emptyBlogForm);
   const [keywordInput, setKeywordInput] = useState("");
+
+  // Helper to format image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80";
+    if (typeof imagePath === "string" && /^https?:\/\//i.test(imagePath)) {
+      return imagePath;
+    }
+    const cleanPath = String(imagePath).replace(/\\/g, "/").replace(/^\/+/, "");
+    const hostBase = IMG_URL
+      ? IMG_URL.replace(/\/$/, "")
+      : (BASE_URL ? BASE_URL.replace(/\/$/, "") : "http://localhost:5000");
+
+    if (cleanPath.startsWith("uploads/")) {
+      return `${hostBase}/${cleanPath}`;
+    }
+    return `${hostBase}/uploads/${cleanPath}`;
+  };
+
+  // Fetch blogs from backend database
+  const fetchBlogs = async () => {
+    try {
+      const response = await API.get("/blog/all");
+      let list = [];
+      if (response.data && response.data.success && Array.isArray(response.data.blogs)) {
+        list = response.data.blogs;
+      } else if (response.data && Array.isArray(response.data.data)) {
+        list = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        list = response.data;
+      }
+      setBlogs(list);
+    } catch (error) {
+      console.error("Error fetching /blog/all, trying fallback /blog:", error);
+      try {
+        const fallback = await API.get("/blog");
+        let list = [];
+        if (fallback.data && fallback.data.success && Array.isArray(fallback.data.blogs)) {
+          list = fallback.data.blogs;
+        } else if (fallback.data && Array.isArray(fallback.data.data)) {
+          list = fallback.data.data;
+        } else if (Array.isArray(fallback.data)) {
+          list = fallback.data;
+        }
+        setBlogs(list);
+      } catch (err) {
+        console.error("Fallback fetch error:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   // Handle outside click for action dropdowns
   useEffect(() => {
@@ -158,48 +166,91 @@ const BlogManagement = () => {
   };
 
   const handleEdit = (blog) => {
-    setFormData(blog);
+    setFormData({
+      _id: blog._id || blog.id,
+      name: blog.name || "",
+      designation: blog.designation || "",
+      title: blog.title || "",
+      category: blog.category || "",
+      date: blog.date || "",
+      metaTitle: blog.metaTitle || "",
+      metaSlug: blog.metaSlug || "",
+      metaKeywords: Array.isArray(blog.metaKeywords) ? blog.metaKeywords : [],
+      metaDescription: blog.metaDescription || "",
+      status: blog.status || "Published",
+      image: blog.image || ""
+    });
     setActiveDropdown(null);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
-      setBlogs((prev) => prev.filter((item) => item._id !== id));
-      setActiveDropdown(null);
+      try {
+        const res = await API.delete(`/blog/${id}`);
+        if (res.data && res.data.success) {
+          fetchBlogs();
+          setActiveDropdown(null);
+        }
+      } catch (error) {
+        console.error("Error deleting blog:", error);
+        alert(error.response?.data?.message || "Failed to delete article");
+      }
     }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (formData._id) {
-      // Update existing
-      setBlogs((prev) =>
-        prev.map((item) => (item._id === formData._id ? { ...formData } : item))
-      );
-    } else {
-      // Create new
-      const newEntry = {
-        ...formData,
-        _id: String(Date.now()),
-        image:
-          formData.image ||
-          "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80"
+    try {
+      const payload = {
+        name: formData.name,
+        designation: formData.designation,
+        title: formData.title,
+        category: formData.category,
+        date: formData.date || new Date().toISOString().split("T")[0],
+        metaTitle: formData.metaTitle || formData.title,
+        metaSlug: formData.metaSlug || "",
+        metaKeywords: formData.metaKeywords || [],
+        metaDescription: formData.metaDescription || "",
+        status: formData.status || "Published",
+        image: formData.image || ""
       };
-      setBlogs([newEntry, ...blogs]);
+
+      if (formData._id) {
+        // Update existing
+        const res = await API.put(`/blog/${formData._id}`, payload);
+        if (res.data && res.data.success) {
+          fetchBlogs();
+          setIsModalOpen(false);
+        }
+      } else {
+        // Create new
+        const res = await API.post("/blog/create", payload);
+        if (res.data && res.data.success) {
+          fetchBlogs();
+          setIsModalOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving blog:", error);
+      alert(error.response?.data?.message || "Failed to save article");
     }
-    setIsModalOpen(false);
   };
 
   // Filtering Logic
-  const filteredBlogs = blogs.filter((blog) => {
+  const filteredBlogs = (Array.isArray(blogs) ? blogs : []).filter((blog) => {
+    const title = blog?.title ? String(blog.title).toLowerCase() : "";
+    const name = blog?.name ? String(blog.name).toLowerCase() : "";
+    const metaSlug = blog?.metaSlug ? String(blog.metaSlug).toLowerCase() : "";
+    const search = searchTerm.toLowerCase();
+
     const matchesSearch =
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.metaSlug.toLowerCase().includes(searchTerm.toLowerCase());
+      title.includes(search) ||
+      name.includes(search) ||
+      metaSlug.includes(search);
 
     const matchesCategory =
-      selectedCategory === "All" || blog.category === selectedCategory;
+      selectedCategory === "All" || blog?.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -210,7 +261,7 @@ const BlogManagement = () => {
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentItems = filteredBlogs.slice(indexOfFirstItem, indexOfLastItem);
 
-  const categories = ["All", ...Array.from(new Set(blogs.map((b) => b.category)))];
+  const categories = ["All", ...Array.from(new Set(blogs.map((b) => b.category).filter(Boolean)))];
 
   return (
     <div className="BM-container">
@@ -262,23 +313,7 @@ const BlogManagement = () => {
           />
         </div>
 
-        <div className="BM-category-filters">
-          <span>Category:</span>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`BM-category-pill ${
-                selectedCategory === cat ? "active" : ""
-              }`}
-              onClick={() => {
-                setSelectedCategory(cat);
-                setCurrentPage(1);
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+       
       </div>
 
       {/* Main Content View */}
@@ -296,91 +331,102 @@ const BlogManagement = () => {
                     <th>Category</th>
                     <th>Date</th>
                     <th>Status</th>
-                    <th className="BM-text-right">Actions</th>
+                    <th style={{ textAlign: "center", width: "160px" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentItems.length > 0 ? (
-                    currentItems.map((item) => (
-                      <tr key={item._id}>
-                        <td>
-                          <div className="BM-article-cell">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="BM-article-thumb"
-                            />
-                            <div className="BM-article-info">
-                              <span className="BM-article-title">
-                                {item.title}
+                    currentItems.map((item) => {
+                      const itemId = item._id || item.id;
+                      return (
+                        <tr key={itemId}>
+                          <td>
+                            <div className="BM-article-cell">
+                              <img
+                                src={getImageUrl(item.image)}
+                                alt={item.title || "Blog cover"}
+                                className="BM-article-thumb"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80";
+                                }}
+                              />
+                              <div className="BM-article-info">
+                                <span className="BM-article-title">
+                                  {item.title || "Untitled"}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="BM-author-cell">
+                              <span className="BM-author-name">{item.name || "N/A"}</span>
+                              <span className="BM-author-role">
+                                {item.designation || ""}
                               </span>
                             </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="BM-author-cell">
-                            <span className="BM-author-name">{item.name}</span>
-                            <span className="BM-author-role">
-                              {item.designation}
+                          </td>
+                          <td>
+                            <div className="BM-seo-cell">
+                              {item.metaSlug ? (
+                                <code className="BM-slug-badge">/{item.metaSlug}</code>
+                              ) : (
+                                <span style={{ color: "#94a3b8", fontSize: "11px" }}>No slug</span>
+                              )}
+                              {Array.isArray(item.metaKeywords) && item.metaKeywords.length > 0 && (
+                                <div className="BM-tag-list">
+                                  {item.metaKeywords.slice(0, 2).map((kw, idx) => (
+                                    <span key={idx} className="BM-mini-tag">
+                                      {kw}
+                                    </span>
+                                  ))}
+                                  {item.metaKeywords.length > 2 && (
+                                    <span className="BM-mini-tag opacity">
+                                      +{item.metaKeywords.length - 2}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <span className="BM-category-badge">
+                              {item.category || "General"}
                             </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="BM-seo-cell">
-                            <code className="BM-slug-badge">/{item.metaSlug}</code>
-                            {item.metaKeywords && item.metaKeywords.length > 0 && (
-                              <div className="BM-tag-list">
-                                {item.metaKeywords.slice(0, 2).map((kw, idx) => (
-                                  <span key={idx} className="BM-mini-tag">
-                                    {kw}
-                                  </span>
-                                ))}
-                                {item.metaKeywords.length > 2 && (
-                                  <span className="BM-mini-tag opacity">
-                                    +{item.metaKeywords.length - 2}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td>
-                          <span className="BM-category-badge">
-                            {item.category}
-                          </span>
-                        </td>
-                        <td className="BM-date-cell">{item.date}</td>
-                        <td>
-                          <span
-                            className={`BM-status-badge ${item.status.toLowerCase()}`}
-                          >
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="BM-text-right BM-pos-relative">
-                          <button
-                            className="BM-action-btn"
-                            onClick={(e) => toggleDropdown(item._id, e)}
-                          >
-                            <FaEllipsisV />
-                          </button>
-
-                          {activeDropdown === item._id && (
-                            <div className="BM-dropdown-menu">
-                              <button onClick={() => handleEdit(item)}>
-                                <FaEdit /> Edit
+                          </td>
+                          <td className="BM-date-cell">{item.date || "N/A"}</td>
+                          <td>
+                            <span
+                              className={`BM-status-badge ${(item.status || "published").toLowerCase()}`}
+                            >
+                              {item.status || "Published"}
+                            </span>
+                          </td>
+                          <td style={{ textAlign: "center" }}>
+                            <div className="BM-table-actions-group">
+                              <button
+                                type="button"
+                                className="BM-table-btn BM-btn-edit"
+                                onClick={() => handleEdit(item)}
+                                title="Edit Article"
+                              >
+                                <FaEdit />
+                                <span>Edit</span>
                               </button>
                               <button
-                                className="BM-delete-action"
-                                onClick={() => handleDelete(item._id)}
+                                type="button"
+                                className="BM-table-btn BM-btn-delete"
+                                onClick={() => handleDelete(itemId)}
+                                title="Delete Article"
                               >
-                                <FaTrash /> Delete
+                                <FaTrash />
+                                <span>Delete</span>
                               </button>
                             </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="7" className="BM-empty-table">
@@ -395,55 +441,58 @@ const BlogManagement = () => {
         ) : (
           /* GRID VIEW */
           <div className="BM-grid-layout">
-            {currentItems.map((item) => (
-              <div key={item._id} className="BM-grid-card">
-                <div
-                  className="BM-card-media"
-                  style={{ backgroundImage: `url(${item.image})` }}
-                >
-                  <span
-                    className={`BM-status-badge float ${item.status.toLowerCase()}`}
+            {currentItems.map((item) => {
+              const itemId = item._id || item.id;
+              return (
+                <div key={itemId} className="BM-grid-card">
+                  <div
+                    className="BM-card-media"
+                    style={{ backgroundImage: `url(${getImageUrl(item.image)})` }}
                   >
-                    {item.status}
-                  </span>
-                  <div className="BM-grid-actions">
-                    <button
-                      className="BM-action-btn glass"
-                      onClick={(e) => toggleDropdown(item._id, e)}
+                    <span
+                      className={`BM-status-badge float ${(item.status || "published").toLowerCase()}`}
                     >
-                      <FaEllipsisV />
-                    </button>
-                    {activeDropdown === item._id && (
-                      <div className="BM-dropdown-menu right-aligned">
-                        <button onClick={() => handleEdit(item)}>
-                          <FaEdit /> Edit
-                        </button>
-                        <button
-                          className="BM-delete-action"
-                          onClick={() => handleDelete(item._id)}
-                        >
-                          <FaTrash /> Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="BM-card-body">
-                  <span className="BM-category-badge">{item.category}</span>
-                  <h3 className="BM-card-title">{item.title}</h3>
-                  <code className="BM-slug-badge">/{item.metaSlug}</code>
-
-                  <div className="BM-card-footer">
-                    <div>
-                      <span className="BM-author-name">{item.name}</span>
-                      <span className="BM-author-role">{item.designation}</span>
+                      {item.status || "Published"}
+                    </span>
+                    <div className="BM-grid-actions">
+                      <button
+                        className="BM-action-btn glass"
+                        onClick={(e) => toggleDropdown(itemId, e)}
+                      >
+                        <FaEllipsisV />
+                      </button>
+                      {activeDropdown === itemId && (
+                        <div className="BM-dropdown-menu right-aligned">
+                          <button onClick={() => handleEdit(item)}>
+                            <FaEdit /> Edit
+                          </button>
+                          <button
+                            className="BM-delete-action"
+                            onClick={() => handleDelete(itemId)}
+                          >
+                            <FaTrash /> Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <span className="BM-date-cell">{item.date}</span>
+                  </div>
+
+                  <div className="BM-card-body">
+                    <span className="BM-category-badge">{item.category || "General"}</span>
+                    <h3 className="BM-card-title">{item.title || "Untitled"}</h3>
+                    {item.metaSlug && <code className="BM-slug-badge">/{item.metaSlug}</code>}
+
+                    <div className="BM-card-footer">
+                      <div>
+                        <span className="BM-author-name">{item.name || "N/A"}</span>
+                        <span className="BM-author-role">{item.designation || ""}</span>
+                      </div>
+                      <span className="BM-date-cell">{item.date || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>
@@ -463,9 +512,8 @@ const BlogManagement = () => {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
-                className={`BM-page-num ${
-                  currentPage === page ? "active" : ""
-                }`}
+                className={`BM-page-num ${currentPage === page ? "active" : ""
+                  }`}
                 onClick={() => setCurrentPage(page)}
               >
                 {page}

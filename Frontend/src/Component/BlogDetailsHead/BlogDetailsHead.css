@@ -59,6 +59,7 @@
 
 .BlogDetailsHead-crumb-link {
   color: #666666;
+  text-decoration: none;
   cursor: pointer;
   transition: color 0.2s ease;
 }

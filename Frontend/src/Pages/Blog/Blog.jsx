@@ -8,7 +8,7 @@ import {
   FiMessageSquare,
   FiRotateCcw,
 } from "react-icons/fi";
-import API, { IMG_URL } from "../../api/axios";
+import API, { IMG_URL, getImageUrl } from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import "./Blog.css";
 
@@ -122,7 +122,7 @@ const Blog = () => {
                   <article key={post._id || post.id} className="BlogPostCardItem">
                     <div className="BlogPostCardImageFrame">
                       <img
-                        src={`${IMG_URL}${post.image}`}
+                        src={getImageUrl(post.image)}
                         alt={post.title}
                         className="BlogPostCoreAssetImage"
                         onError={(e) => {
@@ -225,7 +225,7 @@ const Blog = () => {
                 {blogs.slice(0, 3).map(post => (
                   <div key={post._id || post.id} className="BlogSidebarMiniPostRowItem">
                     <img 
-                      src={`${IMG_URL}${post.image}`} 
+                      src={getImageUrl(post.image)} 
                       alt={post.title} 
                       className="BlogSidebarMiniPostThumbnail" 
                       onError={(e) => {
@@ -258,7 +258,7 @@ const Blog = () => {
                   >
                     <span className="BlogCategoryArrowSymbol">&gt;</span>
                     <span className="BlogCategoryLabelText">{cat}</span>
-                    <span className="BlogCategoryCounterBadge">{categoryCounts[cat]}</span>
+                    {/* <span className="BlogCategoryCounterBadge">{categoryCounts[cat]}</span> */}
                   </li>
                 ))}
               </ul>

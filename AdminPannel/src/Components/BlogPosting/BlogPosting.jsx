@@ -83,18 +83,15 @@ const BlogPosting = () => {
       return imagePath;
     }
 
-    // Clean Windows (\) and Unix (/) paths to isolate filename
-    const cleanFileName = String(imagePath)
-      .replace(/\\/g, '/')
-      .split('/')
-      .pop();
-
-    // Fallback base host URL resolving
+    const cleanPath = String(imagePath).replace(/\\/g, '/').replace(/^\/+/, '');
     const hostBase = IMG_URL 
       ? IMG_URL.replace(/\/$/, '') 
       : (API.defaults.baseURL ? API.defaults.baseURL.replace(/\/$/, '') : 'http://localhost:5000');
 
-    return `${hostBase}/uploads/${cleanFileName}`;
+    if (cleanPath.startsWith('uploads/')) {
+      return `${hostBase}/${cleanPath}`;
+    }
+    return `${hostBase}/uploads/${cleanPath}`;
   };
 
   return (

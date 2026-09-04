@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API, { IMG_URL } from "../../api/axios";
+import API, { IMG_URL, getImageUrl } from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 import {
@@ -88,7 +88,8 @@ const PopularPost = () => {
   const categories = [...new Set(blogs.map(item => item.category))];
 
   const currentIdx = blogs.findIndex(item => item._id === id);
-  const nextPost = currentIdx !== -1 && blogs[currentIdx + 1] ? blogs[currentIdx + 1] : blogs[0];
+  const prevPost = currentIdx > 0 ? blogs[currentIdx - 1] : (blogs.length > 1 ? blogs[blogs.length - 1] : null);
+  const nextPost = currentIdx !== -1 && currentIdx < blogs.length - 1 ? blogs[currentIdx + 1] : (blogs.length > 1 ? blogs[0] : null);
 
   return (
     <div className="PopularPost">
@@ -105,7 +106,7 @@ const PopularPost = () => {
 
             <div className="PopularPost-main-img-container">
               <img
-                src={`${IMG_URL}${blog.image}`}
+                src={getImageUrl(blog.image)}
                 alt={blog.title}
                 className="PopularPost-main-img"
               />
@@ -118,87 +119,35 @@ const PopularPost = () => {
             <div className="PopularPost-meta-row">
               <span className="PopularPost-meta-item">
                 <FaCalendarAlt className="PopularPost-meta-icon" />
-                {blog.date}
+                {blog.date || "March 15, 2024"}
               </span>
-
-              <span className="PopularPost-meta-divider">|</span>
-
               <span className="PopularPost-meta-item">
                 <FaUser className="PopularPost-meta-icon" />
-                {blog.name}
+                By {blog.name || "Admin"}
               </span>
-
-              <span className="PopularPost-meta-divider">|</span>
-
               <span className="PopularPost-meta-item">
                 <FaRegComment className="PopularPost-meta-icon" />
                 0 Comments
               </span>
             </div>
 
-            <h1 className="PopularPost-section-heading">{blog.title}</h1>
+            <h1 className="PopularPost-main-title">{blog.title}</h1>
 
-            {/* Clean presentation of the full blog description body */}
-            <div 
-              className="PopularPost-paragraph"
-              dangerouslySetInnerHTML={{ __html: blog.description }} 
+            <div
+              className="PopularPost-rich-content"
+              dangerouslySetInnerHTML={{ __html: blog.description }}
             />
 
-            <blockquote className="PopularPost-quote-block">
-              <div className="PopularPost-quote-icon-box">
-                <ImQuotesLeft className="PopularPost-quote-svg" />
-              </div>
+           
 
-              <div className="PopularPost-quote-text-container">
-                <p className="PopularPost-quote-text">
-                  "A river seems a magic thing. A magic, moving, living part of the very earth itself."
-                </p>
-                <cite className="PopularPost-quote-author">— {blog.name}</cite>
-              </div>
-            </blockquote>
-
-            <div className="PopularPost-share-bar">
-              <div className="PopularPost-tags-inline">
-                <span className="PopularPost-label">Category:</span>
-                <span className="PopularPost-pill-tag">
-                  {blog.category}
-                </span>
-              </div>
-
-              <div className="PopularPost-social-inline">
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaFacebookF />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaTwitter />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaLinkedinIn />
-                </a>
-                <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaPinterestP />
-                </a>
-              </div>
-            </div>
-
-            {nextPost && nextPost._id !== id && (
-              <div className="PopularPost-nav-link-box" onClick={() => navigate(`/blog/${nextPost._id}`)}>
-                <span className="PopularPost-nav-sub">
-                  NEXT POST
-                  <FaArrowRight className="PopularPost-nav-arrow" />
-                </span>
-                <h4 className="PopularPost-nav-title">
-                  {nextPost.title}
-                </h4>
-              </div>
-            )}
+           
 
           </article>
 
           <div className="PopularPost-author-card">
             <div className="PopularPost-author-avatar-box">
               <img
-                src={`${IMG_URL}${blog.image}`}
+                src={getImageUrl(blog.image)}
                 alt={blog.name}
                 className="PopularPost-author-avatar"
               />
@@ -265,12 +214,12 @@ const PopularPost = () => {
                 <div
                   key={item._id}
                   className="PopularPost-item"
-                  onClick={() => navigate(`/blog/${item._id}`)}
+                  onClick={() => navigate(`/blogdetails/${item._id}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="PopularPost-img-container">
                     <img
-                      src={`${IMG_URL}${item.image}`}
+                      src={getImageUrl(item.image)}
                       alt={item.title}
                       className="PopularPost-thumb"
                     />

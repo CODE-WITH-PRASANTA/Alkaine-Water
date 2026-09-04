@@ -18,11 +18,12 @@ const updateHandler = updateBlog || ((req, res) => res.json({ message: "Update b
 const deleteHandler = deleteBlog || ((req, res) => res.json({ message: "Delete blog" }));
 
 router.get("/", getAllHandler);
-router.get("/all", getAllHandler); 
+router.get("/all", getAllHandler);
 router.get("/:id", getByIdHandler);
 
-router.post("/create", handleSingleImageUpload("image"), createHandler);
-router.put("/:id", handleSingleImageUpload("image"), updateHandler);
+router.post("/create", handleSingleImageUpload("image", "blog"), createHandler);
+router.post("/", handleSingleImageUpload("image", "blog"), createHandler);
+router.put("/:id", handleSingleImageUpload("image", "blog"), updateHandler);
 router.delete("/:id", deleteHandler);
 
 module.exports = router;

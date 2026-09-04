@@ -361,6 +361,13 @@
   gap: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--blog-bg-light);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.BlogSidebarMiniPostRowItem:hover {
+  transform: translateX(4px);
+  opacity: 0.9;
 }
 
 .BlogSidebarMiniPostRowItem:last-child {

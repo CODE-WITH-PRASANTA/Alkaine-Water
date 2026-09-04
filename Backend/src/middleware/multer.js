@@ -59,27 +59,39 @@ const processUploadedFiles = async (req, res, next) => {
   try {
     if (!req.files && !req.file) return next();
 
+    const targetFolder = req.uploadSubfolder
+      ? path.join(uploadPath, req.uploadSubfolder)
+      : uploadPath;
+
+    if (!fs.existsSync(targetFolder)) {
+      fs.mkdirSync(targetFolder, { recursive: true });
+    }
+
     // Handle single file upload (req.file)
     if (req.file) {
       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 999999)}`;
 
       if (req.file.mimetype.startsWith("image/")) {
-        const filename = `${uniqueSuffix}.webp`;
-        const filePath = path.join(uploadPath, filename);
+        const fileBaseName = `${uniqueSuffix}.webp`;
+        const filePath = path.join(targetFolder, fileBaseName);
 
         await sharp(req.file.buffer).webp({ quality: 80 }).toFile(filePath);
 
-        req.file.filename = filename;
+        req.file.filename = req.uploadSubfolder
+          ? `${req.uploadSubfolder}/${fileBaseName}`
+          : fileBaseName;
         req.file.path = filePath;
         req.file.mimetype = "image/webp";
       } else {
         const ext = path.extname(req.file.originalname);
-        const filename = `${uniqueSuffix}${ext}`;
-        const filePath = path.join(uploadPath, filename);
+        const fileBaseName = `${uniqueSuffix}${ext}`;
+        const filePath = path.join(targetFolder, fileBaseName);
 
         await fs.promises.writeFile(filePath, req.file.buffer);
 
-        req.file.filename = filename;
+        req.file.filename = req.uploadSubfolder
+          ? `${req.uploadSubfolder}/${fileBaseName}`
+          : fileBaseName;
         req.file.path = filePath;
       }
     }
@@ -94,22 +106,26 @@ const processUploadedFiles = async (req, res, next) => {
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 999999)}`;
 
         if (file.mimetype.startsWith("image/")) {
-          const filename = `${uniqueSuffix}.webp`;
-          const filePath = path.join(uploadPath, filename);
+          const fileBaseName = `${uniqueSuffix}.webp`;
+          const filePath = path.join(targetFolder, fileBaseName);
 
           await sharp(file.buffer).webp({ quality: 80 }).toFile(filePath);
 
-          file.filename = filename;
+          file.filename = req.uploadSubfolder
+            ? `${req.uploadSubfolder}/${fileBaseName}`
+            : fileBaseName;
           file.path = filePath;
           file.mimetype = "image/webp";
         } else {
           const ext = path.extname(file.originalname);
-          const filename = `${uniqueSuffix}${ext}`;
-          const filePath = path.join(uploadPath, filename);
+          const fileBaseName = `${uniqueSuffix}${ext}`;
+          const filePath = path.join(targetFolder, fileBaseName);
 
           await fs.promises.writeFile(filePath, file.buffer);
 
-          file.filename = filename;
+          file.filename = req.uploadSubfolder
+            ? `${req.uploadSubfolder}/${fileBaseName}`
+            : fileBaseName;
           file.path = filePath;
         }
       }
@@ -141,8 +157,9 @@ const handleDeliveryUploads = (req, res, next) => {
 };
 
 // Middleware wrapper for single image uploads
-const handleSingleImageUpload = (fieldName) => {
+const handleSingleImageUpload = (fieldName, subfolder = "") => {
   return (req, res, next) => {
+    req.uploadSubfolder = subfolder;
     upload.single(fieldName)(req, res, (err) => {
       if (err) {
         return res.status(400).json({ success: false, message: err.message });

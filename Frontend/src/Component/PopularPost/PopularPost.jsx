@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API, { IMG_URL } from "../../api/axios";
+import API, { IMG_URL, getImageUrl } from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 import {
@@ -34,7 +34,7 @@ const PopularPost = () => {
   useEffect(() => {
     fetchBlog();
     fetchBlogs();
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, [id]);
 
   const fetchBlog = async () => {
@@ -79,7 +79,7 @@ const PopularPost = () => {
     );
   }
 
-  const otherBlogs = blogs.filter(item => item._id !== id);
+  const otherBlogs = blogs.filter(item => item._id !== id && item.metaSlug !== id);
 
   const filteredBlogs = otherBlogs.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -87,8 +87,9 @@ const PopularPost = () => {
 
   const categories = [...new Set(blogs.map(item => item.category))];
 
-  const currentIdx = blogs.findIndex(item => item._id === id);
-  const nextPost = currentIdx !== -1 && blogs[currentIdx + 1] ? blogs[currentIdx + 1] : blogs[0];
+  const currentIdx = blogs.findIndex(item => item._id === id || item.metaSlug === id);
+  const prevPost = currentIdx > 0 ? blogs[currentIdx - 1] : (blogs.length > 1 ? blogs[blogs.length - 1] : null);
+  const nextPost = currentIdx !== -1 && currentIdx < blogs.length - 1 ? blogs[currentIdx + 1] : (blogs.length > 1 ? blogs[0] : null);
 
   return (
     <div className="PopularPost">
@@ -105,7 +106,7 @@ const PopularPost = () => {
 
             <div className="PopularPost-main-img-container">
               <img
-                src={`${IMG_URL}${blog.image}`}
+                src={getImageUrl(blog.image)}
                 alt={blog.title}
                 className="PopularPost-main-img"
               />
@@ -118,78 +119,51 @@ const PopularPost = () => {
             <div className="PopularPost-meta-row">
               <span className="PopularPost-meta-item">
                 <FaCalendarAlt className="PopularPost-meta-icon" />
-                {blog.date}
+                {blog.date || "March 15, 2024"}
               </span>
-
-              <span className="PopularPost-meta-divider">|</span>
-
               <span className="PopularPost-meta-item">
                 <FaUser className="PopularPost-meta-icon" />
-                {blog.name}
+                By {blog.name || "Admin"}
               </span>
-
-              <span className="PopularPost-meta-divider">|</span>
-
               <span className="PopularPost-meta-item">
                 <FaRegComment className="PopularPost-meta-icon" />
                 0 Comments
               </span>
             </div>
 
-            <h1 className="PopularPost-section-heading">{blog.title}</h1>
+            <h1 className="PopularPost-main-title">{blog.title}</h1>
 
-            {/* Clean presentation of the full blog description body */}
-            <div 
-              className="PopularPost-paragraph"
-              dangerouslySetInnerHTML={{ __html: blog.description }} 
+            <div
+              className="PopularPost-rich-content"
+              dangerouslySetInnerHTML={{ __html: blog.description }}
             />
 
-            <blockquote className="PopularPost-quote-block">
-              <div className="PopularPost-quote-icon-box">
-                <ImQuotesLeft className="PopularPost-quote-svg" />
-              </div>
 
-              <div className="PopularPost-quote-text-container">
-                <p className="PopularPost-quote-text">
-                  "A river seems a magic thing. A magic, moving, living part of the very earth itself."
-                </p>
-                <cite className="PopularPost-quote-author">— {blog.name}</cite>
-              </div>
-            </blockquote>
 
-            <div className="PopularPost-share-bar">
-              <div className="PopularPost-tags-inline">
-                <span className="PopularPost-label">Category:</span>
-                <span className="PopularPost-pill-tag">
-                  {blog.category}
-                </span>
-              </div>
 
-              <div className="PopularPost-social-inline">
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaFacebookF />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaTwitter />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaLinkedinIn />
-                </a>
-                <a href="https://pinterest.com" target="_blank" rel="noreferrer" className="PopularPost-social-circle">
-                  <FaPinterestP />
-                </a>
-              </div>
-            </div>
 
-            {nextPost && nextPost._id !== id && (
-              <div className="PopularPost-nav-link-box" onClick={() => navigate(`/blog/${nextPost._id}`)}>
-                <span className="PopularPost-nav-sub">
-                  NEXT POST
-                  <FaArrowRight className="PopularPost-nav-arrow" />
-                </span>
-                <h4 className="PopularPost-nav-title">
-                  {nextPost.title}
-                </h4>
+            {/* Post Tags */}
+            {blog.tags && blog.tags.length > 0 && (
+              <div className="PopularPost-tags-container" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", marginTop: "24px", paddingTop: "16px", borderTop: "1px solid #e2e8f0" }}>
+                <strong style={{ color: "#334155", fontSize: "14px", marginRight: "4px" }}>Tags:</strong>
+                {blog.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: "#eff6ff",
+                      color: "#2563eb",
+                      border: "1px solid #bfdbfe",
+                      padding: "4px 12px",
+                      borderRadius: "16px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => navigate("/blog")}
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             )}
 
@@ -198,7 +172,7 @@ const PopularPost = () => {
           <div className="PopularPost-author-card">
             <div className="PopularPost-author-avatar-box">
               <img
-                src={`${IMG_URL}${blog.image}`}
+                src={getImageUrl(blog.image)}
                 alt={blog.name}
                 className="PopularPost-author-avatar"
               />
@@ -246,8 +220,8 @@ const PopularPost = () => {
             <h3 className="PopularPost-widget-title">Categories</h3>
             <ul className="PopularPost-category-list">
               {categories.map((category, index) => (
-                <li 
-                  key={index} 
+                <li
+                  key={index}
                   className="PopularPost-category-item"
                   onClick={() => setSearchQuery(category)}
                 >
@@ -265,12 +239,12 @@ const PopularPost = () => {
                 <div
                   key={item._id}
                   className="PopularPost-item"
-                  onClick={() => navigate(`/blog/${item._id}`)}
+                  onClick={() => navigate(`/blogdetails/${item.metaSlug || item._id}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="PopularPost-img-container">
                     <img
-                      src={`${IMG_URL}${item.image}`}
+                      src={getImageUrl(item.image)}
                       alt={item.title}
                       className="PopularPost-thumb"
                     />
@@ -288,6 +262,49 @@ const PopularPost = () => {
               {filteredBlogs.length === 0 && <p style={{ fontSize: "0.85rem", color: "#8c95a5" }}>No matching posts found.</p>}
             </div>
           </div>
+
+          {/* Popular Tags */}
+          {(() => {
+            const allPopularTags = Array.from(
+              new Set(
+                blogs.flatMap((b) =>
+                  Array.isArray(b.tags)
+                    ? b.tags
+                        .map((t) => (typeof t === "string" && t.trim() ? (t.trim().startsWith("#") ? t.trim() : `#${t.trim()}`) : ""))
+                        .filter(Boolean)
+                    : []
+                )
+              )
+            );
+
+            if (allPopularTags.length === 0) return null;
+
+            return (
+              <div className="PopularPost-widget">
+                <h3 className="PopularPost-widget-title">Popular Tags</h3>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {allPopularTags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      style={{
+                        background: "#f8fafc",
+                        border: "1px solid #cbd5e1",
+                        color: "#334155",
+                        padding: "4px 10px",
+                        borderRadius: "4px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => navigate("/blog")}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Subscribe */}
           <div className="PopularPost-widget">

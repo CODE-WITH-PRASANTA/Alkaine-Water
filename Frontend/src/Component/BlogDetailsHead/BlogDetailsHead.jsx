@@ -1,9 +1,41 @@
-import React from 'react';
-import { IoColorPaletteSharp } from 'react-icons/io5'; // Using react-icons for the left icon
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { IoColorPaletteSharp } from 'react-icons/io5';
+import API from '../../api/axios';
 import './BlogDetailsHead.css';
-import backgroundImg from '../../assets/breadcrum.jpeg'; // Adjust path if your structure differs
+import backgroundImg from '../../assets/breadcrum.jpeg';
 
 const BlogDetailsHead = () => {
+  const { id } = useParams();
+  const [blog, setBlog] = useState(null);
+
+  useEffect(() => {
+    if (id) {
+      fetchBlogDetails();
+    }
+  }, [id]);
+
+  const fetchBlogDetails = async () => {
+    try {
+      const res = await API.get(`/blog/${id}`);
+      if (res.data.success) {
+        setBlog(res.data.blog);
+      }
+    } catch (err) {
+      console.error("Error fetching blog details for breadcrumb:", err);
+    }
+  };
+
+  const dynamicSlug =
+    blog?.metaSlug ||
+    blog?.title
+      ?.toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-') ||
+    "details";
+
   return (
     <div 
       className="BlogDetailsHead" 
@@ -17,17 +49,19 @@ const BlogDetailsHead = () => {
       {/* Content Container */}
       <div className="BlogDetailsHead-content">
         <h1 className="BlogDetailsHead-title">
-          Packaged Water: What Things To Consider?
+          {blog?.title || "Blog Details"}
         </h1>
         
         <nav className="BlogDetailsHead-breadcrumbs">
-          <span className="BlogDetailsHead-crumb-link">HOME</span>
+          <Link to="/" className="BlogDetailsHead-crumb-link">Home</Link>
           <span className="BlogDetailsHead-separator">/</span>
-          <span className="BlogDetailsHead-crumb-current">PACKAGED WATER: WHAT THINGS TO CONSIDER?</span>
+          <Link to="/blog" className="BlogDetailsHead-crumb-link">Blog</Link>
+          <span className="BlogDetailsHead-separator">/</span>
+          <span className="BlogDetailsHead-crumb-current">{dynamicSlug}</span>
         </nav>
       </div>
     </div>
   );
 };
 
-export default BlogDetailsHead;
+export default BlogDetailsHead;

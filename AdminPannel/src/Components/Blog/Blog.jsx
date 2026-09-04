@@ -4,6 +4,7 @@ import API, { IMG_URL, BASE_URL } from "../../api/axios";
 import {
   FaRegIdCard,
   FaTag,
+  FaHashtag,
   FaCalendarAlt,
   FaSearch,
   FaPencilAlt,
@@ -28,6 +29,7 @@ const emptyForm = {
   designation: "",
   title: "",
   category: "",
+  tags: [],
   date: "",
   metaTitle: "",
   metaSlug: "",
@@ -43,6 +45,7 @@ const Blog = () => {
   const [editingId, setEditingId] = useState(null);
   const [preview, setPreview] = useState("");
   const [keywordInput, setKeywordInput] = useState("");
+  const [tagInput, setTagInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -134,17 +137,36 @@ const Blog = () => {
   };
 
   // SEO Keywords Tag Manager
-  const handleKeywordKeyDown = (e) => {
-    if ((e.key === "Enter" || e.key === ",") && keywordInput.trim()) {
-      e.preventDefault();
-      const formattedKey = keywordInput.trim().replace(/^,/, "");
-      if (!formData.metaKeywords.includes(formattedKey)) {
-        setFormData((prev) => ({
-          ...prev,
-          metaKeywords: [...prev.metaKeywords, formattedKey]
-        }));
+  const addKeywordItems = (inputStr) => {
+    if (!inputStr || !inputStr.trim()) return;
+    const rawItems = inputStr.split(/[,;]+/);
+    const newKeys = [];
+    rawItems.forEach((item) => {
+      const clean = item.trim().replace(/^,+/, "").replace(/,+$/, "").trim();
+      if (clean && !formData.metaKeywords.includes(clean) && !newKeys.includes(clean)) {
+        newKeys.push(clean);
       }
-      setKeywordInput("");
+    });
+
+    if (newKeys.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        metaKeywords: [...prev.metaKeywords, ...newKeys]
+      }));
+    }
+    setKeywordInput("");
+  };
+
+  const handleKeywordKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addKeywordItems(keywordInput);
+    }
+  };
+
+  const handleKeywordBlur = () => {
+    if (keywordInput.trim()) {
+      addKeywordItems(keywordInput);
     }
   };
 
@@ -155,12 +177,58 @@ const Blog = () => {
     }));
   };
 
+  // Popular Tags Manager
+  const addTagItems = (inputStr) => {
+    if (!inputStr || !inputStr.trim()) return;
+    const rawItems = inputStr.split(/[,;\s]+/);
+    const newTags = [];
+    rawItems.forEach((item) => {
+      let clean = item.trim().replace(/^,+/, "").replace(/,+$/, "").trim();
+      if (!clean) return;
+      if (!clean.startsWith("#")) {
+        clean = `#${clean}`;
+      }
+      if (!formData.tags.includes(clean) && !newTags.includes(clean)) {
+        newTags.push(clean);
+      }
+    });
+
+    if (newTags.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, ...newTags]
+      }));
+    }
+    setTagInput("");
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addTagItems(tagInput);
+    }
+  };
+
+  const handleTagBlur = () => {
+    if (tagInput.trim()) {
+      addTagItems(tagInput);
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tagToRemove)
+    }));
+  };
+
   // Form Reset
   const handleReset = () => {
     setFormData(emptyForm);
     setEditingId(null);
     setPreview("");
     setKeywordInput("");
+    setTagInput("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -173,16 +241,44 @@ const Blog = () => {
       return;
     }
 
+    // Merge any uncommitted tag or keyword input before submitting
+    let finalTags = [...(formData.tags || [])];
+    if (tagInput.trim()) {
+      const extraTags = tagInput
+        .split(/[,;\s]+/)
+        .map((t) => {
+          let clean = t.trim();
+          if (!clean) return "";
+          return clean.startsWith("#") ? clean : `#${clean}`;
+        })
+        .filter(Boolean);
+      extraTags.forEach((t) => {
+        if (!finalTags.includes(t)) finalTags.push(t);
+      });
+    }
+
+    let finalKeywords = [...(formData.metaKeywords || [])];
+    if (keywordInput.trim()) {
+      const extraKeys = keywordInput
+        .split(/[,;]+/)
+        .map((k) => k.trim())
+        .filter(Boolean);
+      extraKeys.forEach((k) => {
+        if (!finalKeywords.includes(k)) finalKeywords.push(k);
+      });
+    }
+
     setSubmitting(true);
     const postData = new FormData();
     postData.append("name", formData.name);
     postData.append("designation", formData.designation);
     postData.append("title", formData.title);
     postData.append("category", formData.category);
+    postData.append("tags", JSON.stringify(finalTags));
     postData.append("date", formData.date || new Date().toISOString().split("T")[0]);
     postData.append("metaTitle", formData.metaTitle || formData.title);
     postData.append("metaSlug", formData.metaSlug || "");
-    postData.append("metaKeywords", JSON.stringify(formData.metaKeywords || []));
+    postData.append("metaKeywords", JSON.stringify(finalKeywords));
     postData.append("metaDescription", formData.metaDescription || "");
     postData.append("description", formData.description || "");
 
@@ -218,26 +314,75 @@ const Blog = () => {
     }
   };
 
-  // Edit Trigger
-  const handleEdit = (blog) => {
-    const blogId = blog._id || blog.id;
+  // Edit Trigger - Fetches real data by ID from database
+  const handleEdit = async (blogOrId) => {
+    const blogId = typeof blogOrId === "object" ? (blogOrId._id || blogOrId.id) : blogOrId;
+    if (!blogId) return;
+
     setEditingId(blogId);
-    setFormData({
-      _id: blogId,
-      name: blog.name || "",
-      designation: blog.designation || "",
-      title: blog.title || "",
-      category: blog.category || "",
-      date: blog.date || "",
-      metaTitle: blog.metaTitle || "",
-      metaSlug: blog.metaSlug || "",
-      metaKeywords: Array.isArray(blog.metaKeywords) ? blog.metaKeywords : [],
-      metaDescription: blog.metaDescription || "",
-      description: blog.description || "",
-      image: null
-    });
-    setPreview(blog.image ? getImageUrl(blog.image) : "");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setLoading(true);
+
+    try {
+      // Fetch fresh, full blog data directly from database by ID
+      const res = await API.get(`/blog/${blogId}`);
+      if (res.data && res.data.success && res.data.blog) {
+        const blog = res.data.blog;
+
+        let parsedTags = [];
+        if (Array.isArray(blog.tags)) {
+          parsedTags = blog.tags;
+        } else if (typeof blog.tags === "string" && blog.tags.trim()) {
+          if (blog.tags.startsWith("[")) {
+            try {
+              parsedTags = JSON.parse(blog.tags);
+            } catch (e) {
+              parsedTags = blog.tags.split(",").map((t) => t.trim()).filter(Boolean);
+            }
+          } else {
+            parsedTags = blog.tags.split(",").map((t) => t.trim()).filter(Boolean);
+          }
+        }
+
+        let parsedKeywords = [];
+        if (Array.isArray(blog.metaKeywords)) {
+          parsedKeywords = blog.metaKeywords;
+        } else if (typeof blog.metaKeywords === "string" && blog.metaKeywords.trim()) {
+          if (blog.metaKeywords.startsWith("[")) {
+            try {
+              parsedKeywords = JSON.parse(blog.metaKeywords);
+            } catch (e) {
+              parsedKeywords = blog.metaKeywords.split(",").map((k) => k.trim()).filter(Boolean);
+            }
+          } else {
+            parsedKeywords = blog.metaKeywords.split(",").map((k) => k.trim()).filter(Boolean);
+          }
+        }
+
+        setFormData({
+          _id: blogId,
+          name: blog.name || "",
+          designation: blog.designation || "",
+          title: blog.title || "",
+          category: blog.category ? blog.category.replace(/\s*\(\d+\)\s*$/, "").trim() : "",
+          tags: parsedTags,
+          date: blog.date || "",
+          metaTitle: blog.metaTitle || "",
+          metaSlug: blog.metaSlug || "",
+          metaKeywords: parsedKeywords,
+          metaDescription: blog.metaDescription || "",
+          description: blog.description || "",
+          image: null
+        });
+
+        setPreview(blog.image ? getImageUrl(blog.image) : "");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (error) {
+      console.error("Error fetching blog by ID for edit:", error);
+      alert(error.response?.data?.message || "Failed to fetch article details from database.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Delete Trigger
@@ -263,13 +408,15 @@ const Blog = () => {
     const name = blog?.name ? String(blog.name).toLowerCase() : "";
     const category = blog?.category ? String(blog.category).toLowerCase() : "";
     const metaSlug = blog?.metaSlug ? String(blog.metaSlug).toLowerCase() : "";
+    const tagsStr = Array.isArray(blog?.tags) ? blog.tags.join(" ").toLowerCase() : (blog?.tags ? String(blog.tags).toLowerCase() : "");
     const search = (searchTerm || "").toLowerCase();
 
     return (
       title.includes(search) ||
       name.includes(search) ||
       category.includes(search) ||
-      metaSlug.includes(search)
+      metaSlug.includes(search) ||
+      tagsStr.includes(search)
     );
   });
 
@@ -287,7 +434,7 @@ const Blog = () => {
         <div className="Blog-header">
           <div className="Blog-header-info">
             <h2>{editingId ? "Update Blog Entry" : "Create New Blog"}</h2>
-            <p>Configure post content, author details, and SEO metadata.</p>
+            <p>Configure post content, author details, popular tags, and SEO metadata.</p>
           </div>
           {editingId && (
             <button type="button" className="Blog-btn-cancel-edit" onClick={handleReset}>
@@ -361,6 +508,52 @@ const Blog = () => {
                 <FaTag className="Blog-icon" />
               </div>
             </div>
+          </div>
+
+          {/* Popular Tags Field */}
+          <div className="Blog-group">
+            <label>Popular Tags (Press Enter, Comma, or click + Add)</label>
+            <div className="Blog-input-with-action">
+              <div className="Blog-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="e.g. #water, #delivery, #experts, #technology..."
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                  onBlur={handleTagBlur}
+                />
+                <FaHashtag className="Blog-icon" />
+              </div>
+              <button
+                type="button"
+                className="Blog-btn-add-tag"
+                onClick={() => addTagItems(tagInput)}
+              >
+                + Add
+              </button>
+            </div>
+
+            {formData.tags && formData.tags.length > 0 && (
+              <div className="Blog-tags-badge-list">
+                {formData.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="Blog-tag-pill"
+                    style={{ backgroundColor: "#fef3c7", color: "#b45309" }}
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      style={{ color: "#b45309" }}
+                    >
+                      <FaTimes />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Row 3: Publish Date & Cover Image */}
@@ -447,16 +640,26 @@ const Blog = () => {
             </div>
 
             <div className="Blog-group">
-              <label>Meta Keywords (Press Enter or Comma)</label>
-              <div className="Blog-input-wrapper">
-                <input
-                  type="text"
-                  placeholder="Add keyword..."
-                  value={keywordInput}
-                  onChange={(e) => setKeywordInput(e.target.value)}
-                  onKeyDown={handleKeywordKeyDown}
-                />
-                <FaKey className="Blog-icon" />
+              <label>Meta Keywords (Press Enter, Comma, or click + Add)</label>
+              <div className="Blog-input-with-action">
+                <div className="Blog-input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Add keyword..."
+                    value={keywordInput}
+                    onChange={(e) => setKeywordInput(e.target.value)}
+                    onKeyDown={handleKeywordKeyDown}
+                    onBlur={handleKeywordBlur}
+                  />
+                  <FaKey className="Blog-icon" />
+                </div>
+                <button
+                  type="button"
+                  className="Blog-btn-add-tag"
+                  onClick={() => addKeywordItems(keywordInput)}
+                >
+                  + Add
+                </button>
               </div>
 
               {formData.metaKeywords.length > 0 && (
@@ -590,7 +793,7 @@ const Blog = () => {
           <div className="Blog-search">
             <input
               type="text"
-              placeholder="Search by title, author, category, slug..."
+              placeholder="Search by title, author, category, slug, tags..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -611,7 +814,7 @@ const Blog = () => {
                 <th style={{ width: "80px" }}>Cover</th>
                 <th style={{ width: "240px" }}>Article Info</th>
                 <th style={{ width: "160px" }}>Author</th>
-                <th style={{ width: "180px" }}>SEO / Slug</th>
+                <th style={{ width: "180px" }}>SEO / Slug / Tags</th>
                 <th style={{ width: "130px" }}>Category</th>
                 <th style={{ width: "110px" }}>Date</th>
                 <th style={{ width: "100px", textAlign: "center" }}>Actions</th>
@@ -628,6 +831,12 @@ const Blog = () => {
               ) : currentBlogs.length > 0 ? (
                 currentBlogs.map((blog) => {
                   const blogId = blog._id || blog.id;
+                  const blogTags = Array.isArray(blog.tags)
+                    ? blog.tags
+                    : typeof blog.tags === "string" && blog.tags.trim()
+                    ? (blog.tags.startsWith("[") ? JSON.parse(blog.tags || "[]") : blog.tags.split(",").map(t => t.trim()).filter(Boolean))
+                    : [];
+
                   return (
                     <tr key={blogId}>
                       <td>
@@ -668,6 +877,19 @@ const Blog = () => {
                               {blog.metaKeywords.map((kw, kIdx) => (
                                 <span key={kIdx} className="Blog-mini-badge">
                                   {kw}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          {blogTags.length > 0 && (
+                            <div className="Blog-table-keywords" style={{ marginTop: "4px" }}>
+                              {blogTags.map((tg, tIdx) => (
+                                <span
+                                  key={tIdx}
+                                  className="Blog-mini-badge"
+                                  style={{ backgroundColor: "#fef3c7", color: "#b45309" }}
+                                >
+                                  {tg}
                                 </span>
                               ))}
                             </div>

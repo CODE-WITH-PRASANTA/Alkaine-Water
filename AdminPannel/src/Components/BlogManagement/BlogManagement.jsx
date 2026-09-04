@@ -24,6 +24,7 @@ const emptyBlogForm = {
   designation: "",
   title: "",
   category: "",
+  tags: [],
   date: "",
   metaTitle: "",
   metaSlug: "",
@@ -47,6 +48,7 @@ const BlogManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState(emptyBlogForm);
   const [keywordInput, setKeywordInput] = useState("");
+  const [tagInput, setTagInput] = useState("");
 
   // Helper to format image URL
   const getImageUrl = (imagePath) => {
@@ -137,17 +139,29 @@ const BlogManagement = () => {
   };
 
   // SEO Keywords Tag input
-  const handleKeywordKeyDown = (e) => {
-    if ((e.key === "Enter" || e.key === ",") && keywordInput.trim()) {
-      e.preventDefault();
-      const newTag = keywordInput.trim().replace(/^,/, "");
-      if (!formData.metaKeywords.includes(newTag)) {
-        setFormData((prev) => ({
-          ...prev,
-          metaKeywords: [...prev.metaKeywords, newTag]
-        }));
+  const addKeywordTag = (text) => {
+    if (!text || !text.trim()) return;
+    const items = text.split(/[,;]+/);
+    const newKeys = [];
+    items.forEach((item) => {
+      const clean = item.trim().replace(/^,+/, "").replace(/,+$/, "").trim();
+      if (clean && !formData.metaKeywords.includes(clean) && !newKeys.includes(clean)) {
+        newKeys.push(clean);
       }
-      setKeywordInput("");
+    });
+    if (newKeys.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        metaKeywords: [...prev.metaKeywords, ...newKeys]
+      }));
+    }
+    setKeywordInput("");
+  };
+
+  const handleKeywordKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addKeywordTag(keywordInput);
     }
   };
 
@@ -158,30 +172,99 @@ const BlogManagement = () => {
     }));
   };
 
+  // Popular Tags input
+  const addPopularTag = (text) => {
+    if (!text || !text.trim()) return;
+    const items = text.split(/[,;\s]+/);
+    const newTags = [];
+    items.forEach((item) => {
+      let clean = item.trim().replace(/^,+/, "").replace(/,+$/, "").trim();
+      if (!clean) return;
+      if (!clean.startsWith("#")) clean = `#${clean}`;
+      if (!formData.tags.includes(clean) && !newTags.includes(clean)) {
+        newTags.push(clean);
+      }
+    });
+    if (newTags.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, ...newTags]
+      }));
+    }
+    setTagInput("");
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addPopularTag(tagInput);
+    }
+  };
+
+  const removePopularTag = (tagToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((t) => t !== tagToRemove)
+    }));
+  };
+
   // Actions
   const handleOpenCreateModal = () => {
     setFormData(emptyBlogForm);
     setKeywordInput("");
+    setTagInput("");
     setIsModalOpen(true);
   };
 
-  const handleEdit = (blog) => {
-    setFormData({
-      _id: blog._id || blog.id,
-      name: blog.name || "",
-      designation: blog.designation || "",
-      title: blog.title || "",
-      category: blog.category || "",
-      date: blog.date || "",
-      metaTitle: blog.metaTitle || "",
-      metaSlug: blog.metaSlug || "",
-      metaKeywords: Array.isArray(blog.metaKeywords) ? blog.metaKeywords : [],
-      metaDescription: blog.metaDescription || "",
-      status: blog.status || "Published",
-      image: blog.image || ""
-    });
+  const handleEdit = async (blogOrId) => {
+    const blogId = typeof blogOrId === "object" ? (blogOrId._id || blogOrId.id) : blogOrId;
+    if (!blogId) return;
+
     setActiveDropdown(null);
-    setIsModalOpen(true);
+
+    try {
+      const res = await API.get(`/blog/${blogId}`);
+      if (res.data && res.data.success && res.data.blog) {
+        const blog = res.data.blog;
+
+        let parsedTags = [];
+        if (Array.isArray(blog.tags)) {
+          parsedTags = blog.tags;
+        } else if (typeof blog.tags === "string" && blog.tags.trim()) {
+          if (blog.tags.startsWith("[")) {
+            try {
+              parsedTags = JSON.parse(blog.tags);
+            } catch (e) {
+              parsedTags = blog.tags.split(",").map((t) => t.trim()).filter(Boolean);
+            }
+          } else {
+            parsedTags = blog.tags.split(",").map((t) => t.trim()).filter(Boolean);
+          }
+        }
+
+        setFormData({
+          _id: blogId,
+          name: blog.name || "",
+          designation: blog.designation || "",
+          title: blog.title || "",
+          category: blog.category ? blog.category.replace(/\s*\(\d+\)\s*$/, "").trim() : "",
+          tags: parsedTags,
+          date: blog.date || "",
+          metaTitle: blog.metaTitle || "",
+          metaSlug: blog.metaSlug || "",
+          metaKeywords: Array.isArray(blog.metaKeywords) ? blog.metaKeywords : [],
+          metaDescription: blog.metaDescription || "",
+          status: blog.status || "Published",
+          image: blog.image || ""
+        });
+        setTagInput("");
+        setKeywordInput("");
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error fetching blog for edit:", error);
+      alert(error.response?.data?.message || "Failed to fetch article details from database.");
+    }
   };
 
   const handleDelete = async (id) => {
@@ -202,15 +285,42 @@ const BlogManagement = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
+      let finalTags = [...(formData.tags || [])];
+      if (tagInput.trim()) {
+        const extraTags = tagInput
+          .split(/[,;\s]+/)
+          .map((t) => {
+            let clean = t.trim();
+            if (!clean) return "";
+            return clean.startsWith("#") ? clean : `#${clean}`;
+          })
+          .filter(Boolean);
+        extraTags.forEach((t) => {
+          if (!finalTags.includes(t)) finalTags.push(t);
+        });
+      }
+
+      let finalKeywords = [...(formData.metaKeywords || [])];
+      if (keywordInput.trim()) {
+        const extraKeys = keywordInput
+          .split(/[,;]+/)
+          .map((k) => k.trim())
+          .filter(Boolean);
+        extraKeys.forEach((k) => {
+          if (!finalKeywords.includes(k)) finalKeywords.push(k);
+        });
+      }
+
       const payload = {
         name: formData.name,
         designation: formData.designation,
         title: formData.title,
         category: formData.category,
+        tags: finalTags,
         date: formData.date || new Date().toISOString().split("T")[0],
         metaTitle: formData.metaTitle || formData.title,
         metaSlug: formData.metaSlug || "",
-        metaKeywords: formData.metaKeywords || [],
+        metaKeywords: finalKeywords,
         metaDescription: formData.metaDescription || "",
         status: formData.status || "Published",
         image: formData.image || ""
@@ -313,7 +423,7 @@ const BlogManagement = () => {
           />
         </div>
 
-       
+
       </div>
 
       {/* Main Content View */}
@@ -646,6 +756,51 @@ const BlogManagement = () => {
                     onChange={handleInputChange}
                   />
                 </div>
+              </div>
+
+              {/* Popular Tags */}
+              <div className="BM-field" style={{ marginBottom: "16px" }}>
+                <label>Popular Tags (Press Enter, Comma, or click + Add)</label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <div className="BM-input-icon" style={{ flex: 1 }}>
+                    <input
+                      type="text"
+                      placeholder="e.g. #water, #delivery, #technology..."
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={handleTagKeyDown}
+                      onBlur={() => {
+                        if (tagInput.trim()) addPopularTag(tagInput);
+                      }}
+                    />
+                    <FaTag />
+                  </div>
+                  <button
+                    type="button"
+                    className="BM-btn-primary"
+                    style={{ padding: "0 16px", height: "42px", whiteSpace: "nowrap" }}
+                    onClick={() => addPopularTag(tagInput)}
+                  >
+                    + Add
+                  </button>
+                </div>
+
+                {formData.tags && formData.tags.length > 0 && (
+                  <div className="BM-tag-container" style={{ marginTop: "8px" }}>
+                    {formData.tags.map((tag, idx) => (
+                      <span key={idx} className="BM-pill-tag" style={{ backgroundColor: "#fef3c7", color: "#b45309" }}>
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => removePopularTag(tag)}
+                          style={{ color: "#b45309" }}
+                        >
+                          <FaTimes />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* SEO METADATA SECTION */}

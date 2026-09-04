@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Blog = require("../models/blog");
 
-// Helper to parse keywords
+// Helper to parse keywords and tags
 const parseKeywords = (keywords) => {
   if (!keywords) return [];
   if (Array.isArray(keywords)) {
@@ -25,6 +25,45 @@ const parseKeywords = (keywords) => {
       .filter(Boolean);
   }
   return [];
+};
+
+const parseTags = (tags) => {
+  if (!tags) return [];
+  let list = [];
+  if (Array.isArray(tags)) {
+    list = tags;
+  } else if (typeof tags === "string") {
+    const trimmed = tags.trim();
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          list = parsed;
+        } else {
+          list = [parsed];
+        }
+      } catch (e) {
+        list = trimmed.split(/[,;\s]+/);
+      }
+    } else {
+      list = trimmed.split(/[,;\s]+/);
+    }
+  }
+  const cleanList = list
+    .flatMap((t) => {
+      if (typeof t === "string") {
+        return t.split(/[,;\s]+/);
+      }
+      return String(t);
+    })
+    .map((t) => {
+      let clean = String(t).trim();
+      if (!clean) return "";
+      return clean.startsWith("#") ? clean : `#${clean}`;
+    })
+    .filter(Boolean);
+
+  return Array.from(new Set(cleanList));
 };
 
 // Helper to generate slug
@@ -77,11 +116,23 @@ const getAllBlogs = async (req, res) => {
 const getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid ID format" });
+    let blog = null;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      blog = await Blog.findById(id).lean();
     }
 
-    const blog = await Blog.findById(id).lean();
+    if (!blog) {
+      blog = await Blog.findOne({ metaSlug: id }).lean();
+    }
+
+    if (!blog) {
+      // Case-insensitive search on metaSlug
+      blog = await Blog.findOne({
+        metaSlug: { $regex: new RegExp(`^${id}$`, "i") }
+      }).lean();
+    }
+
     if (!blog) {
       return res.status(404).json({ success: false, message: "Blog not found" });
     }
@@ -104,6 +155,7 @@ const createBlog = async (req, res) => {
       title,
       category,
       date,
+      tags,
       metaTitle,
       metaSlug,
       metaKeywords,
@@ -118,6 +170,7 @@ const createBlog = async (req, res) => {
     const imageName = req.file.filename;
     const finalSlug = metaSlug ? generateSlug(metaSlug) : generateSlug(title);
     const parsedKeywords = parseKeywords(metaKeywords);
+    const parsedTags = parseTags(tags);
     const sanitizedCategory = cleanCategory(category);
 
     const newBlog = await Blog.create({
@@ -127,6 +180,7 @@ const createBlog = async (req, res) => {
       designation,
       title,
       category: sanitizedCategory,
+      tags: parsedTags,
       metaTitle: metaTitle || title,
       metaSlug: finalSlug,
       metaKeywords: parsedKeywords,
@@ -156,6 +210,10 @@ const updateBlog = async (req, res) => {
 
     if (updateData.category !== undefined) {
       updateData.category = cleanCategory(updateData.category);
+    }
+
+    if (updateData.tags !== undefined) {
+      updateData.tags = parseTags(updateData.tags);
     }
 
     if (updateData.metaKeywords !== undefined) {

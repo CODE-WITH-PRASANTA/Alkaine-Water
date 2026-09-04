@@ -34,7 +34,7 @@ const PopularPost = () => {
   useEffect(() => {
     fetchBlog();
     fetchBlogs();
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, [id]);
 
   const fetchBlog = async () => {
@@ -79,7 +79,7 @@ const PopularPost = () => {
     );
   }
 
-  const otherBlogs = blogs.filter(item => item._id !== id);
+  const otherBlogs = blogs.filter(item => item._id !== id && item.metaSlug !== id);
 
   const filteredBlogs = otherBlogs.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -87,7 +87,7 @@ const PopularPost = () => {
 
   const categories = [...new Set(blogs.map(item => item.category))];
 
-  const currentIdx = blogs.findIndex(item => item._id === id);
+  const currentIdx = blogs.findIndex(item => item._id === id || item.metaSlug === id);
   const prevPost = currentIdx > 0 ? blogs[currentIdx - 1] : (blogs.length > 1 ? blogs[blogs.length - 1] : null);
   const nextPost = currentIdx !== -1 && currentIdx < blogs.length - 1 ? blogs[currentIdx + 1] : (blogs.length > 1 ? blogs[0] : null);
 
@@ -138,9 +138,34 @@ const PopularPost = () => {
               dangerouslySetInnerHTML={{ __html: blog.description }}
             />
 
-           
 
-           
+
+
+
+            {/* Post Tags */}
+            {blog.tags && blog.tags.length > 0 && (
+              <div className="PopularPost-tags-container" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", marginTop: "24px", paddingTop: "16px", borderTop: "1px solid #e2e8f0" }}>
+                <strong style={{ color: "#334155", fontSize: "14px", marginRight: "4px" }}>Tags:</strong>
+                {blog.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: "#eff6ff",
+                      color: "#2563eb",
+                      border: "1px solid #bfdbfe",
+                      padding: "4px 12px",
+                      borderRadius: "16px",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => navigate("/blog")}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
 
           </article>
 
@@ -195,8 +220,8 @@ const PopularPost = () => {
             <h3 className="PopularPost-widget-title">Categories</h3>
             <ul className="PopularPost-category-list">
               {categories.map((category, index) => (
-                <li 
-                  key={index} 
+                <li
+                  key={index}
                   className="PopularPost-category-item"
                   onClick={() => setSearchQuery(category)}
                 >
@@ -214,7 +239,7 @@ const PopularPost = () => {
                 <div
                   key={item._id}
                   className="PopularPost-item"
-                  onClick={() => navigate(`/blogdetails/${item._id}`)}
+                  onClick={() => navigate(`/blogdetails/${item.metaSlug || item._id}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="PopularPost-img-container">
@@ -237,6 +262,49 @@ const PopularPost = () => {
               {filteredBlogs.length === 0 && <p style={{ fontSize: "0.85rem", color: "#8c95a5" }}>No matching posts found.</p>}
             </div>
           </div>
+
+          {/* Popular Tags */}
+          {(() => {
+            const allPopularTags = Array.from(
+              new Set(
+                blogs.flatMap((b) =>
+                  Array.isArray(b.tags)
+                    ? b.tags
+                        .map((t) => (typeof t === "string" && t.trim() ? (t.trim().startsWith("#") ? t.trim() : `#${t.trim()}`) : ""))
+                        .filter(Boolean)
+                    : []
+                )
+              )
+            );
+
+            if (allPopularTags.length === 0) return null;
+
+            return (
+              <div className="PopularPost-widget">
+                <h3 className="PopularPost-widget-title">Popular Tags</h3>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {allPopularTags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      style={{
+                        background: "#f8fafc",
+                        border: "1px solid #cbd5e1",
+                        color: "#334155",
+                        padding: "4px 10px",
+                        borderRadius: "4px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => navigate("/blog")}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Subscribe */}
           <div className="PopularPost-widget">

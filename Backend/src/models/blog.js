@@ -6,6 +6,7 @@ const blogSchema = new mongoose.Schema(
     designation: { type: String, required: true, trim: true },
     title: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
+    tags: { type: [String], default: [] },
     date: { type: String, required: true, trim: true },
     image: { type: String, required: true },
     metaTitle: { type: String, default: "", trim: true },

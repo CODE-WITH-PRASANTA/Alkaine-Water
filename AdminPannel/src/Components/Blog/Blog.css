@@ -242,6 +242,32 @@
   color: #ef4444;
 }
 
+.Blog-input-with-action {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.Blog-btn-add-tag {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+}
+
+.Blog-btn-add-tag:hover {
+  background: #1d4ed8;
+}
+
 /* Form Actions */
 .Blog-actions {
   display: flex;

@@ -1,82 +1,166 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FaCheckCircle, FaWater, FaTruck, FaRecycle, FaPhoneAlt, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa';
+import API from '../../api/axios';
 import './Plans.css';
 
-const Plans = () => {
+const businessNAP = {
+  name: "Alka Drops",
+  phone: "+917327092477",
+  displayPhone: "+91 7327092477",
+  address: {
+    street: "Plot-N5/22, Main Street, Block N5, IRC Village, Nayapalli",
+    city: "Bhubaneswar",
+    state: "Odisha",
+    postalCode: "751012",
+    country: "India"
+  }
+};
+
+const defaultPlanData = [
+  {
+    id: "basic",
+    title: "Basic Plan",
+    subtitle: "*Home & Small Families",
+    price: "1,499",
+    period: "MO",
+    desc: "Ideal 20 litre water supply near me home delivery package designed for small households in Bhubaneswar.",
+    features: [
+      { text: "Free Doorstep Delivery", icon: <FaTruck /> },
+      { text: "Max 10 Bottles / Month (20L)", icon: <FaWater /> },
+      { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
+      { text: "Max 120 Bottles / Year", icon: <FaWater /> },
+      { text: "Mineral Wellness Water", icon: <FaCheckCircle /> }
+    ],
+    isFeatured: false
+  },
+  {
+    id: "premium",
+    title: "Premium Plan",
+    subtitle: "*BEST VALUE ANNUAL SUBSCRIPTION",
+    price: "2,999",
+    period: "YR",
+    desc: "Top mineral water supply in Bhubaneswar with enriched alkalinity and vital essential minerals for total wellness.",
+    features: [
+      { text: "Free Express Delivery", icon: <FaTruck /> },
+      { text: "Max 10 Bottles / Month (20L)", icon: <FaWater /> },
+      { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
+      { text: "Max 120 Bottles / Year", icon: <FaWater /> },
+      { text: "Mineral Wellness Water", icon: <FaCheckCircle /> }
+    ],
+    isFeatured: true
+  },
+  {
+    id: "advanced",
+    title: "Advanced Plan",
+    subtitle: "*Workplaces, Gyms & Studios",
+    price: "2,199",
+    period: "MO",
+    desc: "High-demand drinking water supply for corporate offices, gyms, and commercial centers across Bhubaneswar.",
+    features: [
+      { text: "Priority Free Delivery", icon: <FaTruck /> },
+      { text: "Max 15 Bottles / Month (20L)", icon: <FaWater /> },
+      { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
+      { text: "Flexible Bottle Replacements", icon: <FaWater /> },
+      { text: "Certified Pure Mineral Water", icon: <FaCheckCircle /> }
+    ],
+    isFeatured: false
+  }
+];
+
+const getFeatureIcon = (text) => {
+  const lower = String(text).toLowerCase();
+  if (lower.includes('deliver') || lower.includes('doorstep') || lower.includes('express') || lower.includes('schedule')) {
+    return <FaTruck />;
+  }
+  if (lower.includes('pickup') || lower.includes('recycle') || lower.includes('empty') || lower.includes('replacement')) {
+    return <FaRecycle />;
+  }
+  if (lower.includes('bottle') || lower.includes('water') || lower.includes('dispenser') || lower.includes('mineral') || lower.includes('jar') || lower.includes('20l')) {
+    return <FaWater />;
+  }
+  return <FaCheckCircle />;
+};
+
+const formatLivePlans = (liveList) => {
+  if (!liveList || !liveList.length) return defaultPlanData;
+  const activePlans = liveList.filter(p => p.isActive !== false);
+  const displayList = activePlans.length > 0 ? activePlans : liveList;
+
+  return displayList.map((p, idx) => {
+    const rawPeriod = (p.period || 'Monthly').toUpperCase();
+    const shortPeriod = rawPeriod.startsWith('Y') ? 'YR' : rawPeriod.startsWith('Q') ? 'QTR' : rawPeriod.startsWith('W') ? 'WK' : rawPeriod.startsWith('D') ? 'DAY' : 'MO';
+    const isFeatured = Array.isArray(p.tags) && p.tags.some(t => /best value|featured|popular/i.test(t));
+    
+    let featuresList = [];
+    if (Array.isArray(p.features) && p.features.length > 0) {
+      featuresList = p.features.filter(Boolean);
+    } else if (typeof p.features === 'string') {
+      featuresList = p.features.split(/\r?\n|,/).map(f => f.trim()).filter(Boolean);
+    }
+
+    if (!featuresList.length) {
+      featuresList = ['Free Doorstep Delivery', 'Mineral Wellness Water', 'Empty Bottle Pickup'];
+    }
+
+    return {
+      id: p._id || p.id || `plan-${idx}`,
+      title: p.name || 'Subscription Plan',
+      subtitle: p.bestFor ? `*${p.bestFor}` : (p.tags && p.tags.length ? `*${p.tags.join(' • ')}` : ''),
+      price: p.price || '0',
+      period: shortPeriod,
+      desc: p.description ? p.description.replace(/<[^>]*>/g, '').trim() : 'Ideal mineral water supply package with doorstep delivery.',
+      features: featuresList.map(f => ({
+        text: f,
+        icon: getFeatureIcon(f)
+      })),
+      isFeatured: isFeatured || (displayList.length > 1 && idx === 1)
+    };
+  });
+};
+
+const Plans = ({ plans: propsPlans, loading: propsLoading }) => {
   const [flippedCards, setFlippedCards] = useState({});
+  const [planData, setPlanData] = useState(() => {
+    if (propsPlans && propsPlans.length) return formatLivePlans(propsPlans);
+    return defaultPlanData;
+  });
 
   const toggleCardFlip = (id, isFeatured) => {
     if (isFeatured) return;
-    setFlippedCards((prev) => ({
+    setFlippedCards(prev => ({
       ...prev,
-      [id]: !prev[id],
+      [id]: !prev[id]
     }));
   };
 
-  const businessNAP = {
-    name: "Alka Drops",
-    phone: "+917327092477",
-    displayPhone: "+91 7327092477",
-    address: {
-      street: "Plot-N5/22, Main Street, Block N5, IRC Village, Nayapalli",
-      city: "Bhubaneswar",
-      state: "Odisha",
-      postalCode: "751012",
-      country: "IN"
+  useEffect(() => {
+    if (propsPlans && propsPlans.length) {
+      setPlanData(formatLivePlans(propsPlans));
+    } else {
+      fetchLivePlans();
+    }
+  }, [propsPlans]);
+
+  const fetchLivePlans = async () => {
+    try {
+      const res = await API.get('/subscription/all');
+      let liveList = [];
+      if (res.data && res.data.success && Array.isArray(res.data.plans)) {
+        liveList = res.data.plans;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        liveList = res.data.data;
+      } else if (Array.isArray(res.data)) {
+        liveList = res.data;
+      }
+
+      if (liveList.length > 0) {
+        setPlanData(formatLivePlans(liveList));
+      }
+    } catch (err) {
+      console.log('Using default pricing plans:', err.message);
     }
   };
-
-  const planData = [
-    {
-      id: "basic",
-      title: "Basic Plan",
-      subtitle: "*Home & Small Families",
-      price: "1,499",
-      period: "MO",
-      desc: "Ideal 20 litre water supply near me home delivery package designed for small households in Bhubaneswar.",
-      features: [
-        { text: "Free Doorstep Delivery", icon: <FaTruck /> },
-        { text: "Max 10 Bottles / Month (20L)", icon: <FaWater /> },
-        { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
-        { text: "Max 120 Bottles / Year", icon: <FaWater /> },
-        { text: "Mineral Wellness Water", icon: <FaCheckCircle /> }
-      ],
-      isFeatured: false
-    },
-    {
-      id: "premium",
-      title: "Premium Plan",
-      subtitle: "*BEST VALUE ANNUAL SUBSCRIPTION",
-      price: "2,999",
-      period: "YR",
-      desc: "Top mineral water supply in Bhubaneswar with enriched alkalinity and vital essential minerals for total wellness.",
-      features: [
-        { text: "Free Express Delivery", icon: <FaTruck /> },
-        { text: "Max 10 Bottles / Month (20L)", icon: <FaWater /> },
-        { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
-        { text: "Max 120 Bottles / Year", icon: <FaWater /> },
-        { text: "Mineral Wellness Water", icon: <FaCheckCircle /> }
-      ],
-      isFeatured: true
-    },
-    {
-      id: "advanced",
-      title: "Advanced Plan",
-      subtitle: "*Workplaces, Gyms & Studios",
-      price: "2,199",
-      period: "MO",
-      desc: "High-demand drinking water supply for corporate offices, gyms, and commercial centers across Bhubaneswar.",
-      features: [
-        { text: "Priority Free Delivery", icon: <FaTruck /> },
-        { text: "Max 15 Bottles / Month (20L)", icon: <FaWater /> },
-        { text: "Empty Bottle Pickup", icon: <FaRecycle /> },
-        { text: "Flexible Bottle Replacements", icon: <FaWater /> },
-        { text: "Certified Pure Mineral Water", icon: <FaCheckCircle /> }
-      ],
-      isFeatured: false
-    }
-  ];
 
   const schemaMarkup = {
     "@context": "https://schema.org",
@@ -138,8 +222,8 @@ const Plans = () => {
         {/* Pricing Cards Container */}
         <div className="Plans-container">
           {planData.map((plan) => (
-            <div 
-              key={plan.id} 
+            <div
+              key={plan.id}
               className={`Plans-card ${plan.isFeatured ? 'Plans-featured-card' : 'Plans-standard-card'} ${flippedCards[plan.id] ? 'is-flipped' : ''}`}
               onClick={() => toggleCardFlip(plan.id, plan.isFeatured)}
             >
@@ -174,7 +258,7 @@ const Plans = () => {
                     <p className="Plans-card-description">{plan.desc}</p>
                   )}
 
-                  <a 
+                  <a
                     href={`tel:${businessNAP.phone}`}
                     className="Plans-order-btn"
                     onClick={(e) => e.stopPropagation()}
@@ -211,7 +295,7 @@ const Plans = () => {
                       ))}
                     </ul>
 
-                    <a 
+                    <a
                       href={`tel:${businessNAP.phone}`}
                       className="Plans-order-btn variant-light"
                       onClick={(e) => e.stopPropagation()}
@@ -252,11 +336,11 @@ const Plans = () => {
               <span className="Plans-nap-label">Business:</span> {businessNAP.name}
             </div>
             <div className="Plans-nap-item">
-              <FaMapMarkerAlt /> 
+              <FaMapMarkerAlt />
               <span>{businessNAP.address.street}, {businessNAP.address.city}, {businessNAP.address.state} - {businessNAP.address.postalCode}</span>
             </div>
             <div className="Plans-nap-item">
-              <FaPhoneAlt /> 
+              <FaPhoneAlt />
               <span>Helpline: <a href={`tel:${businessNAP.phone}`}>{businessNAP.displayPhone}</a></span>
             </div>
           </footer>

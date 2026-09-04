@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
+import API, { IMG_URL } from '../../api/axios';
 import './ShopForm.css';
 import { 
   FaRegIdCard, 
@@ -16,63 +17,78 @@ import {
   FaTimes,
   FaPercent,
   FaBoxes,
-  FaEye
+  FaEye,
+  FaPlus,
+  FaSpinner,
+  FaSyncAlt
 } from 'react-icons/fa';
-
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Reverse Osmosis Pro',
-    description: '<p>Pure, family-sized alkaline water enriched with vital minerals...</p>',
-    category: 'Water Bottle',
-    tags: ['New', 'Bestseller'],
-    type: 'Alkaline',
-    price: '500',
-    discount: '10',
-    finalPrice: '450.00',
-    rating: 5,
-    images: ['https://via.placeholder.com/80/e2e8f0/000000?text=Bottle1']
-  },
-  {
-    id: 2,
-    name: 'Whisper Spring 0.75L',
-    description: '<p>Pure spring hydration for everyday use.</p>',
-    category: 'Water Bottle',
-    tags: ['Sale'],
-    type: 'Spring Water',
-    price: '300',
-    discount: '15',
-    finalPrice: '255.00',
-    rating: 4,
-    images: ['https://via.placeholder.com/80/e2e8f0/000000?text=Bottle2']
-  }
-];
 
 const emptyForm = {
   id: null,
   name: '',
-  images: [],
   description: '',
   price: '',
-  discount: '',
-  finalPrice: '',
+  discount: '0',
+  finalPrice: '0.00',
   category: '',
   type: '',
   tags: [],
-  rating: 0
+  rating: 5,
+};
+
+const resolveImageUrl = (img) => {
+  if (!img) return 'https://via.placeholder.com/80/e2e8f0/000000?text=No+Img';
+  if (img.startsWith('blob:') || img.startsWith('http://') || img.startsWith('https://')) {
+    return img;
+  }
+  const cleanPath = img.replace(/^\/?uploads\//, '').replace(/^(\.\/|\/)/, '');
+  return `${IMG_URL}/uploads/${cleanPath}`;
 };
 
 const ShopForm = () => {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState(emptyForm);
   const [tagInput, setTagInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [viewProduct, setViewProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(null);
+
+  // File uploads and preview states
+  const [imageFiles, setImageFiles] = useState([]); // New File objects to upload
+  const [existingImages, setExistingImages] = useState([]); // Existing relative paths from DB
+  const [imagePreviews, setImagePreviews] = useState([]); // [{ url, isFile, fileIndex, existingIndex }]
 
   // Pagination & Filter States
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch all shop products on mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get('/shop/all');
+      let list = [];
+      if (res.data && res.data.success && Array.isArray(res.data.products)) {
+        list = res.data.products;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        list = res.data.data;
+      } else if (Array.isArray(res.data)) {
+        list = res.data;
+      }
+      setProducts(list);
+    } catch (err) {
+      console.error('Error fetching shop products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Auto-calculation for Price, Discount, and Final Price
   useEffect(() => {
@@ -102,15 +118,19 @@ const ShopForm = () => {
     setFormData(prev => ({ ...prev, rating: rate }));
   };
 
-  // Multiple Tags Logic
+  // Add Tag Helper
+  const addCurrentTag = () => {
+    const clean = tagInput.trim().replace(/^,+|,+$/g, '');
+    if (clean && !formData.tags.includes(clean)) {
+      setFormData(prev => ({ ...prev, tags: [...prev.tags, clean] }));
+    }
+    setTagInput('');
+  };
+
   const handleTagKeyDown = (e) => {
-    if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+    if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      const newTag = tagInput.trim().replace(/^,/, '');
-      if (!formData.tags.includes(newTag)) {
-        setFormData(prev => ({ ...prev, tags: [...prev.tags, newTag] }));
-      }
-      setTagInput('');
+      addCurrentTag();
     }
   };
 
@@ -124,72 +144,178 @@ const ShopForm = () => {
   // Image Upload Handlers
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      const newImageUrls = files.map(file => URL.createObjectURL(file));
-      setFormData(prev => ({ ...prev, images: [...prev.images, ...newImageUrls] }));
-    }
+    if (files.length === 0) return;
+
+    const newFiles = [...imageFiles, ...files];
+    setImageFiles(newFiles);
+
+    // Build previews
+    const newPreviews = files.map((file, idx) => ({
+      url: URL.createObjectURL(file),
+      isFile: true,
+      fileRef: file
+    }));
+
+    setImagePreviews(prev => [...prev, ...newPreviews]);
   };
 
   const handleRemoveImage = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+    const itemToRemove = imagePreviews[index];
+    if (!itemToRemove) return;
+
+    if (itemToRemove.isFile) {
+      setImageFiles(prev => prev.filter(f => f !== itemToRemove.fileRef));
+    } else {
+      setExistingImages(prev => prev.filter((_, i) => i !== itemToRemove.existingIndex));
+    }
+
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleReset = () => {
     setFormData(emptyForm);
     setTagInput('');
     setIsEditing(false);
+    setImageFiles([]);
+    setExistingImages([]);
+    setImagePreviews([]);
+    setStatusMessage(null);
   };
 
   // Form Submit Handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.price || !formData.category) return;
-
-    if (isEditing) {
-      setProducts(products.map(p => p.id === formData.id ? { ...formData } : p));
-    } else {
-      const newProduct = {
-        ...formData,
-        id: Date.now(),
-        images: formData.images.length > 0 ? formData.images : ['https://via.placeholder.com/80/e2e8f0/000000?text=No+Img']
-      };
-      setProducts([...products, newProduct]);
+    if (!formData.name || !formData.price || !formData.category) {
+      alert('Please fill in required fields (Name, Base Price, and Category).');
+      return;
     }
 
-    handleReset();
+    // Capture uncommitted tag if any
+    let currentTags = [...formData.tags];
+    const cleanTag = tagInput.trim().replace(/^,+|,+$/g, '');
+    if (cleanTag && !currentTags.includes(cleanTag)) {
+      currentTags.push(cleanTag);
+    }
+
+    try {
+      setSubmitting(true);
+      setStatusMessage({ type: 'info', text: 'Saving product...' });
+
+      const data = new FormData();
+      data.append('name', formData.name.trim());
+      data.append('category', formData.category.trim());
+      data.append('type', formData.type || '');
+      data.append('price', formData.price);
+      data.append('discount', formData.discount || '0');
+      data.append('finalPrice', formData.finalPrice);
+      data.append('description', formData.description || '');
+      data.append('rating', formData.rating || 5);
+
+      // Append tags
+      currentTags.forEach(t => data.append('tags', t));
+
+      // Append existing retained images
+      data.append('existingImages', JSON.stringify(existingImages));
+
+      // Append newly uploaded files
+      imageFiles.forEach(file => {
+        data.append('images', file);
+      });
+
+      let res;
+      if (isEditing && formData.id) {
+        res = await API.put(`/shop/${formData.id}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        res = await API.post('/shop/create', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      }
+
+      if (res.data && res.data.success) {
+        setStatusMessage({
+          type: 'success',
+          text: isEditing ? 'Product updated successfully!' : 'Product added successfully!'
+        });
+        await fetchProducts();
+        handleReset();
+      } else {
+        throw new Error(res.data?.message || 'Failed to save product');
+      }
+    } catch (err) {
+      console.error('Error saving shop product:', err);
+      setStatusMessage({
+        type: 'error',
+        text: err.response?.data?.message || err.message || 'Error saving product'
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleEdit = (product) => {
     setIsEditing(true);
+    setStatusMessage(null);
+
+    const rawImages = Array.isArray(product.images) ? product.images : [];
+    setExistingImages(rawImages);
+    setImageFiles([]);
+
+    const previews = rawImages.map((imgPath, idx) => ({
+      url: resolveImageUrl(imgPath),
+      isFile: false,
+      existingIndex: idx,
+      path: imgPath
+    }));
+    setImagePreviews(previews);
+
     setFormData({
-      id: product.id,
+      id: product._id || product.id,
       name: product.name || '',
-      images: product.images || [],
       description: product.description || '',
       price: product.price || '',
-      discount: product.discount || '',
-      finalPrice: product.finalPrice || '',
+      discount: product.discount !== undefined ? String(product.discount) : '0',
+      finalPrice: product.finalPrice !== undefined ? String(product.finalPrice) : '0.00',
       category: product.category || '',
       type: product.type || '',
-      tags: product.tags || [],
-      rating: product.rating || 0
+      tags: Array.isArray(product.tags) ? product.tags : [],
+      rating: product.rating || 5
     });
+
+    // Scroll smoothly to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = (id) => {
-    setProducts(products.filter(p => p.id !== id));
-    if (formData.id === id) handleReset();
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+      setLoading(true);
+      const res = await API.delete(`/shop/${id}`);
+      if (res.data && res.data.success) {
+        setProducts(prev => prev.filter(p => (p._id || p.id) !== id));
+        if (formData.id === id) handleReset();
+      } else {
+        alert(res.data?.message || 'Failed to delete product');
+      }
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert(err.response?.data?.message || err.message || 'Failed to delete product');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Search & Pagination Filtering
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.type && product.type.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredProducts = products.filter(product => {
+    const q = searchTerm.toLowerCase();
+    const nameMatch = (product.name || '').toLowerCase().includes(q);
+    const catMatch = (product.category || '').toLowerCase().includes(q);
+    const typeMatch = (product.type || '').toLowerCase().includes(q);
+    const tagMatch = Array.isArray(product.tags) && product.tags.some(t => t.toLowerCase().includes(q));
+    return nameMatch || catMatch || typeMatch || tagMatch;
+  });
 
   const totalPages = Math.ceil(filteredProducts.length / entriesPerPage) || 1;
   const startIndex = (currentPage - 1) * entriesPerPage;
@@ -200,9 +326,31 @@ const ShopForm = () => {
       {/* Form Section */}
       <div className="ShopForm-card">
         <div className="ShopForm-header">
-          <h2>{isEditing ? 'Update Product' : 'Add New Product'}</h2>
-          <p>Fill in the product information line-by-line.</p>
+          <div>
+            <h2>{isEditing ? 'Update Product' : 'Add New Product'}</h2>
+            <p>Fill in the product information and upload high quality images.</p>
+          </div>
+          {isEditing && (
+            <button type="button" className="ShopForm-btn-reset" onClick={handleReset} style={{ margin: 0 }}>
+              Cancel Edit
+            </button>
+          )}
         </div>
+
+        {statusMessage && (
+          <div style={{
+            padding: '12px 16px',
+            margin: '0 30px 20px 30px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            backgroundColor: statusMessage.type === 'success' ? '#dcfce7' : statusMessage.type === 'error' ? '#fee2e2' : '#e0f2fe',
+            color: statusMessage.type === 'success' ? '#166534' : statusMessage.type === 'error' ? '#991b1b' : '#075985',
+            border: `1px solid ${statusMessage.type === 'success' ? '#bbf7d0' : statusMessage.type === 'error' ? '#fecaca' : '#bae6fd'}`
+          }}>
+            {statusMessage.text}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="ShopForm-body">
           {/* 1. Product Name */}
@@ -223,7 +371,7 @@ const ShopForm = () => {
 
           {/* 2. Product Images */}
           <div className="ShopForm-group">
-            <label>Product Images *</label>
+            <label>Product Images (Upload to uploads/shop) *</label>
             <div className="ShopForm-upload-box">
               <input 
                 type="file" 
@@ -235,19 +383,20 @@ const ShopForm = () => {
               />
               <label htmlFor="ShopForm-file-input" className="ShopForm-upload-label">
                 <FaCloudUploadAlt className="ShopForm-upload-icon" />
-                <span>Drag & drop images here or click to browse</span>
+                <span>Drag & drop multiple images here or click to browse</span>
               </label>
             </div>
 
-            {formData.images.length > 0 && (
+            {imagePreviews.length > 0 && (
               <div className="ShopForm-image-preview-list">
-                {formData.images.map((imgSrc, index) => (
+                {imagePreviews.map((item, index) => (
                   <div key={index} className="ShopForm-image-preview-item">
-                    <img src={imgSrc} alt="Preview" />
+                    <img src={item.url} alt="Preview" />
                     <button 
                       type="button" 
                       className="ShopForm-image-remove-btn" 
                       onClick={() => handleRemoveImage(index)}
+                      title="Remove image"
                     >
                       <FaTimes />
                     </button>
@@ -259,12 +408,12 @@ const ShopForm = () => {
 
           {/* 3. TinyMCE Description */}
           <div className="ShopForm-group">
-            <label>Description *</label>
+            <label>Description</label>
             <Editor
               tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js"
               value={formData.description}
               init={{
-                height: 200,
+                height: 220,
                 menubar: false,
                 plugins: ['advlist', 'autolink', 'lists', 'link', 'charmap', 'preview', 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'table', 'code', 'help', 'wordcount'],
                 toolbar: 'undo redo | blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
@@ -285,6 +434,8 @@ const ShopForm = () => {
                 value={formData.price}
                 onChange={handleInputChange}
                 required
+                min="0"
+                step="any"
               />
               <FaRupeeSign className="ShopForm-icon" />
             </div>
@@ -302,6 +453,7 @@ const ShopForm = () => {
                 onChange={handleInputChange}
                 min="0"
                 max="100"
+                step="any"
               />
               <FaPercent className="ShopForm-icon" />
             </div>
@@ -336,6 +488,8 @@ const ShopForm = () => {
                 <option value="Water Bottle">Water Bottle</option>
                 <option value="Accessories">Accessories</option>
                 <option value="Dispensers">Dispensers</option>
+                <option value="Purifiers">Purifiers</option>
+                <option value="Jars">Jars</option>
               </select>
               <FaChevronDown className="ShopForm-icon" />
             </div>
@@ -358,19 +512,37 @@ const ShopForm = () => {
 
           {/* 9. Tags System */}
           <div className="ShopForm-group">
-            <label>Tags (Press Enter or comma to add)</label>
-            <div className="ShopForm-input-wrapper">
+            <label>Tags (Type and press Enter, Comma, or click Add)</label>
+            <div className="ShopForm-input-wrapper" style={{ display: 'flex', gap: '8px' }}>
               <input 
                 type="text" 
-                placeholder="Type tag and press Enter" 
+                placeholder="e.g. New, Bestseller, 20L" 
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyDown}
+                onBlur={addCurrentTag}
               />
-              <FaTag className="ShopForm-icon" />
+              <button 
+                type="button" 
+                onClick={addCurrentTag}
+                style={{
+                  background: '#004ea8',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0 16px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <FaPlus /> Add
+              </button>
             </div>
             {formData.tags.length > 0 && (
-              <div className="ShopForm-tag-container">
+              <div className="ShopForm-tag-container" style={{ marginTop: '10px' }}>
                 {formData.tags.map((tag, idx) => (
                   <span key={idx} className="ShopForm-tag-pill">
                     {tag}
@@ -401,11 +573,19 @@ const ShopForm = () => {
 
           {/* Form Controls */}
           <div className="ShopForm-actions">
-            <button type="button" className="ShopForm-btn-reset" onClick={handleReset}>
+            <button type="button" className="ShopForm-btn-reset" onClick={handleReset} disabled={submitting}>
               <FaUndo /> Reset
             </button>
-            <button type="submit" className="ShopForm-btn-submit">
-              <FaPaperPlane /> {isEditing ? 'Update' : 'Submit'}
+            <button type="submit" className="ShopForm-btn-submit" disabled={submitting}>
+              {submitting ? (
+                <>
+                  <FaSpinner className="fa-spin" /> {isEditing ? 'Updating...' : 'Saving...'}
+                </>
+              ) : (
+                <>
+                  <FaPaperPlane /> {isEditing ? 'Update Product' : 'Submit Product'}
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -416,8 +596,17 @@ const ShopForm = () => {
         <div className="ShopForm-header ShopForm-table-header">
           <div>
             <h2>Product Catalog</h2>
-            <p>Manage inventory details and pricing.</p>
+            <p>Manage inventory details, images, and live pricing.</p>
           </div>
+          <button 
+            type="button" 
+            onClick={fetchProducts} 
+            className="ShopForm-btn-reset" 
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}
+            title="Refresh list"
+          >
+            <FaSyncAlt className={loading ? 'fa-spin' : ''} /> Refresh
+          </button>
         </div>
 
         <div className="ShopForm-controls">
@@ -430,6 +619,7 @@ const ShopForm = () => {
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={20}>20</option>
+              <option value={50}>50</option>
             </select>
             entries
           </div>
@@ -462,81 +652,103 @@ const ShopForm = () => {
               </tr>
             </thead>
             <tbody>
-              {currentProducts.length > 0 ? (
-                currentProducts.map((product, index) => (
-                  <tr key={product.id}>
-                    <td>{startIndex + index + 1}</td>
-                    <td>
-                      <img 
-                        src={product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/50'} 
-                        alt={product.name} 
-                        className="ShopForm-table-img" 
-                      />
-                    </td>
-                    <td className="ShopForm-name-cell">
-                      <span className="ShopForm-prod-title">{product.name}</span>
-                    </td>
-                    <td>
-                      <div className="badge-stack">
-                        <span className="ShopForm-badge category-badge">{product.category}</span>
-                        {product.type && <span className="ShopForm-badge type-badge">{product.type}</span>}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="table-tags-wrapper">
-                        {product.tags && product.tags.map((t, i) => (
-                          <span key={i} className="ShopForm-badge tag-badge">{t}</span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ShopForm-price-cell">
-                        <span className="ShopForm-current-price">₹{product.finalPrice}</span>
-                        {product.discount > 0 && (
-                          <span className="ShopForm-old-price">
-                            <del>₹{product.price}</del> ({product.discount}% OFF)
+              {loading ? (
+                <tr>
+                  <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+                    <FaSpinner className="fa-spin" style={{ fontSize: '24px', marginBottom: '8px' }} />
+                    <div>Loading catalog from database...</div>
+                  </td>
+                </tr>
+              ) : currentProducts.length > 0 ? (
+                currentProducts.map((product, index) => {
+                  const prodId = product._id || product.id;
+                  const firstImg = Array.isArray(product.images) && product.images[0]
+                    ? resolveImageUrl(product.images[0])
+                    : 'https://via.placeholder.com/50/e2e8f0/000000?text=No+Img';
+
+                  return (
+                    <tr key={prodId}>
+                      <td>{startIndex + index + 1}</td>
+                      <td>
+                        <img 
+                          src={firstImg} 
+                          alt={product.name} 
+                          className="ShopForm-table-img" 
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/50/e2e8f0/000000?text=No+Img';
+                          }}
+                        />
+                      </td>
+                      <td className="ShopForm-name-cell">
+                        <span className="ShopForm-prod-title">{product.name}</span>
+                        {product.images && product.images.length > 1 && (
+                          <span style={{ fontSize: '11px', color: '#004ea8', display: 'block', fontWeight: '600' }}>
+                            +{product.images.length - 1} more images
                           </span>
                         )}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ShopForm-table-stars">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <FaStar key={s} className={s <= product.rating ? 'active' : ''} />
-                        ))}
-                      </div>
-                    </td>
-                    <td className="ShopForm-actions-cell">
-                      <button 
-                        type="button" 
-                        className="ShopForm-action-view"
-                        title="View Details"
-                        onClick={() => setViewProduct(product)}
-                      >
-                        <FaEye />
-                      </button>
-                      <button 
-                        type="button" 
-                        className="ShopForm-action-edit"
-                        title="Edit Product"
-                        onClick={() => handleEdit(product)}
-                      >
-                        <FaPencilAlt />
-                      </button>
-                      <button 
-                        type="button" 
-                        className="ShopForm-action-delete"
-                        title="Delete Product"
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        <FaTrashAlt />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td>
+                        <div className="badge-stack">
+                          <span className="ShopForm-badge category-badge">{product.category}</span>
+                          {product.type && <span className="ShopForm-badge type-badge">{product.type}</span>}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="table-tags-wrapper">
+                          {Array.isArray(product.tags) && product.tags.map((t, i) => (
+                            <span key={i} className="ShopForm-badge tag-badge">{t}</span>
+                          ))}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="ShopForm-price-cell">
+                          <span className="ShopForm-current-price">₹{product.finalPrice}</span>
+                          {product.discount > 0 && (
+                            <span className="ShopForm-old-price">
+                              <del>₹{product.price}</del> ({product.discount}% OFF)
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="ShopForm-table-stars">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <FaStar key={s} className={s <= (product.rating || 5) ? 'active' : ''} />
+                          ))}
+                        </div>
+                      </td>
+                      <td className="ShopForm-actions-cell">
+                        <button 
+                          type="button" 
+                          className="ShopForm-action-view"
+                          title="View Details"
+                          onClick={() => setViewProduct(product)}
+                        >
+                          <FaEye />
+                        </button>
+                        <button 
+                          type="button" 
+                          className="ShopForm-action-edit"
+                          title="Edit Product"
+                          onClick={() => handleEdit(product)}
+                        >
+                          <FaPencilAlt />
+                        </button>
+                        <button 
+                          type="button" 
+                          className="ShopForm-action-delete"
+                          title="Delete Product"
+                          onClick={() => handleDelete(prodId)}
+                        >
+                          <FaTrashAlt />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="8" className="ShopForm-empty-td">No matching products found</td>
+                  <td colSpan="8" className="ShopForm-empty-td">No matching products found in database</td>
                 </tr>
               )}
             </tbody>
@@ -584,20 +796,37 @@ const ShopForm = () => {
               <button className="close-btn" onClick={() => setViewProduct(null)}><FaTimes /></button>
             </div>
             <div className="ShopForm-modal-body">
-              <div className="modal-gallery">
-                {viewProduct.images.map((img, i) => (
-                  <img key={i} src={img} alt="Product" />
-                ))}
+              <div className="modal-gallery" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
+                {Array.isArray(viewProduct.images) && viewProduct.images.length > 0 ? (
+                  viewProduct.images.map((img, i) => (
+                    <img 
+                      key={i} 
+                      src={resolveImageUrl(img)} 
+                      alt="Product" 
+                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                    />
+                  ))
+                ) : (
+                  <p style={{ color: '#64748b' }}>No images available</p>
+                )}
               </div>
               <div className="modal-details">
                 <p><strong>Category:</strong> {viewProduct.category}</p>
                 <p><strong>Type:</strong> {viewProduct.type || 'N/A'}</p>
                 <p><strong>Original Price:</strong> ₹{viewProduct.price}</p>
-                <p><strong>Discount:</strong> {viewProduct.discount}%</p>
+                <p><strong>Discount:</strong> {viewProduct.discount || 0}%</p>
                 <p><strong>Final Price:</strong> ₹{viewProduct.finalPrice}</p>
-                <div>
+                <p><strong>Rating:</strong> {viewProduct.rating || 5} / 5</p>
+                {Array.isArray(viewProduct.tags) && viewProduct.tags.length > 0 && (
+                  <p><strong>Tags:</strong> {viewProduct.tags.join(', ')}</p>
+                )}
+                <div style={{ marginTop: '15px' }}>
                   <strong>Description:</strong>
-                  <div className="desc-preview" dangerouslySetInnerHTML={{ __html: viewProduct.description }} />
+                  <div 
+                    className="desc-preview" 
+                    dangerouslySetInnerHTML={{ __html: viewProduct.description || '<em>No description provided</em>' }} 
+                    style={{ marginTop: '8px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                  />
                 </div>
               </div>
             </div>

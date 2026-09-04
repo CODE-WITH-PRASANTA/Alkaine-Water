@@ -1,5 +1,41 @@
 const mongoose = require("mongoose");
+const path = require("path");
+const fs = require("fs");
 const Blog = require("../models/blog");
+
+// Helper to delete an image file from disk
+const deleteFileIfLocal = (filePath) => {
+  if (!filePath || typeof filePath !== "string") return;
+  if (
+    filePath.startsWith("http://") ||
+    filePath.startsWith("https://") ||
+    filePath.startsWith("blob:") ||
+    filePath.startsWith("data:")
+  ) {
+    return;
+  }
+  try {
+    const sanitized = filePath
+      .replace(/^\/+/, "")
+      .replace(/^uploads\//, "")
+      .replace(/^(\.\/)/, "");
+
+    const possiblePaths = [
+      path.join(__dirname, "../../uploads", sanitized),
+      path.join(__dirname, "../uploads", sanitized),
+      path.join(__dirname, "../../uploads/blog", path.basename(sanitized)),
+      path.join(__dirname, "../uploads/blog", path.basename(sanitized)),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+        fs.unlinkSync(p);
+      }
+    }
+  } catch (err) {
+    console.warn("Could not delete blog image file:", filePath, err.message);
+  }
+};
 
 // Helper to parse keywords and tags
 const parseKeywords = (keywords) => {
@@ -202,10 +238,19 @@ const updateBlog = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid ID format" });
     }
 
+    const existingBlog = await Blog.findById(id);
+    if (!existingBlog) {
+      return res.status(404).json({ success: false, message: "Blog not found" });
+    }
+
     const updateData = { ...req.body };
 
     if (req.file) {
       updateData.image = req.file.filename;
+      // Delete old image from disk
+      if (existingBlog.image && existingBlog.image !== req.file.filename) {
+        deleteFileIfLocal(existingBlog.image);
+      }
     }
 
     if (updateData.category !== undefined) {
@@ -229,10 +274,6 @@ const updateBlog = async (req, res) => {
       runValidators: true,
     });
 
-    if (!updatedBlog) {
-      return res.status(404).json({ success: false, message: "Blog not found" });
-    }
-
     res.status(200).json({ success: true, message: "Blog updated successfully", blog: updatedBlog });
   } catch (error) {
     console.error("Error updating blog:", error);
@@ -251,7 +292,13 @@ const deleteBlog = async (req, res) => {
     if (!deletedBlog) {
       return res.status(404).json({ success: false, message: "Blog not found" });
     }
-    res.status(200).json({ success: true, message: "Blog deleted successfully" });
+
+    // Delete associated image from disk
+    if (deletedBlog.image) {
+      deleteFileIfLocal(deletedBlog.image);
+    }
+
+    res.status(200).json({ success: true, message: "Blog and associated image deleted successfully" });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }

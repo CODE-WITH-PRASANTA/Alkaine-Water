@@ -22,6 +22,8 @@ const routeRoutes = require("./src/routes/routeRoutes");
 const damagedStockRoutes = require("./src/routes/damagedStockRoutes");
 const productRoutes = require("./src/routes/productRoutes");
 const authRoutes = require("./src/routes/authRoutes");
+const subscriptionPlanRoutes = require("./src/routes/subscriptionPlanRoutes");
+const shopRoutes = require("./src/routes/shopRoutes");
 
 // Connect Database
 connectDB();
@@ -63,6 +65,16 @@ app.use("/api/routeRoutes", routeRoutes);
 app.use("/api/damage", damagedStockRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
+
+// Subscription Plan Routes
+app.use("/api/subscription", subscriptionPlanRoutes);
+app.use("/api/subscriptions", subscriptionPlanRoutes);
+app.use("/api/subscription-plans", subscriptionPlanRoutes);
+
+// Shop Product Routes
+app.use("/api/shop", shopRoutes);
+app.use("/api/shops", shopRoutes);
+app.use("/api/shop-products", shopRoutes);
 
 // ================= Home Route =================
 app.get("/", (req, res) => {

@@ -1,5 +1,39 @@
-// Ensure this relative path matches your actual file name in src/models/
+const path = require("path");
+const fs = require("fs");
 const Gallery = require("../models/gallery"); 
+
+const deleteFileIfLocal = (filePath) => {
+  if (!filePath || typeof filePath !== "string") return;
+  if (
+    filePath.startsWith("http://") ||
+    filePath.startsWith("https://") ||
+    filePath.startsWith("blob:") ||
+    filePath.startsWith("data:")
+  ) {
+    return;
+  }
+  try {
+    const sanitized = filePath
+      .replace(/^\/+/, "")
+      .replace(/^uploads\//, "")
+      .replace(/^(\.\/)/, "");
+
+    const possiblePaths = [
+      path.join(__dirname, "../../uploads", sanitized),
+      path.join(__dirname, "../uploads", sanitized),
+      path.join(__dirname, "../../uploads/gallery", path.basename(sanitized)),
+      path.join(__dirname, "../uploads/gallery", path.basename(sanitized)),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+        fs.unlinkSync(p);
+      }
+    }
+  } catch (err) {
+    console.warn("Could not delete gallery image file:", filePath, err.message);
+  }
+};
 
 const getAllGalleryItems = async (req, res) => {
   try {
@@ -37,6 +71,11 @@ const deleteGalleryItem = async (req, res) => {
     if (!deletedItem) {
       return res.status(404).json({ success: false, message: "Gallery item not found" });
     }
+
+    if (deletedItem.image) {
+      deleteFileIfLocal(deletedItem.image);
+    }
+
     res.status(200).json({ success: true, message: "Gallery item deleted successfully" });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

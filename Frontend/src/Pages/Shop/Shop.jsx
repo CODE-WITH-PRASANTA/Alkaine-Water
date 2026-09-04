@@ -12,201 +12,25 @@ import {
   FiBox,
   FiFeather,
   FiShield,
-  FiZap
+  FiZap,
+  FiLoader
 } from 'react-icons/fi';
 import './Shop.css';
 
-// =========================================================
-// LOCAL IMAGE IMPORTS
-// =========================================================
-import WhiteQuartzImg from '../../assets/shop1.jpg'; 
-import EternalFlowImg from '../../assets/shop_01.jpg';
-import MistValleyImg from '../../assets/shop_04.jpg';
-import PureGlacierImg from '../../assets/shop_08-357x500 (1).jpg';
-import AquaVitaeImg from '../../assets/shop_08-357x500.jpg';
-import AlpineDewImg from '../../assets/shop_01.jpg';
-import ReverseOsmosisImg from '../../assets/shop_10.jpg';
+// Banner image
 import BannerBgImg from '../../assets/breadcrum.jpeg';
 
-// =========================================================
-// PRODUCT DATA ARRAY (Prices in INR)
-// =========================================================
-const ALL_PRODUCTS = [
-  { 
-    id: 1, 
-    name: "White Quartz 2l", 
-    price: 99.00, 
-    rating: 5, 
-    category: "Products", 
-    tags: ["#water", "#delivery"], 
-    image: WhiteQuartzImg, 
-    isSale: false,
-    gallery: [WhiteQuartzImg, EternalFlowImg, MistValleyImg, PureGlacierImg],
-    packSize: "2 Litre",
-    type: "Natural Spring Water",
-    benefits: "Active Hydration, Balanced pH, Electrolytes"
-  },
-  { 
-    id: 2, 
-    name: "Eternal Flow 0.5l Tide", 
-    price: 45.00, 
-    rating: 5, 
-    category: "Products", 
-    tags: ["#water"], 
-    image: EternalFlowImg, 
-    isSale: false,
-    gallery: [EternalFlowImg, WhiteQuartzImg, AlpineDewImg],
-    packSize: "0.5 Litre",
-    type: "Electrolyte Water",
-    benefits: "Rapid Hydration, Trace Minerals"
-  },
-  { 
-    id: 3, 
-    name: "Mist Valley 1.5l", 
-    price: 75.00, 
-    rating: 4, 
-    category: "Water", 
-    tags: ["#company"], 
-    image: MistValleyImg, 
-    isSale: false,
-    gallery: [MistValleyImg, AquaVitaeImg, ReverseOsmosisImg],
-    packSize: "1.5 Litre",
-    type: "Mineral Water",
-    benefits: "Natural Calcium & Magnesium"
-  },
-  { 
-    id: 4, 
-    name: "Pure Glacier 1l", 
-    price: 60.00, 
-    rating: 5, 
-    category: "Water", 
-    tags: ["#delivery"], 
-    image: PureGlacierImg, 
-    isSale: false,
-    gallery: [PureGlacierImg, MistValleyImg, WhiteQuartzImg],
-    packSize: "1 Litre",
-    type: "Glacier Water",
-    benefits: "Crisp Taste, Low Mineral Content"
-  },
-  { 
-    id: 5, 
-    name: "Aqua Vitae 0.75l", 
-    price: 120.00, 
-    rating: 5, 
-    category: "Filters", 
-    tags: ["#experts"], 
-    image: AquaVitaeImg, 
-    isSale: false,
-    gallery: [AquaVitaeImg, EternalFlowImg],
-    packSize: "0.75 Litre",
-    type: "Alkaline Water",
-    benefits: "Detoxification, Cellular Energy"
-  },
-  { 
-    id: 6, 
-    name: "Alpine Dew 2.5l", 
-    price: 150.00, 
-    rating: 4, 
-    category: "Company", 
-    tags: ["#strategy"], 
-    image: AlpineDewImg, 
-    isSale: false,
-    gallery: [AlpineDewImg, WhiteQuartzImg],
-    packSize: "2.5 Litre",
-    type: "Mountain Water",
-    benefits: "High Purity, Pure Source"
-  },
-  { 
-    id: 7, 
-    name: "Liquid Sky 1.5l", 
-    price: 80.00, 
-    rating: 5, 
-    category: "Company", 
-    tags: ["#water", "#strategy"], 
-    image: WhiteQuartzImg, 
-    isSale: false,
-    gallery: [WhiteQuartzImg, EternalFlowImg],
-    packSize: "1.5 Litre",
-    type: "Vapour Distilled",
-    benefits: "Essential Minerals Added"
-  },
-  { 
-    id: 8, 
-    name: "Calm Source 0.75l", 
-    price: 140.00, 
-    rating: 4, 
-    category: "Filters", 
-    tags: ["#services"], 
-    image: EternalFlowImg, 
-    isSale: false,
-    gallery: [EternalFlowImg, PureGlacierImg],
-    packSize: "0.75 Litre",
-    type: "Spring Blend",
-    benefits: "Daily Balance, Clean Finish"
-  },
-  { 
-    id: 9, 
-    name: "Blue Pulse 0.5l", 
-    price: 65.00, 
-    rating: 5, 
-    category: "Products", 
-    tags: ["#delivery"], 
-    image: MistValleyImg, 
-    isSale: false,
-    gallery: [MistValleyImg, ReverseOsmosisImg],
-    packSize: "0.5 Litre",
-    type: "Structured Water",
-    benefits: "Deep Absorption"
-  },
-  { 
-    id: 10, 
-    name: "Reverse Osmosis Pro", 
-    price: 180.00, 
-    originalPrice: 220.00, 
-    rating: 5, 
-    category: "Filters", 
-    tags: ["#technologies", "#water"], 
-    image: ReverseOsmosisImg, 
-    isSale: true,
-    gallery: [ReverseOsmosisImg, WhiteQuartzImg, PureGlacierImg, AlpineDewImg],
-    packSize: "2 Litre",
-    type: "Alkaline Mineral Water",
-    benefits: "Hydration, pH Balance, Essential Minerals"
-  },
-  { 
-    id: 11, 
-    name: "Whisper Spring 0.75l", 
-    price: 110.00, 
-    rating: 5, 
-    category: "Water", 
-    tags: ["#experts"], 
-    image: PureGlacierImg, 
-    isSale: false,
-    gallery: [PureGlacierImg, MistValleyImg],
-    packSize: "0.75 Litre",
-    type: "Artesian Water",
-    benefits: "Smooth Taste, Natural Silica"
-  },
-  { 
-    id: 12, 
-    name: "Additional Cartridges Pro", 
-    price: 250.00, 
-    rating: 4, 
-    category: "Filters", 
-    tags: ["#services", "#technologies"], 
-    image: AlpineDewImg, 
-    isSale: false,
-    gallery: [AlpineDewImg, AquaVitaeImg],
-    packSize: "Pack of 2",
-    type: "Multi-stage Purifier",
-    benefits: "Removes Micro-particles, High Flow"
-  }
-];
+import API, { getImageUrl } from '../../api/axios';
+
+const placeholderImg = 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=80';
 
 const Shop = () => {
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState(500);
+  const [priceRange, setPriceRange] = useState(2000);
+  const [maxAvailablePrice, setMaxAvailablePrice] = useState(1000);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTag, setSelectedTag] = useState(null);
   const [sortOption, setSortOption] = useState("Default sorting");
@@ -220,6 +44,73 @@ const Shop = () => {
 
   const itemsPerPage = 6;
 
+  // Fetch live products from backend database
+  useEffect(() => {
+    fetchLiveProducts();
+  }, []);
+
+  const fetchLiveProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get('/shop/all');
+      let live = [];
+      if (res.data && res.data.success && Array.isArray(res.data.products)) {
+        live = res.data.products;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        live = res.data.data;
+      } else if (Array.isArray(res.data)) {
+        live = res.data;
+      }
+
+      const formatted = live.map((p, idx) => {
+        const rawImages = Array.isArray(p.images) && p.images.length > 0
+          ? p.images.map(img => getImageUrl(img))
+          : [placeholderImg];
+
+        const primaryImg = rawImages[0];
+        const parsedFinalPrice = typeof p.finalPrice === 'number' ? p.finalPrice : parseFloat(p.finalPrice || p.price) || 0;
+        const parsedBasePrice = typeof p.price === 'number' ? p.price : parseFloat(p.price) || 0;
+        const discountVal = parseFloat(p.discount) || 0;
+
+        const cleanDesc = p.description ? p.description.replace(/<[^>]*>/g, '').trim() : '';
+
+        return {
+          id: p._id || p.id || `prod-${idx}`,
+          name: p.name || 'Alka Drops Product',
+          price: parsedFinalPrice > 0 ? parsedFinalPrice : parsedBasePrice,
+          originalPrice: (discountVal > 0 && parsedBasePrice > parsedFinalPrice) ? parsedBasePrice : null,
+          discount: discountVal,
+          rating: p.rating || 5,
+          category: p.category || 'General',
+          tags: Array.isArray(p.tags) && p.tags.length > 0
+            ? p.tags.map(t => (String(t).startsWith('#') ? t : `#${t}`))
+            : [],
+          image: primaryImg,
+          isSale: Boolean(discountVal > 0),
+          gallery: rawImages,
+          packSize: p.type || 'Standard',
+          type: p.type || p.category || 'Alkaline Water',
+          benefits: cleanDesc ? (cleanDesc.length > 90 ? cleanDesc.substring(0, 90) + '...' : cleanDesc) : 'Pure mineral wellness & active hydration',
+          description: p.description || ''
+        };
+      });
+
+      setProductsList(formatted);
+
+      if (formatted.length > 0) {
+        const highestPrice = Math.max(...formatted.map(p => p.price || 0), 500);
+        const ceiling = Math.ceil(highestPrice / 100) * 100;
+        setMaxAvailablePrice(ceiling);
+        setPriceRange(ceiling);
+      }
+    } catch (err) {
+      console.error('Error fetching live shop products from database:', err);
+      setProductsList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Prevent background scrolling when popup is active
   useEffect(() => {
     if (selectedProduct) {
@@ -231,6 +122,30 @@ const Shop = () => {
       document.body.style.overflow = 'unset';
     };
   }, [selectedProduct]);
+
+  // Dynamic categories with counts derived from real DB products
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    productsList.forEach(p => {
+      if (p.category) {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+      }
+    });
+    return Object.entries(counts).map(([name, count]) => ({ name, count }));
+  }, [productsList]);
+
+  // Dynamic tags derived from real DB products
+  const tagList = useMemo(() => {
+    const set = new Set();
+    productsList.forEach(p => {
+      if (Array.isArray(p.tags)) {
+        p.tags.forEach(t => {
+          if (t && String(t).trim()) set.add(String(t).trim());
+        });
+      }
+    });
+    return Array.from(set);
+  }, [productsList]);
 
   // --- ACTIONS ---
   const handleAddToCart = (product, quantity = 1, e) => {
@@ -265,10 +180,15 @@ const Shop = () => {
 
   // --- FILTERING & SORTING LOGIC ---
   const filteredAndSortedProducts = useMemo(() => {
-    let result = [...ALL_PRODUCTS];
+    let result = [...productsList];
 
-    if (searchQuery) {
-      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(p => 
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.type && p.type.toLowerCase().includes(q))
+      );
     }
 
     result = result.filter(p => p.price <= priceRange);
@@ -284,7 +204,7 @@ const Shop = () => {
     if (sortOption === "Sort by popularity" || sortOption === "Sort by average rating") {
       result.sort((a, b) => b.rating - a.rating);
     } else if (sortOption === "Sort by latest") {
-      result.sort((a, b) => b.id - a.id);
+      result.sort((a, b) => String(b.id).localeCompare(String(a.id)));
     } else if (sortOption === "Sort by price: low to high") {
       result.sort((a, b) => a.price - b.price);
     } else if (sortOption === "Sort by price: high to low") {
@@ -292,10 +212,10 @@ const Shop = () => {
     }
 
     return result;
-  }, [searchQuery, priceRange, selectedCategory, selectedTag, sortOption]);
+  }, [productsList, searchQuery, priceRange, selectedCategory, selectedTag, sortOption]);
 
   const totalResults = filteredAndSortedProducts.length;
-  const totalPages = Math.ceil(totalResults / itemsPerPage);
+  const totalPages = Math.ceil(totalResults / itemsPerPage) || 1;
   
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -375,73 +295,80 @@ const Shop = () => {
             <h3 className="ShopWidgetTitle">FILTER BY PRICE</h3>
             <div className="ShopPriceSliderWrapper">
               <div className="ShopSliderLineTrack">
-                <div className="ShopSliderLineProgress" style={{ width: `${(priceRange / 500) * 100}%` }}></div>
+                <div 
+                  className="ShopSliderLineProgress" 
+                  style={{ width: `${maxAvailablePrice > 0 ? (priceRange / maxAvailablePrice) * 100 : 100}%` }}
+                ></div>
               </div>
               <input 
                 type="range" 
                 min="0" 
-                max="500" 
-                step="1" 
+                max={maxAvailablePrice} 
+                step="10" 
                 value={priceRange} 
                 onChange={handlePriceChange}
                 className="ShopActualSliderInput"
               />
               <div className="ShopSliderKnob left"></div>
-              <div className="ShopSliderKnob right" style={{ left: `${(priceRange / 500) * 100}%` }}></div>
+              <div 
+                className="ShopSliderKnob right" 
+                style={{ left: `${maxAvailablePrice > 0 ? (priceRange / maxAvailablePrice) * 100 : 100}%` }}
+              ></div>
             </div>
             <div className="ShopPriceFilterFooter">
               <span className="ShopPriceOutputDisplay">Price: ₹0 — ₹{priceRange.toFixed(0)}</span>
-              <button className="ShopFilterActionBtn">Filter</button>
+              <button 
+                className="ShopFilterActionBtn" 
+                onClick={() => setCurrentPage(1)}
+              >
+                Filter
+              </button>
             </div>
           </div>
 
-          {/* Categories Filter list */}
-          <div className="ShopSidebarWidget CategoriesWidget">
-            <h3 className="ShopWidgetTitle">PRODUCT CATEGORIES</h3>
-            <ul className="ShopCategoriesList">
-              {[
-                { name: "Company", count: 11 },
-                { name: "Experts", count: 0 },
-                { name: "Filters", count: 8 },
-                { name: "Our services", count: 0 },
-                { name: "Products", count: 2 },
-                { name: "Technologies", count: 0 },
-                { name: "Water", count: 0 }
-              ].map(cat => (
-                <li 
-                  key={cat.name} 
-                  className={`ShopCategoryItem ${selectedCategory === cat.name ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedCategory(selectedCategory === cat.name ? null : cat.name);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <span className="ShopCategoryArrow">&gt;</span>
-                  <span className="ShopCategoryLabelName">{cat.name}</span>
-                  <span className="ShopCategoryCount">({cat.count})</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Tags Widget */}
-          <div className="ShopSidebarWidget TagsWidget">
-            <h3 className="ShopWidgetTitle">PRODUCT TAGS</h3>
-            <div className="ShopTagsCloudContainer">
-              {["#company", "#delivery", "#experts", "#services", "#strategy", "#technologies", "#water"].map(tag => (
-                <span 
-                  key={tag} 
-                  className={`ShopProductTagBadge ${selectedTag === tag ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedTag(selectedTag === tag ? null : tag);
-                    setCurrentPage(1);
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+          {/* Categories Filter list (Real Database Data) */}
+          {categoryCounts.length > 0 && (
+            <div className="ShopSidebarWidget CategoriesWidget">
+              <h3 className="ShopWidgetTitle">PRODUCT CATEGORIES</h3>
+              <ul className="ShopCategoriesList">
+                {categoryCounts.map(cat => (
+                  <li 
+                    key={cat.name} 
+                    className={`ShopCategoryItem ${selectedCategory === cat.name ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedCategory(selectedCategory === cat.name ? null : cat.name);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <span className="ShopCategoryArrow">&gt;</span>
+                    <span className="ShopCategoryLabelName">{cat.name}</span>
+                    <span className="ShopCategoryCount">({cat.count})</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
+
+          {/* Tags Widget (Real Database Data) */}
+          {tagList.length > 0 && (
+            <div className="ShopSidebarWidget TagsWidget">
+              <h3 className="ShopWidgetTitle">PRODUCT TAGS</h3>
+              <div className="ShopTagsCloudContainer">
+                {tagList.map(tag => (
+                  <span 
+                    key={tag} 
+                    className={`ShopProductTagBadge ${selectedTag === tag ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedTag(selectedTag === tag ? null : tag);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </aside>
 
         {/* Content Section Area Grid */}
@@ -484,56 +411,80 @@ const Shop = () => {
           </div>
 
           {/* Cards Dynamic Grid */}
-          <div className="ShopProductsResponsiveGrid">
-            {paginatedProducts.map((product) => {
-              const isAddedToCart = cart.some(item => item.id === product.id);
-              return (
-                <div 
-                  key={product.id} 
-                  className="ShopProductCardItem clickableCard"
-                  onClick={() => openProductModal(product)}
-                >
-                  <div className="ShopCardImageFrameContainer">
-                    {product.isSale && <span className="ShopSaleRibbonBadge">%</span>}
-                    <img src={product.image} alt={product.name} className="ShopProductItemCoreImage" />
-                    
-                    <div className="ShopCardHoverActionOverlay">
-                      <button 
-                        className={`ShopCardCircleActionBtn ${isAddedToCart ? 'addedSuccessState' : ''}`}
-                        onClick={(e) => handleAddToCart(product, 1, e)}
-                        aria-label="Add to cart"
-                      >
-                        {isAddedToCart ? <FiCheck className="ShopActionCheckmark" /> : <FiShoppingCart />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="ShopProductItemCardDetails">
-                    <div className="ShopProductItemRatingStars">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <span 
-                          key={i} 
-                          className={`ShopStarIconElement ${i < product.rating ? 'filledGold' : 'emptyMuted'}`}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#004ea8' }}>
+              <FiLoader className="fa-spin" style={{ fontSize: '32px', marginBottom: '12px' }} />
+              <p style={{ fontSize: '16px', fontWeight: '600' }}>Loading products from database...</p>
+            </div>
+          ) : paginatedProducts.length > 0 ? (
+            <div className="ShopProductsResponsiveGrid">
+              {paginatedProducts.map((product) => {
+                const isAddedToCart = cart.some(item => item.id === product.id);
+                return (
+                  <div 
+                    key={product.id} 
+                    className="ShopProductCardItem clickableCard"
+                    onClick={() => openProductModal(product)}
+                  >
+                    <div className="ShopCardImageFrameContainer">
+                      {product.isSale && <span className="ShopSaleRibbonBadge">{product.discount ? ` ${product.discount}%` : ''}</span>}
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="ShopProductItemCoreImage" 
+                        onError={(e) => {
+                          e.target.src = placeholderImg;
+                        }}
+                      />
+                      
+                      <div className="ShopCardHoverActionOverlay">
+                        <button 
+                          className={`ShopCardCircleActionBtn ${isAddedToCart ? 'addedSuccessState' : ''}`}
+                          onClick={(e) => handleAddToCart(product, 1, e)}
+                          aria-label="Add to cart"
                         >
-                          ★
-                        </span>
-                      ))}
+                          {isAddedToCart ? <FiCheck className="ShopActionCheckmark" /> : <FiShoppingCart />}
+                        </button>
+                      </div>
                     </div>
-                    <h4 className="ShopProductCardItemTitleName">{product.name}</h4>
-                    <p className="ShopProductCardItemShortDesc">
-                      Pure, family-sized alkaline water enriched with vital minerals for everyday cellular energy
-                    </p>
-                    <div className="ShopProductCardPricingRow">
-                      {product.isSale && (
-                        <span className="ShopProductCardOriginalCrossedPrice">₹{product.originalPrice?.toFixed(2)}</span>
-                      )}
-                      <span className="ShopProductCardActiveSalePrice">₹{product.price.toFixed(2)}</span>
+
+                    <div className="ShopProductItemCardDetails">
+                      <div className="ShopProductItemRatingStars">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <span 
+                            key={i} 
+                            className={`ShopStarIconElement ${i < product.rating ? 'filledGold' : 'emptyMuted'}`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <h4 className="ShopProductCardItemTitleName">{product.name}</h4>
+                      <p className="ShopProductCardItemShortDesc">
+                        {product.benefits}
+                      </p>
+                      <div className="ShopProductCardPricingRow">
+                        {product.isSale && product.originalPrice && (
+                          <span className="ShopProductCardOriginalCrossedPrice">₹{product.originalPrice.toFixed(2)}</span>
+                        )}
+                        <span className="ShopProductCardActiveSalePrice">₹{product.price.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', margin: '20px 0' }}>
+              <FiBox style={{ fontSize: '48px', color: '#94a3b8', marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '18px', color: '#1e293b', marginBottom: '8px' }}>No Products Found</h3>
+              <p style={{ fontSize: '14px', color: '#64748b' }}>
+                {searchQuery || selectedCategory || selectedTag 
+                  ? "No products matched your search or filters. Try adjusting your selections."
+                  : "No products available in the database catalog yet."}
+              </p>
+            </div>
+          )}
 
           {/* Pagination Navigation */}
           {totalPages > 1 && (
@@ -579,7 +530,11 @@ const Shop = () => {
             {/* Left Side: Images & Gallery */}
             <div className="ShopModalLeftPane">
               <div className="ShopModalHeroImageContainer">
-                {selectedProduct.isSale && <span className="ShopModalSaleBadge">%</span>}
+                {selectedProduct.isSale && (
+                  <span className="ShopModalSaleBadge">
+                    {selectedProduct.discount ? ` ${selectedProduct.discount}%` : ''}
+                  </span>
+                )}
                 
                 {activeGallery.length > 1 && (
                   <button 
@@ -594,6 +549,7 @@ const Shop = () => {
                   src={activeGallery[activeImageIdx] || selectedProduct.image} 
                   alt={selectedProduct.name} 
                   className="ShopModalCoreImg"
+                  onError={(e) => { e.target.src = placeholderImg; }}
                 />
 
                 {activeGallery.length > 1 && (
@@ -615,7 +571,11 @@ const Shop = () => {
                       className={`ShopModalThumbBtn ${idx === activeImageIdx ? 'selected' : ''}`}
                       onClick={() => setActiveImageIdx(idx)}
                     >
-                      <img src={imgSrc} alt={`Thumbnail ${idx + 1}`} />
+                      <img 
+                        src={imgSrc} 
+                        alt={`Thumbnail ${idx + 1}`} 
+                        onError={(e) => { e.target.src = placeholderImg; }}
+                      />
                     </button>
                   ))}
                 </div>
@@ -626,15 +586,28 @@ const Shop = () => {
             <div className="ShopModalRightPane">
               <div className="ShopModalRatingStars">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="ShopModalStar">★</span>
+                  <span 
+                    key={i} 
+                    className="ShopModalStar"
+                    style={{ color: i < (selectedProduct.rating || 5) ? '#f59e0b' : '#cbd5e1' }}
+                  >
+                    ★
+                  </span>
                 ))}
               </div>
 
               <h2 className="ShopModalTitle">{selectedProduct.name}</h2>
 
-              <p className="ShopModalDescription">
-                Pure, family-sized alkaline water enriched with vital minerals for everyday cellular energy.
-              </p>
+              {selectedProduct.description ? (
+                <div 
+                  className="ShopModalDescription"
+                  dangerouslySetInnerHTML={{ __html: selectedProduct.description }}
+                />
+              ) : (
+                <p className="ShopModalDescription">
+                  {selectedProduct.benefits}
+                </p>
+              )}
 
               <div className="ShopModalPricingRow">
                 {selectedProduct.originalPrice && (
@@ -653,35 +626,35 @@ const Shop = () => {
                   </div>
                 </div>
 
-                <div className="ShopModalSpecItem">
-                  <div className="ShopModalSpecIcon"><FiTag /></div>
-                  <div className="ShopModalSpecText">
-                    <span className="ShopModalSpecLabel">Tag</span>
-                    <span className="ShopModalTagGreenPill">New</span>
+                {selectedProduct.tags && selectedProduct.tags.length > 0 && (
+                  <div className="ShopModalSpecItem">
+                    <div className="ShopModalSpecIcon"><FiTag /></div>
+                    <div className="ShopModalSpecText">
+                      <span className="ShopModalSpecLabel">Tags</span>
+                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {selectedProduct.tags.map((t, idx) => (
+                          <span key={idx} className="ShopModalTagGreenPill">{t}</span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="ShopModalSpecItem">
-                  <div className="ShopModalSpecIcon"><FiBox /></div>
-                  <div className="ShopModalSpecText">
-                    <span className="ShopModalSpecLabel">Pack Size</span>
-                    <span className="ShopModalSpecValue">{selectedProduct.packSize || "2 Litre"}</span>
+                {selectedProduct.type && (
+                  <div className="ShopModalSpecItem">
+                    <div className="ShopModalSpecIcon"><FiFeather /></div>
+                    <div className="ShopModalSpecText">
+                      <span className="ShopModalSpecLabel">Type</span>
+                      <span className="ShopModalSpecValue">{selectedProduct.type}</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="ShopModalSpecItem">
-                  <div className="ShopModalSpecIcon"><FiFeather /></div>
-                  <div className="ShopModalSpecText">
-                    <span className="ShopModalSpecLabel">Type</span>
-                    <span className="ShopModalSpecValue">{selectedProduct.type || "Alkaline Mineral Water"}</span>
-                  </div>
-                </div>
+                )}
 
                 <div className="ShopModalSpecItem">
                   <div className="ShopModalSpecIcon"><FiShield /></div>
                   <div className="ShopModalSpecText">
                     <span className="ShopModalSpecLabel">Benefits</span>
-                    <span className="ShopModalSpecValue">{selectedProduct.benefits || "Hydration, pH Balance, Essential Minerals"}</span>
+                    <span className="ShopModalSpecValue">{selectedProduct.benefits}</span>
                   </div>
                 </div>
               </div>

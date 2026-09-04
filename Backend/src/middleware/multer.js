@@ -31,7 +31,12 @@ const fileFilter = (req, file, cb) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
-  if (file.fieldname === "profileImage" || file.fieldname === "image") {
+  if (
+    file.fieldname === "profileImage" ||
+    file.fieldname === "image" ||
+    file.fieldname === "images" ||
+    file.mimetype.startsWith("image/")
+  ) {
     if (allowedImageTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -169,9 +174,23 @@ const handleSingleImageUpload = (fieldName, subfolder = "") => {
   };
 };
 
+// Middleware wrapper for multiple image uploads (e.g. Shop product images)
+const handleMultipleImagesUpload = (fieldName = "images", maxCount = 10, subfolder = "") => {
+  return (req, res, next) => {
+    req.uploadSubfolder = subfolder;
+    upload.array(fieldName, maxCount)(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      processUploadedFiles(req, res, next);
+    });
+  };
+};
+
 module.exports = {
   upload,
   processUploadedFiles,
   handleDeliveryUploads,
   handleSingleImageUpload,
+  handleMultipleImagesUpload,
 };

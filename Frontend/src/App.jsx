@@ -49,6 +49,7 @@ import Contact from "./Pages/Contact/Contact";
 
 import AkaineGalary from "./Component/AkaineGalary/AkaineGalary";
 import OurTeam from "./Component/OurTeam/OurTeam";
+import Login from "./Component/Login/Login";
 
 // =====================================================
 // CONDITIONAL FLOATING
@@ -339,6 +340,9 @@ function App() {
           path="/gallery-component"
           element={<AkaineGalary />}
         />
+        <Route
+        path="/login"
+        element={<Login/>}/>
       </Routes>
 
       {/* =========================================

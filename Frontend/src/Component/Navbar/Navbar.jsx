@@ -103,7 +103,6 @@ const Navbar = () => {
               </NavLink>
             </li>
 
-            {/* Previously in Dropdown, now inline */}
             <li className="navbar-item">
               <NavLink
                 to="/blog"
@@ -165,8 +164,18 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* Mobile Primary Call To Action */}
+          {/* Mobile Actions: Order Now + Login */}
           <div className="navbar-mobile-actions">
+            <button
+              type="button"
+              className="navbar-btn-secondary full-width"
+              onClick={() => {
+                navigate('/login');
+                closeAllMenus();
+              }}
+            >
+              Log In
+            </button>
             <button
               type="button"
               className="navbar-btn-primary full-width"
@@ -198,6 +207,19 @@ const Navbar = () => {
             </svg>
           </button>
 
+          {/* Desktop Login Button */}
+          <button
+            type="button"
+            className="navbar-btn-secondary hide-on-mobile"
+            onClick={() => {
+              navigate('/login');
+              closeAllMenus();
+            }}
+          >
+            Log In
+          </button>
+
+          {/* Desktop Primary CTA Button */}
           <button
             type="button"
             className="navbar-btn-primary hide-on-mobile"
